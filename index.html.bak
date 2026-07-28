@@ -171,34 +171,6 @@ input{font-family:inherit;border:none;outline:none}
 @media(min-width:768px){.grid{grid-template-columns:repeat(4,1fr);gap:12px}.tabs,.cats,.main,.sett{padding-left:24px;padding-right:24px}.hdr{padding:10px 24px}}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(5,1fr)}}
 @media(min-width:1440px){.grid{grid-template-columns:repeat(6,1fr);max-width:1500px;margin:0 auto}}
-
-/* BOTTOM NAV (Mobile) */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:99;background:rgba(10,10,20,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:none;align-items:center;gap:4px;padding:8px 0 env(safe-area-inset-bottom,8px)}
-.bottom-nav.on{display:flex}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--text3);font-size:10px;transition:color .3s;cursor:pointer}
-.nav-item.on{color:var(--accent)}
-.nav-item i{font-size:20px}
-.nav-item.radio.on{color:var(--radio)}
-
-/* DESKTOP SIDEBAR */
-@media(min-width:768px){
-.bottom-nav{display:none}
-.tabs{display:none}
-.main{padding-left:260px}
-.hdr{padding-left:260px}
-.cats{padding-left:260px}
-.sett{padding-left:260px}
-.aud-bar{left:260px}
-.sidebar{position:fixed;left:0;top:0;bottom:0;width:240px;background:var(--bg2);border-right:1px solid var(--border);z-index:90;padding:20px 0;display:none}
-.sidebar.on{display:flex;flex-direction:column}
-.sidebar-logo{font-size:20px;font-weight:700;color:var(--accent);padding:0 20px 20px}
-.sidebar-nav{flex:1}
-.sidebar-item{display:flex;align-items:center;gap:12px;padding:12px 20px;color:var(--text2);font-size:14px;transition:.3s;cursor:pointer}
-.sidebar-item:hover{color:#fff;background:rgba(255,255,255,0.03)}
-.sidebar-item.on{color:var(--accent);background:rgba(0,212,255,0.05)}
-.sidebar-item i{width:20px;text-align:center;font-size:18px}
-.sidebar-dev{padding:16px 20px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)}
-}
 </style>
 </head>
 <body>
@@ -225,24 +197,12 @@ input{font-family:inherit;border:none;outline:none}
 <button class="hdr-btn" id="refBtn" onclick="refreshScan()" title="Обновить"><i class="fas fa-sync-alt"></i></button>
 </header>
 
-<nav class="sidebar" id="sidebar">
-<div class="sidebar-logo">S TV</div>
-<div class="sidebar-nav">
-<div class="sidebar-item on" data-tab="tv" onclick="setTab('tv')"><i class="fas fa-tv"></i> ТВ Каналы</div>
-<div class="sidebar-item" data-tab="radio" onclick="setTab('radio')"><i class="fas fa-radio"></i> Радио</div>
-<div class="sidebar-item" data-tab="fav" onclick="setTab('fav')"><i class="fas fa-star"></i> Избранное</div>
-<div class="sidebar-item" data-tab="settings" onclick="setTab('settings')"><i class="fas fa-cog"></i> Настройки</div>
-</div>
-<div class="sidebar-dev">by Safarali Group 🛡 v1.0.0</div>
-</nav>
-
 <div class="scan-w" id="scanW"><div class="scan-i" id="scanI"></div></div>
 <div class="scan-t" id="scanT"></div>
 
 <div class="tabs">
 <button class="tab on" onclick="setTab('tv')">📺 ТВ Каналы</button>
 <button class="tab" onclick="setTab('radio')">📻 Радио</button>
-<button class="tab" onclick="setTab('fav')">⭐ Избранное</button>
 <button class="tab" onclick="setTab('settings')">⚙️ Настройки</button>
 </div>
 
@@ -296,13 +256,6 @@ input{font-family:inherit;border:none;outline:none}
 <div class="toast-c" id="toastC"></div>
 <button class="to-top" id="toTop" onclick="scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
-<nav class="bottom-nav" id="bottomNav">
-<button class="nav-item" data-tab="tv" onclick="setTab('tv')"><i class="fas fa-tv"></i><span>ТВ</span></button>
-<button class="nav-item" data-tab="radio" onclick="setTab('radio')"><i class="fas fa-radio"></i><span>Радио</span></button>
-<button class="nav-item" data-tab="fav" onclick="setTab('fav')"><i class="fas fa-star"></i><span>Избранное</span></button>
-<button class="nav-item" data-tab="settings" onclick="setTab('settings')"><i class="fas fa-cog"></i><span>Настройки</span></button>
-</nav>
-
 <audio id="audEl" crossorigin="anonymous"></audio>
 
 <script>
@@ -352,8 +305,6 @@ loadFav();
 setupSearch();
 setupScroll();
 addEventListener('keydown',function(e){if(e.key==='Escape')closeVid()});
-// Show sidebar on desktop
-if(window.innerWidth>=768)$('#sidebar').classList.add('on');
 var cached=localStorage.getItem('stv_cache2');
 var ct=parseInt(localStorage.getItem('stv_ct2')||'0');
 if(cached&&Date.now()-ct<864e5){
@@ -393,8 +344,6 @@ return false;
 }
 
 function renderCats(){
-if(_tab==='fav'||_tab==='settings'){$('#catsW').style.display='none';return}
-$('#catsW').style.display='';
 var cs=_tab==='radio'?R_C:TV_C;
 var ls=_tab==='radio'?R_L:TV_L;
 var h='';
@@ -428,14 +377,8 @@ var g=$('#grid'),em=$('#empty');
 if(_tab==='settings'){$('#mainW').style.display='none';$('#settW').classList.add('on');$('#catsW').style.display='none';return}
 $('#mainW').style.display='';$('#settW').classList.remove('on');$('#catsW').style.display='';
 
-var filtered;
-if(_tab==='fav'){
-filtered=_favIdx.filter(function(i){return i<_ch.length});
-if(!filtered.length){g.innerHTML='';em.style.display='';em.querySelector('p').textContent='Нет избранных каналов';return}
-}else{
-filtered=getFiltered();
+var filtered=getFiltered();
 if(!filtered.length){g.innerHTML='';em.style.display='';em.querySelector('p').textContent='Каналы не найдены';return}
-}
 em.style.display='none';
 g.innerHTML=filtered.map(function(idx){return makeCard(idx)}).join('');
 }
@@ -693,15 +636,7 @@ function clearSearch(){$('#searchIn').value='';_q='';$('#searchX').classList.rem
 function setTab(t){
 _tab=t;_cat='all';
 var tabs=$$('.tab');
-for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('on');if((t==='tv'&&i===0)||(t==='radio'&&i===1)||(t==='fav'&&i===2)||(t==='settings'&&i===3))tabs[i].classList.add('on')}
-// Update bottom nav
-var navItems=$$('.nav-item');
-for(var j=0;j<navItems.length;j++){navItems[j].classList.remove('on');if(navItems[j].dataset.tab===t)navItems[j].classList.add('on')}
-// Update sidebar
-var sbItems=$$('.sidebar-item');
-for(var k=0;k<sbItems.length;k++){sbItems[k].classList.remove('on');if(sbItems[k].dataset.tab===t)sbItems[k].classList.add('on')}
-// Show/hide sidebar on desktop
-if(window.innerWidth>=768)$('#sidebar').classList.add('on');
+for(var i=0;i<tabs.length;i++){tabs[i].classList.remove('on');if((t==='tv'&&i===0)||(t==='radio'&&i===1)||(t==='settings'&&i===2))tabs[i].classList.add('on')}
 renderCats();render();
 }
 window.setTab=setTab;
