@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="theme-color" content="#0a0a14">
 <meta name="description" content="S TV — Бесплатное ТВ и Радио online">
-<meta property="og:title" content="S TV — ТВ и Радио">
-<meta property="og:description" content="Бесплатное ТВ и Радио online от Safarali Group">
 <title>S TV — ТВ и Радио</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230a0a14'/><text x='50' y='72' text-anchor='middle' font-size='60' font-weight='bold' fill='%2300d4ff'>S</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,68 +20,61 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 input{font-family:inherit;border:none;outline:none}
 a{text-decoration:none;color:inherit}
 
-/* ========= SPLASH ========= */
+/* SPLASH */
 #splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
 #splash.out{opacity:0;pointer-events:none}
 #splashCanvas{position:absolute;inset:0;width:100%;height:100%}
-.splash-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px}
-.splash-logo{font-size:72px;font-weight:700;color:var(--accent);text-shadow:0 0 40px rgba(0,212,255,0.5),0 0 80px rgba(0,212,255,0.2);animation:logoPop .8s cubic-bezier(.34,1.56,.64,1) forwards;transform:scale(0)}
-@keyframes logoPop{to{transform:scale(1)}}
-.splash-title{font-size:44px;font-weight:700;letter-spacing:2px}
-.splash-title .t-s{color:var(--accent)}
-.splash-title .t-tv{color:var(--text)}
-.splash-slogan{font-size:15px;color:var(--text2);font-weight:300;min-height:22px}
-.splash-slogan .cur{display:inline-block;width:2px;height:16px;background:var(--accent);vertical-align:text-bottom;animation:blink .6s step-end infinite}
+.sp-body{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px}
+.sp-logo{font-size:72px;font-weight:700;color:var(--accent);text-shadow:0 0 40px rgba(0,212,255,0.5),0 0 80px rgba(0,212,255,0.2);animation:pop .8s cubic-bezier(.34,1.56,.64,1) forwards;transform:scale(0)}
+@keyframes pop{to{transform:scale(1)}}
+.sp-slogan{font-size:15px;color:var(--text2);font-weight:300;min-height:22px}
+.sp-slogan .cur{display:inline-block;width:2px;height:16px;background:var(--accent);vertical-align:text-bottom;animation:blink .6s step-end infinite}
 @keyframes blink{50%{opacity:0}}
-.splash-dev{position:absolute;bottom:50px;font-size:12px;color:var(--text3);opacity:0;animation:fadeIn .5s .5s forwards}
-@keyframes fadeIn{to{opacity:1}}
-.splash-bar{position:absolute;bottom:30px;width:180px;height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden}
-.splash-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7B2FFF);transition:width .1s linear}
+.sp-dev{position:absolute;bottom:50px;font-size:12px;color:var(--text3);opacity:0;animation:fi .5s .5s forwards}
+@keyframes fi{to{opacity:1}}
+.sp-bar{position:absolute;bottom:30px;width:180px;height:2px;background:rgba(255,255,255,0.05);border-radius:1px;overflow:hidden}
+.sp-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7B2FFF);transition:width .1s linear}
 
-/* ========= HEADER ========= */
-.header{position:sticky;top:0;z-index:100;background:rgba(10,10,20,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px}
-.h-logo{font-size:20px;font-weight:700;color:var(--accent);white-space:nowrap}
-.h-search{flex:1;max-width:360px;position:relative}
-.h-search input{width:100%;padding:9px 34px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:13px;transition:border .3s}
-.h-search input:focus{border-color:var(--accent)}
-.h-search input::placeholder{color:var(--text3)}
-.h-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px}
-.h-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
-.h-x.on{display:flex}
-.h-x:hover{background:rgba(255,255,255,0.08)}
-.h-stats{font-size:11px;color:var(--text3);white-space:nowrap}
-.h-stats b{color:var(--accent)}
-.h-btn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;transition:.3s}
-.h-btn:hover{background:rgba(255,255,255,0.06);color:var(--accent)}
-.h-btn.spin i{animation:sp 1s linear infinite}
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(10,10,20,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:10px}
+.hdr-logo{font-size:20px;font-weight:700;color:var(--accent);white-space:nowrap}
+.hdr-search{flex:1;max-width:360px;position:relative}
+.hdr-search input{width:100%;padding:9px 34px 9px 36px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:13px;transition:border .3s}
+.hdr-search input:focus{border-color:var(--accent)}
+.hdr-search input::placeholder{color:var(--text3)}
+.hdr-search i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px}
+.hdr-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;border-radius:50%;display:none;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
+.hdr-x.on{display:flex}.hdr-x:hover{background:rgba(255,255,255,0.08)}
+.hdr-stats{font-size:11px;color:var(--text3);white-space:nowrap}.hdr-stats b{color:var(--accent)}
+.hdr-btn{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text2);font-size:15px;transition:.3s}
+.hdr-btn:hover{background:rgba(255,255,255,0.06);color:var(--accent)}
+.hdr-btn.spin i{animation:sp 1s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* ========= TABS ========= */
+/* TABS */
 .tabs{display:flex;padding:12px 16px 0;gap:4px}
 .tab{flex:1;padding:10px;border-radius:12px;font-size:13px;font-weight:600;text-align:center;background:var(--card);border:1px solid var(--border);transition:.3s}
 .tab:hover{border-color:rgba(0,212,255,0.3)}
 .tab.on{background:var(--accent);color:#000;border-color:var(--accent)}
-.tab.radio-tab.on{background:var(--radio);border-color:var(--radio)}
 
-/* ========= SCAN ========= */
-.scan-wrap{height:3px;background:var(--bg2);margin:0 16px;border-radius:2px;overflow:hidden;display:none}
-.scan-wrap.on{display:block}
-.scan-inner{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7B2FFF);transition:width .15s}
-.scan-text{padding:6px 16px;font-size:11px;color:var(--text3);text-align:center;display:none}
-.scan-text.on{display:block}
+/* SCAN */
+.scan-w{height:3px;background:var(--bg2);margin:0 16px;border-radius:2px;overflow:hidden;display:none}
+.scan-w.on{display:block}
+.scan-i{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#7B2FFF);transition:width .15s}
+.scan-t{padding:6px 16px;font-size:11px;color:var(--text3);text-align:center;display:none}
+.scan-t.on{display:block}
 
-/* ========= CATEGORIES ========= */
+/* CATEGORIES */
 .cats{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .cats::-webkit-scrollbar{display:none}
 .cat{padding:7px 14px;border-radius:18px;font-size:12px;font-weight:500;white-space:nowrap;background:var(--card);border:1px solid var(--border);color:var(--text2);transition:.3s;flex-shrink:0}
 .cat:hover,.cat.on{background:var(--accent);color:#000;border-color:var(--accent)}
-.cat.radio-cat.on{background:var(--radio);border-color:var(--radio)}
 
-/* ========= GRID ========= */
+/* GRID */
 .main{padding:8px 16px 110px}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 
-/* ========= CARD ========= */
+/* CARD */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:.35s cubic-bezier(.34,1.56,.64,1);cursor:pointer}
 .card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 8px 30px rgba(0,212,255,0.12)}
 .card-th{aspect-ratio:16/9;background:var(--bg2);position:relative;overflow:hidden}
@@ -101,11 +92,13 @@ a{text-decoration:none;color:inherit}
 .card-name mark{background:rgba(0,212,255,0.25);color:#fff;border-radius:2px;padding:0 2px}
 .card-btn{width:100%;padding:7px;border-radius:8px;font-size:11px;font-weight:600;background:rgba(0,212,255,0.1);color:var(--accent);transition:.3s}
 .card-btn:hover{background:var(--accent);color:#000}
-.card.radio-c{border-color:rgba(255,94,148,0.12)}
-.card.radio-c:hover{border-color:var(--radio);box-shadow:0 8px 30px rgba(255,94,148,0.12)}
-.card.radio-c .card-th{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,94,148,0.08),rgba(123,47,255,0.08))}
-.card.radio-c .card-btn{background:rgba(255,94,148,0.1);color:var(--radio)}
-.card.radio-c .card-btn:hover{background:var(--radio);color:#fff}
+
+/* RADIO CARD */
+.card.rc{border-color:rgba(255,94,148,0.12)}
+.card.rc:hover{border-color:var(--radio);box-shadow:0 8px 30px rgba(255,94,148,0.12)}
+.card.rc .card-th{display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(255,94,148,0.08),rgba(123,47,255,0.08))}
+.card.rc .card-btn{background:rgba(255,94,148,0.1);color:var(--radio)}
+.card.rc .card-btn:hover{background:var(--radio);color:#fff}
 .eq{display:flex;gap:3px;align-items:flex-end;height:28px}
 .eq i{display:block;width:3px;border-radius:2px;background:var(--radio);transition:height .15s}
 .eq i:nth-child(1){height:6px;animation:eq .7s ease-in-out infinite alternate}
@@ -114,16 +107,16 @@ a{text-decoration:none;color:inherit}
 .eq i:nth-child(4){height:18px;animation:eq .7s .05s ease-in-out infinite alternate}
 .eq i:nth-child(5){height:8px;animation:eq .7s .15s ease-in-out infinite alternate}
 @keyframes eq{to{height:4px}}
-.card.radio-c:not(.playing) .eq i{animation-play-state:paused;height:4px}
-.card.radio-c.playing .eq i{animation-play-state:running}
-.card.radio-c:hover .eq i{animation-play-state:running}
+.card.rc:not(.playing) .eq i{animation-play-state:paused;height:4px}
+.card.rc.playing .eq i{animation-play-state:running}
+.card.rc:hover .eq i{animation-play-state:running}
 .fav-sec{grid-column:1/-1;padding:12px 0 4px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
 
-/* ========= VIDEO MODAL ========= */
-.vid-overlay{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.4s;padding:16px}
-.vid-overlay.on{opacity:1;pointer-events:auto}
+/* VIDEO MODAL */
+.vid-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.92);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.4s;padding:16px}
+.vid-ov.on{opacity:1;pointer-events:auto}
 .vid-box{width:100%;max-width:900px;background:var(--bg2);border-radius:20px;overflow:hidden;transform:scale(0.85);transition:transform .4s cubic-bezier(.34,1.56,.64,1);position:relative}
-.vid-overlay.on .vid-box{transform:scale(1)}
+.vid-ov.on .vid-box{transform:scale(1)}
 .vid-name{position:absolute;top:12px;left:14px;font-size:13px;font-weight:600;color:#fff;background:rgba(0,0,0,0.55);padding:5px 12px;border-radius:8px;z-index:5;pointer-events:none}
 .vid-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:5;color:#fff;font-size:14px;transition:.3s}
 .vid-x:hover{background:var(--radio)}
@@ -132,13 +125,13 @@ a{text-decoration:none;color:inherit}
 .vid-ctrl{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,0.85));display:flex;flex-direction:column;gap:6px;transition:opacity .3s}
 .vid-ctrl.hide{opacity:0}
 .vid-prog{width:100%;height:3px;background:rgba(255,255,255,0.12);border-radius:2px;cursor:pointer}
-.vid-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2,#0072ff));border-radius:2px;width:0;transition:width .1s}
+.vid-prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),#0072ff);border-radius:2px;width:0;transition:width .1s}
 .vid-btns{display:flex;align-items:center;gap:10px}
 .vid-btn{color:#fff;font-size:16px;padding:3px;transition:.2s}
 .vid-btn:hover{color:var(--accent)}
 .vid-time{font-size:11px;color:rgba(255,255,255,0.6);margin-left:auto}
 
-/* ========= AUDIO PLAYER ========= */
+/* AUDIO PLAYER */
 .aud-bar{position:fixed;bottom:0;left:0;right:0;z-index:90;background:rgba(10,10,20,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(255,94,148,0.15);padding:10px 14px;display:none;align-items:center;gap:10px}
 .aud-bar.on{display:flex}
 .aud-eq{display:flex;gap:2px;align-items:flex-end;height:22px;min-width:22px}
@@ -150,140 +143,122 @@ a{text-decoration:none;color:inherit}
 .aud-play:hover{transform:scale(1.08)}
 .aud-close{color:var(--text3);font-size:16px;padding:4px}
 
-/* ========= ABOUT ========= */
-.about{display:none;padding:20px 16px 110px}
-.about.on{display:block}
-.about-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:28px;text-align:center}
-.about-logo{width:80px;height:80px;border-radius:20px;background:linear-gradient(135deg,var(--accent),#0072ff);display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:700;margin:0 auto 14px;color:#000}
-.about h2{font-size:22px;margin-bottom:4px}
-.about .ver{font-size:12px;color:var(--text3);margin-bottom:16px}
-.about .dev{font-size:14px;color:var(--text2);margin-bottom:20px}
-.about-links{display:flex;flex-direction:column;gap:8px}
-.about-link{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;font-size:13px;transition:.3s;width:100%;text-align:left}
-.about-link:hover{border-color:var(--accent);background:rgba(0,212,255,0.05)}
-.about-link i{width:18px;text-align:center;color:var(--accent);font-size:15px}
+/* SETTINGS */
+.sett{display:none;padding:20px 16px 110px}
+.sett.on{display:block}
+.sett-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:24px}
+.sett h2{font-size:20px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.sett-grp{margin-bottom:18px}
+.sett-grp h3{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.sett-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--bg2);border-radius:10px;margin-bottom:6px}
+.sett-row label{font-size:13px}
+.sett-sel{padding:7px 10px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:12px}
+.sett-btn{width:100%;padding:12px;border-radius:10px;font-size:13px;font-weight:500;text-align:center;transition:.3s;margin-bottom:6px}
+.sett-btn.danger{background:rgba(255,94,148,0.1);color:var(--radio);border:1px solid rgba(255,94,148,0.2)}
+.sett-btn.danger:hover{background:rgba(255,94,148,0.2)}
+.sett-btn.primary{background:var(--accent);color:#000}
+.sett-dev{text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.sett-dev p{font-size:12px;color:var(--text3);margin-bottom:4px}
+.sett-dev a{color:var(--accent);font-size:13px}
 
-/* ========= TOAST ========= */
+/* TOAST */
 .toast-c{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:6px}
 .toast{padding:10px 18px;background:var(--bg2);border:1px solid var(--border);border-radius:10px;font-size:12px;color:#fff;transform:translateX(120%);transition:transform .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 6px 24px rgba(0,0,0,0.5)}
 .toast.on{transform:translateX(0)}
-.toast.ok{border-color:var(--hd)}
-.toast.err{border-color:var(--radio)}
 
-/* ========= SCROLL TOP ========= */
+/* SCROLL TOP */
 .to-top{position:fixed;bottom:70px;right:14px;width:40px;height:40px;border-radius:50%;background:var(--accent);color:#000;display:none;align-items:center;justify-content:center;font-size:16px;z-index:50;box-shadow:0 4px 16px rgba(0,212,255,0.3)}
 .to-top.on{display:flex}
 
-/* ========= EMPTY ========= */
+/* EMPTY */
 .empty{text-align:center;padding:50px 16px;color:var(--text3)}
 .empty i{font-size:40px;margin-bottom:12px;opacity:.3}
 .empty p{font-size:13px}
 
-/* ========= RESPONSIVE ========= */
+/* RESPONSIVE */
 @media(min-width:500px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(min-width:768px){
-.grid{grid-template-columns:repeat(4,1fr);gap:12px}
-.tabs{padding:16px 24px 0}
-.main,.about{padding-left:24px;padding-right:24px}
-_cats{padding:10px 24px}
-.header{padding:10px 24px}
-}
+@media(min-width:768px){.grid{grid-template-columns:repeat(4,1fr);gap:12px}.tabs,.cats,.main,.sett{padding-left:24px;padding-right:24px}.hdr{padding:10px 24px}}
 @media(min-width:1024px){.grid{grid-template-columns:repeat(5,1fr)}}
 @media(min-width:1440px){.grid{grid-template-columns:repeat(6,1fr);max-width:1500px;margin:0 auto}}
 </style>
 </head>
 <body>
 
-<!-- ===== SPLASH ===== -->
 <div id="splash">
 <canvas id="splashCanvas"></canvas>
-<div class="splash-body">
-<div class="splash-logo">S TV</div>
-<div class="splash-slogan" id="slogan"></div>
-<div class="splash-dev">by Safarali Group 🛡</div>
+<div class="sp-body">
+<div class="sp-logo">S TV</div>
+<div class="sp-slogan" id="slogan"></div>
+<div class="sp-dev">by Safarali Group 🛡</div>
 </div>
-<div class="splash-bar"><div class="splash-fill" id="sFill"></div></div>
+<div class="sp-bar"><div class="sp-fill" id="sFill"></div></div>
 </div>
 
-<!-- ===== HEADER ===== -->
-<header class="header">
-<div class="h-logo">S TV</div>
-<div class="h-search">
+<header class="hdr">
+<div class="hdr-logo">S TV</div>
+<div class="hdr-search">
 <i class="fas fa-search"></i>
 <input id="searchIn" placeholder="Поиск каналов..." autocomplete="off">
-<button class="h-x" id="searchX" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+<button class="hdr-x" id="searchX" onclick="clearSearch()"><i class="fas fa-times"></i></button>
 </div>
-<div class="h-stats">ТВ: <b id="cntTv">0</b> | Радио: <b id="cntR">0</b></div>
-<button class="h-btn" onclick="randomCh()" title="Случайный"><i class="fas fa-dice"></i></button>
-<button class="h-btn" id="refBtn" onclick="refreshScan()" title="Обновить"><i class="fas fa-sync-alt"></i></button>
+<div class="hdr-stats">ТВ: <b id="cntTv">0</b> | Радио: <b id="cntR">0</b></div>
+<button class="hdr-btn" onclick="randomCh()" title="Случайный"><i class="fas fa-dice"></i></button>
+<button class="hdr-btn" id="refBtn" onclick="refreshScan()" title="Обновить"><i class="fas fa-sync-alt"></i></button>
 </header>
 
-<!-- ===== SCAN ===== -->
-<div class="scan-wrap" id="scanWrap"><div class="scan-inner" id="scanIn"></div></div>
-<div class="scan-text" id="scanTxt"></div>
+<div class="scan-w" id="scanW"><div class="scan-i" id="scanI"></div></div>
+<div class="scan-t" id="scanT"></div>
 
-<!-- ===== TABS ===== -->
 <div class="tabs">
 <button class="tab on" onclick="setTab('tv')">📺 ТВ Каналы</button>
-<button class="tab radio-tab" onclick="setTab('radio')">📻 Радио</button>
-<button class="tab" onclick="setTab('about')">ℹ️ О приложении</button>
+<button class="tab" onclick="setTab('radio')">📻 Радио</button>
+<button class="tab" onclick="setTab('settings')">⚙️ Настройки</button>
 </div>
 
-<!-- ===== CATEGORIES ===== -->
-<div class="cats" id="catsWrap"></div>
+<div class="cats" id="catsW"></div>
 
-<!-- ===== GRID ===== -->
-<main class="main" id="mainWrap">
+<main class="main" id="mainW">
 <div class="grid" id="grid"></div>
 <div class="empty" id="empty" style="display:none"><i class="fas fa-satellite-dish"></i><p>Каналы не найдены</p></div>
 </main>
 
-<!-- ===== ABOUT ===== -->
-<div class="about" id="aboutWrap">
-<div class="about-card">
-<div class="about-logo">S</div>
-<h2>S TV</h2>
-<div class="ver">Версия 1.0.0</div>
-<div class="dev">Разработано Safarali Group 🛡</div>
-<div class="about-links">
-<a class="about-link" href="https://t.me/Mushtariy_LLC" target="_blank"><i class="fab fa-telegram"></i> Telegram @Mushtariy_LLC</a>
-<a class="about-link" href="mailto:support@safaraligroup.com"><i class="fas fa-envelope"></i> support@safaraligroup.com</a>
-<button class="about-link" onclick="shareApp()"><i class="fas fa-share-alt"></i> Поделиться</button>
-<button class="about-link" onclick="refreshScan();setTab('tv')"><i class="fas fa-sync-alt"></i> Обновить каналы</button>
-<div style="margin-top:12px;font-size:12px;color:var(--text3)">ТВ: <b id="aTv" style="color:var(--accent)">0</b> | Радио: <b id="aR" style="color:var(--radio)">0</b></div>
+<div class="sett" id="settW">
+<div class="sett-card">
+<h2>Настройки</h2>
+<div class="sett-grp">
+<h3>Внешний вид</h3>
+<div class="sett-row"><label>Тема</label><select class="sett-sel" id="themeSel" onchange="setTheme(this.value)"><option value="amoled">AMOLED</option><option value="dark">Тёмная</option><option value="gray">Серая</option></select></div>
+<div class="sett-row"><label>Размер карточек</label><select class="sett-sel" id="gridSel" onchange="setGrid(this.value)"><option value="compact">Компактный</option><option value="standard" selected>Стандартный</option><option value="large">Крупный</option></select></div>
+</div>
+<div class="sett-grp">
+<h3>Данные</h3>
+<button class="sett-btn primary" onclick="refreshScan();setTab('tv')">🔄 Обновить каналы</button>
+<button class="sett-btn danger" onclick="clearCache()">🗑 Очистить кеш</button>
+</div>
+<div class="sett-grp">
+<h3>Информация</h3>
+<div class="sett-row"><label>Версия</label><span style="color:var(--text2);font-size:12px">1.0.0</span></div>
+<div class="sett-row"><label>Разработчик</label><span style="color:var(--text2);font-size:12px">Safarali Group 🛡</span></div>
+</div>
+<div class="sett-dev">
+<a href="https://t.me/Mushtariy_LLC" target="_blank"><i class="fab fa-telegram"></i> Telegram @Mushtariy_LLC</a>
+<p style="margin-top:8px"><button onclick="shareApp()" style="color:var(--accent);font-size:13px">📤 Поделиться</button></p>
 </div>
 </div>
 </div>
 
-<!-- ===== VIDEO MODAL ===== -->
-<div class="vid-overlay" id="vidOv">
+<div class="vid-ov" id="vidOv">
 <div class="vid-box">
 <div class="vid-name" id="vidName"></div>
 <button class="vid-x" onclick="closeVid()"><i class="fas fa-times"></i></button>
 <div class="vid-wrap" id="vidWrap">
-<video id="video" playsinline></video>
-<div class="vid-ctrl" id="vidCtrl">
-<div class="vid-prog" id="progWrap" onclick="seek(event)"><div class="vid-prog-fill" id="progFill"></div></div>
-<div class="vid-btns">
-<button class="vid-btn" id="ppBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
-<button class="vid-btn" onclick="toggleMute()"><i class="fas fa-volume-up" id="volIco"></i></button>
-<input type="range" min="0" max="1" step="0.05" value="1" style="width:70px;accent-color:var(--accent)" oninput="setVol(this.value)">
-<span class="vid-time" id="vTime">LIVE</span>
-<button class="vid-btn" id="favBtn" onclick="toggleFavCur()"><i class="far fa-star"></i></button>
-<button class="vid-btn" onclick="copyUrl()"><i class="fas fa-link"></i></button>
-<button class="vid-btn" onclick="pip()"><i class="fas fa-external-link-square-alt"></i></button>
-<button class="vid-btn" onclick="goFs()"><i class="fas fa-expand"></i></button>
-</div>
-</div>
+<video id="video" playsinline controls></video>
 </div>
 </div>
 </div>
 
-<!-- ===== AUDIO BAR ===== -->
 <div class="aud-bar" id="audBar">
-<div class="aud-eq" id="audEq">
-<i></i><i></i><i></i><i></i><i></i>
-</div>
+<div class="aud-eq" id="audEq"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="aud-info">
 <div class="aud-n" id="audName">...</div>
 <div class="aud-s">● LIVE</div>
@@ -292,221 +267,528 @@ _cats{padding:10px 24px}
 <button class="aud-close" onclick="closeAud()"><i class="fas fa-times"></i></button>
 </div>
 
-<!-- ===== TOAST ===== -->
 <div class="toast-c" id="toastC"></div>
-
-<!-- ===== SCROLL TOP ===== -->
 <button class="to-top" id="toTop" onclick="scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
 
-<!-- ===== HIDDEN AUDIO ===== -->
 <audio id="audEl" crossorigin="anonymous"></audio>
 
 <script>
+(function(){
 'use strict';
-const API=['https://api.mediabay.tv/v2/channels/thread/','https://api.v1.mediabay.tv/v2/channels/thread/','https://api.v1.mediabay.uz/v2/channels/thread/'];
-const MAX=850,BATCH=30;
-let all=[],tv=[],rad=[],tab='tv',cat='all',fav=[],cur=null,scanning=false,q='';
-let hls=null,audioCtx=null,animF=null;
 
-const $=s=>document.querySelector(s);
-const $$=s=>document.querySelectorAll(s);
+// ======================================================================
+// SECURE CHANNEL STORAGE — URLs exist ONLY in this array in JS memory
+// Never written to DOM, localStorage, data-attributes, or anywhere else
+// ======================================================================
+var _channels = []; // [{name, url, q, t}]  t='tv'|'r', q='hd'|'sd'|'fhd'|''
+var _tvIdx = [];
+var _radIdx = [];
+var _favIdx = [];
+var _tab = 'tv';
+var _cat = 'all';
+var _q = '';
+var _scanning = false;
+var _curIdx = -1;
+var _hls = null;
+var _audioCtx = null;
+var _animF = null;
+
+var API = [
+'https://api.mediabay.tv/v2/channels/thread/',
+'https://api.v1.mediabay.tv/v2/channels/thread/',
+'https://api.v1.mediabay.uz/v2/channels/thread/'
+];
+var MAX = 850, BATCH = 30;
+
+// ===== DOM helpers =====
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return document.querySelectorAll(s); };
 
 // ===== SPLASH =====
-!function(){
-const cv=$('#splashCanvas'),cx=cv.getContext('2d');
-let stars=[],mx=0,my=0;
-function rs(){cv.width=innerWidth;cv.height=innerHeight}
-rs();addEventListener('resize',rs);
-for(let i=0;i<180;i++)stars.push({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,a:Math.random()});
-addEventListener('mousemove',e=>{mx=(e.clientX/cv.width-.5)*15;my=(e.clientY/cv.height-.5)*15});
-function draw(){cx.clearRect(0,0,cv.width,cv.height);stars.forEach(s=>{s.x+=s.vx;s.y+=s.vy;if(s.x<0)s.x=cv.width;if(s.x>cv.width)s.x=0;if(s.y<0)s.y=cv.height;if(s.y>cv.height)s.y=0;cx.beginPath();cx.arc(s.x+mx*s.a,s.y+my*s.a,s.r,0,6.28);cx.fillStyle=`rgba(255,255,255,${.25+s.a*.5})`;cx.fill()});requestAnimationFrame(draw)}
+(function(){
+var cv = $('#splashCanvas'), cx = cv.getContext('2d');
+var stars = [], mx = 0, my = 0;
+function rs(){ cv.width = innerWidth; cv.height = innerHeight; }
+rs(); addEventListener('resize', rs);
+for(var i = 0; i < 180; i++) stars.push({x:Math.random()*cv.width, y:Math.random()*cv.height, r:Math.random()*1.4+.3, vx:(Math.random()-.5)*.25, vy:(Math.random()-.5)*.25, a:Math.random()});
+addEventListener('mousemove', function(e){ mx = (e.clientX/cv.width-.5)*15; my = (e.clientY/cv.height-.5)*15; });
+function draw(){
+cx.clearRect(0,0,cv.width,cv.height);
+for(var i=0;i<stars.length;i++){
+var s=stars[i]; s.x+=s.vx; s.y+=s.vy;
+if(s.x<0)s.x=cv.width; if(s.x>cv.width)s.x=0;
+if(s.y<0)s.y=cv.height; if(s.y>cv.height)s.y=0;
+cx.beginPath(); cx.arc(s.x+mx*s.a, s.y+my*s.a, s.r, 0, 6.28);
+cx.fillStyle='rgba(255,255,255,'+(0.25+s.a*0.5)+')'; cx.fill();
+}
+requestAnimationFrame(draw);
+}
 draw();
-const sl='ТВ и Радио — всегда под рукой',el=$('#slogan');let i=0;
-function tc(){if(i<sl.length){el.innerHTML=sl.slice(0,i+1)+'<span class="cur"></span>';i++;setTimeout(tc,55)}else el.innerHTML=sl+'<span class="cur"></span>'}
-setTimeout(tc,900);
-let p=0;const fl=$('#sFill');
-const iv=setInterval(()=>{p+=Math.random()*18+4;if(p>=100){p=100;clearInterval(iv);setTimeout(()=>{$('#splash').classList.add('out');setTimeout(()=>{$('#splash').remove();init()},600)},250)}fl.style.width=p+'%'},80);
-}();
+var sl = 'ТВ и Радио — всегда под рукой', el = $('#slogan'), si = 0;
+function tc(){ if(si < sl.length){ el.innerHTML = sl.slice(0,si+1)+'<span class="cur"></span>'; si++; setTimeout(tc,55); } else { el.innerHTML = sl+'<span class="cur"></span>'; } }
+setTimeout(tc, 900);
+var p = 0, fl = $('#sFill');
+var iv = setInterval(function(){
+p += Math.random()*18+4;
+if(p >= 100){ p=100; clearInterval(iv); setTimeout(function(){$('#splash').classList.add('out'); setTimeout(function(){$('#splash').remove(); init();},600);},250); }
+fl.style.width = p+'%';
+}, 80);
+})();
 
 // ===== INIT =====
 function init(){
 loadFav();
 setupSearch();
 setupScroll();
-addEventListener('keydown',e=>{if(e.key==='Escape'){closeVid()}});
-const cached=localStorage.getItem('stv_cache');
-const ct=parseInt(localStorage.getItem('stv_ct')||'0');
-if(cached&&Date.now()-ct<864e5){all=JSON.parse(cached);split();render();renderCats()}
-else doScan();
+addEventListener('keydown', function(e){ if(e.key==='Escape') closeVid(); });
+var cached = localStorage.getItem('stv_cache');
+var ct = parseInt(localStorage.getItem('stv_ct') || '0');
+if(cached && Date.now() - ct < 864e5){
+_channels = JSON.parse(cached);
+buildIdx();
+render();
+renderCats();
+} else {
+doScan();
+}
 }
 
-// ===== CHANNELS =====
-function split(){tv=all.filter(c=>c.t==='tv');rad=all.filter(c=>c.t==='r');$('#cntTv').textContent=tv.length;$('#cntR').textContent=rad.length;const a=$('#aTv');if(a){a.textContent=tv.length;$('#aR').textContent=rad.length}}
-function detType(n){const l=n.toLowerCase();const rk=['radio','fm','музыка','хит','джаз','рок','ретро','волна','эхо','muz','шансон','эстрад','dance','house','techno','beat','mix','vip','gold','hit','music','news radio','biznes','comedy','love','relax','soft','deep'];return rk.some(k=>l.includes(k))?'r':'tv'}
-function detQ(n){const l=n.toLowerCase();if(l.includes('full hd')||l.includes('fullhd')||l.includes('fhd')||l.includes('1080'))return'fhd';if(l.includes(' hd')||l.includes('hd '))return'hd';if(l.includes(' sd')||l.includes('sd ')||l.includes('low'))return'sd';return''}
+function buildIdx(){
+_tvIdx = []; _radIdx = [];
+for(var i=0; i<_channels.length; i++){
+if(_channels[i].t === 'tv') _tvIdx.push(i); else _radIdx.push(i);
+}
+$('#cntTv').textContent = _tvIdx.length;
+$('#cntR').textContent = _radIdx.length;
+}
 
-const TV_CATS=['all','cinema','sport','news','kids','music','hd','region','other'];
-const TV_LABELS=['🔥 Все','🎬 Кино','⚽ Спорт','📰 Новости','👶 Дети','🎵 Музыка','✨ HD','🌍 Регион','🎭 Разное'];
-const R_CATS=['all','hits','rock','jazz','talk','dance','region'];
-const R_LABELS=['🔥 Все','🎤 Хиты','🎸 Рок','🎷 Джаз','📡 Разговорное','💃 Танцевальное','🌐 Регион'];
+// ===== DETECTORS =====
+function detType(n){
+var l = n.toLowerCase();
+var rk = ['radio','fm','музыка','хит','джаз','рок','ретро','волна','эхо','muz','шансон','эстрад','dance','house','techno','beat','mix','vip','gold','hit','music','news radio','biznes','comedy','love','relax','soft','deep'];
+for(var i=0;i<rk.length;i++) if(l.indexOf(rk[i])>=0) return 'r';
+return 'tv';
+}
+function detQ(n){
+var l = n.toLowerCase();
+if(l.indexOf('full hd')>=0||l.indexOf('fullhd')>=0||l.indexOf('fhd')>=0||l.indexOf('1080')>=0) return 'fhd';
+if(l.indexOf(' hd')>=0||l.indexOf('hd ')>=0) return 'hd';
+if(l.indexOf(' sd')>=0||l.indexOf('sd ')>=0||l.indexOf('low')>=0) return 'sd';
+return '';
+}
 
-function matchC(ch,c){
-if(c==='all')return true;
-const n=ch.name.toLowerCase();
+// ===== CATEGORIES =====
+var TV_C = ['all','cinema','sport','news','kids','music','hd','region','other'];
+var TV_L = ['🔥 Все','🎬 Кино','⚽ Спорт','📰 Новости','👶 Дети','🎵 Музыка','✨ HD','🌍 Регион','🎭 Разное'];
+var R_C = ['all','hits','rock','jazz','talk','dance','region'];
+var R_L = ['🔥 Все','🎤 Хиты','🎸 Рок','🎷 Джаз','📡 Разговорное','💃 Танцевальное','🌐 Регион'];
+
+function matchC(ch, c){
+if(c==='all') return true;
+var n = ch.name.toLowerCase();
 switch(c){
-case'cinema':return['кино','фильм','movie','film','cinema','box','prime','hbo','сериал','series'].some(k=>n.includes(k));
-case'sport':return['спорт','sport','football','футбол','match','arena','espn','bein'].some(k=>n.includes(k));
-case'news':return['news','новости','cnn','bbc','rt','fox','sky','blast','закон','ахбор'].some(k=>n.includes(k));
-case'kids':return['дети','kid','child','cartoon','мульт','baby','nick','disney','boomerang'].some(k=>n.includes(k));
-case'music':return['музыка','music','mtv','vh1','vevo','band','concert'].some(k=>n.includes(k));
-case'hd':return ch.q==='hd'||ch.q==='fhd';
-case'region':return['region','область','район','viloyat','tuman','town','city','local'].some(k=>n.includes(k));
-case'other':return true;
-case'hits':return['hit','хит','top','популярн','billboard','chart'].some(k=>n.includes(k));
-case'rock':return['rock','рок','metal','punk','alternative','indie'].some(k=>n.includes(k));
-case'jazz':return['jazz','джаз','blues','блюз','soul'].some(k=>n.includes(k));
-case'talk':return['talk','разговор','news radio','интервью','comedy','stand'].some(k=>n.includes(k));
-case'dance':return['dance','дэнс','techno','house','edm','club','vip'].some(k=>n.includes(k));
-default:return true}}
+case 'cinema': return indexOfAny(n,['кино','фильм','movie','film','cinema','box','prime','hbo','сериал','series'])>=0;
+case 'sport': return indexOfAny(n,['спорт','sport','football','футбол','match','arena','espn','bein'])>=0;
+case 'news': return indexOfAny(n,['news','новости','cnn','bbc','rt','fox','sky','blast','закон','ахбор'])>=0;
+case 'kids': return indexOfAny(n,['дети','kid','child','cartoon','мульт','baby','nick','disney','boomerang'])>=0;
+case 'music': return indexOfAny(n,['музыка','music','mtv','vh1','vevo','band','concert'])>=0;
+case 'hd': return ch.q==='hd'||ch.q==='fhd';
+case 'region': return indexOfAny(n,['region','область','район','viloyat','tuman','town','city','local'])>=0;
+case 'other': return true;
+case 'hits': return indexOfAny(n,['hit','хит','top','популярн','billboard','chart'])>=0;
+case 'rock': return indexOfAny(n,['rock','рок','metal','punk','alternative','indie'])>=0;
+case 'jazz': return indexOfAny(n,['jazz','джаз','blues','блюз','soul'])>=0;
+case 'talk': return indexOfAny(n,['talk','разговор','news radio','интервью','comedy','stand'])>=0;
+case 'dance': return indexOfAny(n,['dance','дэнс','techno','house','edm','club','vip'])>=0;
+default: return true;
+}
+}
+function indexOfAny(s, arr){ for(var i=0;i<arr.length;i++) if(s.indexOf(arr[i])>=0) return i; return -1; }
 
 function renderCats(){
-const cs=tab==='radio'?R_CATS:TV_CATS;
-const ls=tab==='radio'?R_LABELS:TV_LABELS;
-$('#catsWrap').innerHTML=cs.map((c,i)=>`<button class="cat${tab==='radio'?' radio-cat':''}${c===cat?' on':''}" onclick="setCat('${c}')">${ls[i]}</button>`).join('');
+var cs = _tab==='radio' ? R_C : TV_C;
+var ls = _tab==='radio' ? R_L : TV_L;
+var h = '';
+for(var i=0;i<cs.length;i++){
+h += '<button class="cat'+(cs[i]===_cat?' on':'')+'" onclick="window._setCat(\''+cs[i]+'\')">'+ls[i]+'</button>';
 }
-function setCat(c){cat=c;renderCats();render()}
+$('#catsW').innerHTML = h;
+}
+window._setCat = function(c){ _cat=c; renderCats(); render(); };
+
+function getFiltered(){
+var idxs = _tab==='radio' ? _radIdx : _tvIdx;
+var result = [];
+for(var i=0;i<idxs.length;i++){
+var ch = _channels[idxs[i]];
+if(_q && ch.name.toLowerCase().indexOf(_q.toLowerCase())<0) continue;
+if(!matchC(ch, _cat)) continue;
+result.push(idxs[i]);
+}
+return result;
+}
+
+function hl(t){
+if(!_q) return t;
+var re = new RegExp('('+_q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+return t.replace(re, '<mark>$1</mark>');
+}
 
 function render(){
-const g=$('#grid'),em=$('#empty');
-if(tab==='about'){$('#mainWrap').style.display='none';$('#aboutWrap').classList.add('on');$('#catsWrap').style.display='none';return}
-$('#mainWrap').style.display='';$('#aboutWrap').classList.remove('on');$('#catsWrap').style.display='';
+var g = $('#grid'), em = $('#empty');
+if(_tab==='settings'){
+$('#mainW').style.display='none';
+$('#settW').classList.add('on');
+$('#catsW').style.display='none';
+return;
+}
+$('#mainW').style.display='';
+$('#settW').classList.remove('on');
+$('#catsW').style.display='';
 
-if(tab==='fav'){
-const ft=all.filter(c=>fav.includes(c.id));
-if(!ft.length){g.innerHTML='';em.style.display='';em.querySelector('p').textContent='Нет избранных каналов';return}
-em.style.display='none';g.innerHTML=ft.map(c=>c.t==='r'?cardR(c):cardTV(c)).join('');return}
-
-let chs=tab==='radio'?rad:tv;
-if(q){const lq=q.toLowerCase();chs=chs.filter(c=>c.name.toLowerCase().includes(lq))}
-chs=chs.filter(c=>matchC(c,cat));
-if(!chs.length){g.innerHTML='';em.style.display='';em.querySelector('p').textContent='Каналы не найдены';return}
+if(_tab==='fav'){
+var favChs = [];
+for(var i=0;i<_favIdx.length;i++){
+if(_favIdx[i]<_channels.length) favChs.push(_favIdx[i]);
+}
+if(!favChs.length){ g.innerHTML=''; em.style.display=''; em.querySelector('p').textContent='Нет избранных каналов'; return; }
 em.style.display='none';
-g.innerHTML=chs.map(c=>c.t==='r'?cardR(c):cardTV(c)).join('');
+g.innerHTML = favChs.map(function(idx){ return makeCard(idx); }).join('');
+return;
 }
 
-function hl(t){if(!q)return t;return t.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi'),'<mark>$1</mark>')}
-function cardTV(c){
-const f=fav.includes(c.id);
-const qc=c.q?`<span class="card-q ${c.q}">${c.q.toUpperCase()}</span>`:'';
-return`<div class="card" onclick='playV(${JSON.stringify(c).replace(/'/g,"&#39;")})'><div class="card-th">${qc}<span class="card-star${f?' on':''}" onclick="event.stopPropagation();toggleFav('${c.id}')"><i class="${f?'fas':'far'} fa-star"></i></span></div><div class="card-body"><div class="card-name">${hl(c.name)}</div><button class="card-btn" onclick="event.stopPropagation();playV(${JSON.stringify(c).replace(/'/g,"&#39;")})">▶ Смотреть</button></div></div>`;
+var filtered = getFiltered();
+if(!filtered.length){ g.innerHTML=''; em.style.display=''; em.querySelector('p').textContent='Каналы не найдены'; return; }
+em.style.display='none';
+g.innerHTML = filtered.map(function(idx){ return makeCard(idx); }).join('');
 }
-function cardR(c){
-const f=fav.includes(c.id);
-const playing=cur&&cur.id===c.id;
-return`<div class="card radio-c${playing?' playing':''}" onclick='playR(${JSON.stringify(c).replace(/'/g,"&#39;")})'><div class="card-th"><div class="eq"><i></i><i></i><i></i><i></i><i></i></div><span class="card-star${f?' on':''}" onclick="event.stopPropagation();toggleFav('${c.id}')"><i class="${f?'fas':'far'} fa-star"></i></span></div><div class="card-body"><div class="card-name">${hl(c.name)}</div><button class="card-btn" onclick="event.stopPropagation();playR(${JSON.stringify(c).replace(/'/g,"&#39;")})">▶ Слушать</button></div></div>`;
+
+function makeCard(idx){
+var ch = _channels[idx];
+var isFav = _favIdx.indexOf(idx)>=0;
+var isR = ch.t==='r';
+var qc = ch.q ? '<span class="card-q '+ch.q+'">'+ch.q.toUpperCase()+'</span>' : '';
+var cls = isR ? 'card rc' : 'card';
+if(isR && _curIdx===idx) cls += ' playing';
+var eq = '<div class="eq"><i></i><i></i><i></i><i></i><i></i></div>';
+var preview = isR ? eq : '<div class="card-th">'+qc+'</div>';
+return '<div class="'+cls+'" data-idx="'+idx+'">'+
+'<div class="card-th">'+(isR?'':qc)+'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'+(isR?eq:'')+'</div>'+
+'<span class="card-star'+(isFav?' on':'')+'" data-fav="'+idx+'"><i class="'+(isFav?'fas':'far')+' fa-star"></i></span></div>'+
+'<div class="card-body"><div class="card-name">'+hl(ch.name)+'</div>'+
+'<button class="card-btn" data-play="'+idx+'">'+(isR?'▶ Слушать':'▶ Смотреть')+'</button></div></div>';
 }
 
 // ===== SCANNER =====
-async function doScan(){
-if(scanning)return;scanning=true;
-const sw=$('#scanWrap'),si=$('#scanIn'),st=$('#scanTxt'),rb=$('#refBtn');
-sw.classList.add('on');st.classList.add('on');rb.classList.add('spin');
-all=[];let found=0,th=0;
-for(let i=0;i<MAX;i+=BATCH){
-const batch=[];for(let j=i;j<Math.min(i+BATCH,MAX);j++)batch.push(j);
-const res=await Promise.allSettled(batch.map(t=>fetchCh(t)));
-res.forEach((r,idx)=>{th++;si.style.width=Math.round(th/MAX*100)+'%';st.textContent=`Сканирование: ${th}/${MAX} | Найдено: ${found}`;
-if(r.status==='fulfilled'&&r.value){all.push(r.value);found++;$('#cntTv').textContent=all.filter(c=>c.t==='tv').length;$('#cntR').textContent=all.filter(c=>c.t==='r').length}});
+function doScan(){
+if(_scanning) return;
+_scanning = true;
+$('#scanW').classList.add('on');
+$('#scanT').classList.add('on');
+$('#refBtn').classList.add('spin');
+_channels = [];
+var found = 0, th = 0;
+
+function scanBatch(start){
+var batch = [];
+for(var j=start; j<Math.min(start+BATCH, MAX); j++) batch.push(j);
+
+var promises = batch.map(function(id){
+return fetchCh(id).then(function(ch){
+th++;
+$('#scanI').style.width = Math.round(th/MAX*100)+'%';
+$('#scanT').textContent = 'Сканирование: '+th+'/'+MAX+' | Найдено: '+found;
+if(ch){ _channels.push(ch); found++; }
+});
+});
+
+Promise.all(promises).then(function(){
+if(start + BATCH < MAX){
+scanBatch(start + BATCH);
+} else {
+buildIdx();
+render();
+// Save cache WITHOUT URLs — only names, quality, type
+var safeCache = _channels.map(function(c){ return {name:c.name, q:c.q, t:c.t}; });
+localStorage.setItem('stv_cache', JSON.stringify(safeCache));
+localStorage.setItem('stv_ct', Date.now().toString());
+$('#scanW').classList.remove('on');
+$('#scanT').classList.remove('on');
+$('#refBtn').classList.remove('spin');
+$('#scanT').textContent = 'Готово! ТВ: '+_tvIdx.length+' | Радио: '+_radIdx.length;
+_scanning = false;
 }
-split();render();
-localStorage.setItem('stv_cache',JSON.stringify(all));
-localStorage.setItem('stv_ct',Date.now().toString());
-sw.classList.remove('on');st.classList.remove('on');rb.classList.remove('spin');
-st.textContent=`Готово! ТВ: ${tv.length} | Радио: ${rad.length}`;
-scanning=false;
+});
+}
+scanBatch(0);
 }
 
-async function fetchCh(id){
-for(const m of API){
-try{const ac=new AbortController();const t=setTimeout(()=>ac.abort(),8000);
-const r=await fetch(m+id,{signal:ac.signal});clearTimeout(t);
-if(!r.ok)continue;const d=await r.json();
-if(d&&d.url&&d.name)return{id:'c'+id,name:d.name,url:d.url,t:detType(d.name),q:detQ(d.name)};
-if(d&&d.streams&&d.streams[0]&&d.streams[0].url){const s=d.streams[0];return{id:'c'+id,name:d.name||s.name||('Ch '+id),url:s.url,t:detType(d.name||s.name||''),q:detQ(d.name||s.name||'')}}
-}catch(e){continue}}return null}
-
-function refreshScan(){localStorage.removeItem('stv_cache');localStorage.removeItem('stv_ct');doScan()}
-
-// ===== VIDEO PLAYER =====
-function playV(c){
-cur=c;$('#vidName').textContent=c.name;$('#vidOv').classList.add('on');document.body.style.overflow='hidden';
-const v=$('#video');if(hls){hls.destroy();hls=null}
-if(c.url.includes('.m3u8')||c.url.includes('m3u8')){
-if(Hls.isSupported()){hls=new Hls();hls.loadSource(c.url);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>{}))}
-else if(v.canPlayType('application/vnd.apple.mpegurl')){v.src=c.url;v.play().catch(()=>{})}
-}else{v.src=c.url;v.play().catch(()=>{})}
-v.onplay=()=>$('#ppBtn').innerHTML='<i class="fas fa-pause"></i>';
-v.onpause=()=>$('#ppBtn').innerHTML='<i class="fas fa-play"></i>';
-v.ontimeupdate=updProg;
-updFavBtn();startCtrlTimer();
+function fetchCh(id){
+for(var m=0; m<API.length; m++){
+(function(mirror, threadId){
+return new Promise(function(resolve){
+var ac = new AbortController();
+var timer = setTimeout(function(){ ac.abort(); resolve(null); }, 8000);
+fetch(mirror+threadId, {signal:ac.signal}).then(function(r){
+clearTimeout(timer);
+if(!r.ok) return resolve(null);
+return r.json();
+}).then(function(d){
+if(d && d.url && d.name){
+resolve({name:d.name, url:d.url, t:detType(d.name), q:detQ(d.name)});
+} else if(d && d.streams && d.streams[0] && d.streams[0].url){
+var s = d.streams[0];
+resolve({name:d.name||s.name||('Ch '+threadId), url:s.url, t:detType(d.name||s.name||''), q:detQ(d.name||s.name||'')});
+} else {
+resolve(null);
 }
-function closeVid(){$('#vidOv').classList.remove('on');document.body.style.overflow='';const v=$('#video');v.pause();v.removeAttribute('src');if(hls){hls.destroy();hls=null}}
-function togglePlay(){const v=$('#video');v.paused?v.play():v.pause()}
-function toggleMute(){const v=$('#video');v.muted=!v.muted;$('#volIco').className=v.muted?'fas fa-volume-mute':'fas fa-volume-up'}
-function setVol(v){$('#video').volume=parseFloat(v)}
-function updProg(){const v=$('#video');if(v.duration&&isFinite(v.duration)){$('#progFill').style.width=v.currentTime/v.duration*100+'%';$('#vTime').textContent=fT(v.currentTime)+' / '+fT(v.duration)}else{$('#vTime').textContent='LIVE';$('#progFill').style.width='0'}}
-function fT(s){const m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
-function seek(e){const v=$('#video');if(!v.duration||!isFinite(v.duration))return;const r=e.currentTarget.getBoundingClientRect();v.currentTime=(e.clientX-r.left)/r.width*v.duration}
-function pip(){const v=$('#video');if(document.pictureInPictureElement)document.exitPictureInPicture().catch(()=>{});else if(v.requestPictureInPicture)v.requestPictureInPicture().catch(()=>{})}
-function goFs(){const w=$('#vidWrap');if(document.fullscreenElement)document.exitFullscreen();else if(w.requestFullscreen)w.requestFullscreen()}
-function startCtrlTimer(){clearTimeout(window._ct);$('#vidCtrl').classList.remove('hide');window._ct=setTimeout(()=>$('vidCtrl')?.classList.add('hide'),3000)}
-document.addEventListener('mousemove',startCtrlTimer);
-function copyUrl(){if(cur)navigator.clipboard.writeText(cur.url).then(()=>toast('✅ Ссылка скопирована!','ok')).catch(()=>{})}
-
-// ===== AUDIO =====
-function playR(c){
-cur=c;const a=$('#audEl');
-if(audioCtx){audioCtx.close();audioCtx=null}
-if(c.url.includes('.m3u8')||c.url.includes('m3u8')){
-if(Hls.isSupported()){const ah=new Hls();ah.loadSource(c.url);ah.attachMedia(a);ah.on(Hls.Events.MANIFEST_PARSED,()=>a.play().catch(()=>{}));window._ah=ah}
-else{a.src=c.url;a.play().catch(()=>{})}
-}else{a.src=c.url;a.play().catch(()=>{})}
-$('#audName').textContent=c.name;$('#audBar').classList.add('on');$('#audPlay').innerHTML='<i class="fas fa-pause"></i>';
-setupEq();render();
+}).catch(function(){ resolve(null); });
+});
+})(API[m], id);
 }
-function toggleAud(){const a=$('#audEl');a.paused?a.play():a.pause();$('#audPlay').innerHTML=a.paused?'<i class="fas fa-play"></i>':'<i class="fas fa-pause"></i>'}
-function closeAud(){const a=$('#audEl');a.pause();a.removeAttribute('src');if(window._ah){window._ah.destroy();window._ah=null}if(audioCtx){audioCtx.close();audioCtx=null}cancelAnimationFrame(animF);$('#audBar').classList.remove('on');cur=null;render()}
+return Promise.resolve(null);
+}
+
+function refreshScan(){
+localStorage.removeItem('stv_cache');
+localStorage.removeItem('stv_ct');
+doScan();
+setTab('tv');
+toast('🔄 Каналы обновляются...');
+}
+
+function clearCache(){
+localStorage.removeItem('stv_cache');
+localStorage.removeItem('stv_ct');
+_channels = []; _tvIdx = []; _radIdx = [];
+render();
+toast('🗑 Кеш очищен');
+doScan();
+}
+
+// ===== VIDEO PLAYER — URL passed ONLY as function argument =====
+function openVid(idx){
+if(idx<0 || idx>=_channels.length) return;
+_curIdx = idx;
+var ch = _channels[idx];
+$('#vidName').textContent = ch.name;
+$('#vidOv').classList.add('on');
+document.body.style.overflow = 'hidden';
+
+var v = $('#video');
+if(_hls){ _hls.destroy(); _hls = null; }
+
+// URL extracted from memory array, passed directly to player
+var url = ch.url;
+
+if(url.indexOf('.m3u8')>=0 || url.indexOf('m3u8')>=0){
+if(Hls.isSupported()){
+_hls = new Hls();
+_hls.loadSource(url);
+_hls.attachMedia(v);
+_hls.on(Hls.Events.MANIFEST_PARSED, function(){ v.play().catch(function(){}); });
+} else if(v.canPlayType('application/vnd.apple.mpegurl')){
+v.src = url;
+v.play().catch(function(){});
+}
+} else {
+v.src = url;
+v.play().catch(function(){});
+}
+// url variable is local — goes out of scope after this function
+}
+
+function closeVid(){
+$('#vidOv').classList.remove('on');
+document.body.style.overflow = '';
+var v = $('#video');
+v.pause();
+v.removeAttribute('src');
+if(_hls){ _hls.destroy(); _hls = null; }
+_curIdx = -1;
+}
+
+// Click handlers via delegation — NO URL in DOM
+document.addEventListener('click', function(e){
+var t = e.target;
+
+// Play button
+var playBtn = t.closest('[data-play]');
+if(playBtn){
+e.stopPropagation();
+var idx = parseInt(playBtn.getAttribute('data-play'));
+if(_tab==='radio'){ openAud(idx); } else { openVid(idx); }
+return;
+}
+
+// Favorite button
+var favBtn = t.closest('[data-fav]');
+if(favBtn){
+e.stopPropagation();
+var fidx = parseInt(favBtn.getAttribute('data-fav'));
+toggleFav(fidx);
+return;
+}
+
+// Card click (not button/star)
+var card = t.closest('.card[data-idx]');
+if(card){
+var cidx = parseInt(card.getAttribute('data-idx'));
+if(_tab==='radio'){ openAud(cidx); } else { openVid(cidx); }
+return;
+}
+
+// Close video on background click
+if(t === $('#vidOv')) closeVid();
+});
+
+// ===== AUDIO PLAYER — URL passed ONLY as function argument =====
+function openAud(idx){
+if(idx<0 || idx>=_channels.length) return;
+_curIdx = idx;
+var ch = _channels[idx];
+var a = $('#audEl');
+if(_audioCtx){ _audioCtx.close(); _audioCtx = null; }
+
+// URL from memory, passed directly
+var url = ch.url;
+
+if(url.indexOf('.m3u8')>=0 || url.indexOf('m3u8')>=0){
+if(Hls.isSupported()){
+var ah = new Hls();
+ah.loadSource(url);
+ah.attachMedia(a);
+ah.on(Hls.Events.MANIFEST_PARSED, function(){ a.play().catch(function(){}); });
+window._ah = ah;
+} else {
+a.src = url;
+a.play().catch(function(){});
+}
+} else {
+a.src = url;
+a.play().catch(function(){});
+}
+$('#audName').textContent = ch.name;
+$('#audBar').classList.add('on');
+$('#audPlay').innerHTML = '<i class="fas fa-pause"></i>';
+setupEq();
+render();
+}
+
+function toggleAud(){
+var a = $('#audEl');
+a.paused ? a.play() : a.pause();
+$('#audPlay').innerHTML = a.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
+}
+
+function closeAud(){
+var a = $('#audEl');
+a.pause();
+a.removeAttribute('src');
+if(window._ah){ window._ah.destroy(); window._ah = null; }
+if(_audioCtx){ _audioCtx.close(); _audioCtx = null; }
+cancelAnimationFrame(_animF);
+$('#audBar').classList.remove('on');
+_curIdx = -1;
+render();
+}
+
 function setupEq(){
-try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();analyser=audioCtx.createAnalyser();analyser.fftSize=64;
-const src=audioCtx.createMediaElementSource($('#audEl'));src.connect(analyser);analyser.connect(audioCtx.destination);
-const bars=$$('#audEq i');const d=new Uint8Array(analyser.frequencyBinCount);
-function an(){analyser.getByteFrequencyData(d);bars.forEach((b,i)=>{b.style.height=Math.max(3,d[i*2]/255*22)+'px'});animF=requestAnimationFrame(an)}an();
-}catch(e){}}
+try{
+_audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+var analyser = _audioCtx.createAnalyser();
+analyser.fftSize = 64;
+var src = _audioCtx.createMediaElementSource($('#audEl'));
+src.connect(analyser);
+analyser.connect(_audioCtx.destination);
+var bars = $$('#audEq i');
+var d = new Uint8Array(analyser.frequencyBinCount);
+function an(){
+analyser.getByteFrequencyData(d);
+for(var i=0;i<bars.length;i++) bars[i].style.height = Math.max(3, d[i*2]/255*22)+'px';
+_animF = requestAnimationFrame(an);
+}
+an();
+} catch(e){}
+}
 
-// ===== FAVORITES =====
-function loadFav(){try{fav=JSON.parse(localStorage.getItem('stv_fav')||'[]')}catch(e){fav=[]}}
-function saveFav(){localStorage.setItem('stv_fav',JSON.stringify(fav));render()}
-function toggleFav(id){const i=fav.indexOf(id);if(i>=0){fav.splice(i,1);toast('Удалено из избранного')}else{fav.push(id);toast('⭐ Добавлено в избранное','ok')}saveFav()}
-function toggleFavCur(){if(cur)toggleFav(cur.id);updFavBtn()}
-function updFavBtn(){if(!cur)return;$('#favBtn').innerHTML=`<i class="${fav.includes(cur.id)?'fas':'far'} fa-star" style="color:${fav.includes(cur.id)?'#ffd600':''}"></i>`}
+// ===== FAVORITES — stored as index array only =====
+function loadFav(){
+try { _favIdx = JSON.parse(localStorage.getItem('stv_fav') || '[]'); } catch(e){ _favIdx = []; }
+}
+function saveFav(){
+localStorage.setItem('stv_fav', JSON.stringify(_favIdx));
+render();
+}
+function toggleFav(idx){
+var i = _favIdx.indexOf(idx);
+if(i>=0){ _favIdx.splice(i,1); toast('🗑 Удалено из избранного'); }
+else { _favIdx.push(idx); toast('⭐ Добавлено в избранное'); }
+saveFav();
+}
 
 // ===== SEARCH =====
-function setupSearch(){$('#searchIn').addEventListener('input',e=>{q=e.target.value.trim();$('#searchX').classList.toggle('on',q.length>0);render()})}
-function clearSearch(){$('#searchIn').value='';q='';$('#searchX').classList.remove('on');render()}
+function setupSearch(){
+$('#searchIn').addEventListener('input', function(e){
+_q = e.target.value.trim();
+$('#searchX').classList.toggle('on', _q.length>0);
+render();
+});
+}
+function clearSearch(){
+$('#searchIn').value=''; _q=''; $('#searchX').classList.remove('on'); render();
+}
 
 // ===== TABS =====
-function setTab(t){tab=t;cat='all';
-$$('.tab').forEach((b,i)=>{b.classList.toggle('on',(t==='tv'&&i===0)||(t==='radio'&&i===1)||(t==='about'&&i===2))});
-if(t==='about'){$('#mainWrap').style.display='none';$('#aboutWrap').classList.add('on');$('#catsWrap').style.display='none';$('#refBtn').style.display='none'}
-else{$('#mainWrap').style.display='';$('#aboutWrap').classList.remove('on');$('#catsWrap').style.display='';$('#refBtn').style.display=''}
-renderCats();render()}
+function setTab(t){
+_tab = t; _cat = 'all';
+var tabs = $$('.tab');
+for(var i=0;i<tabs.length;i++){
+tabs[i].classList.remove('on');
+if((t==='tv'&&i===0)||(t==='radio'&&i===1)||(t==='settings'&&i===2)) tabs[i].classList.add('on');
+}
+renderCats(); render();
+}
+window.setTab = setTab;
+
+// ===== THEME & GRID =====
+function setTheme(v){
+var root = document.documentElement;
+if(v==='amoled'){ root.style.setProperty('--bg','#000000'); root.style.setProperty('--bg2','#050508'); }
+else if(v==='gray'){ root.style.setProperty('--bg','#121218'); root.style.setProperty('--bg2','#1a1a24'); }
+else { root.style.setProperty('--bg','#0a0a14'); root.style.setProperty('--bg2','#0f0f1a'); }
+}
+function setGrid(v){
+var g = $('#grid');
+if(v==='compact') g.style.gridTemplateColumns='repeat(auto-fill,minmax(140px,1fr))';
+else if(v==='large') g.style.gridTemplateColumns='repeat(auto-fill,minmax(240px,1fr))';
+else g.style.gridTemplateColumns='';
+}
 
 // ===== UTILS =====
-function toast(m,t=''){const d=document.createElement('div');d.className='toast '+t;d.textContent=m;$('#toastC').appendChild(d);requestAnimationFrame(()=>d.classList.add('on'));setTimeout(()=>{d.classList.remove('on');setTimeout(()=>d.remove(),400)},3000)}
-function setupScroll(){addEventListener('scroll',()=>$('toTop')?.classList.toggle('on',scrollY>350))}
-function randomCh(){const cs=tab==='radio'?rad:tv;if(!cs.length){toast('Нет каналов');return}const c=cs[Math.floor(Math.random()*cs.length)];tab==='radio'?playR(c):playV(c);toast('🎲 '+c.name)}
-function shareApp(){if(navigator.share)navigator.share({title:'S TV — ТВ и Радио',url:location.href});else navigator.clipboard.writeText(location.href).then(()=>toast('✅ Ссылка скопирована!','ok'))}
-if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+function toast(m){
+var d = document.createElement('div');
+d.className = 'toast'; d.textContent = m;
+$('#toastC').appendChild(d);
+requestAnimationFrame(function(){ d.classList.add('on'); });
+setTimeout(function(){ d.classList.remove('on'); setTimeout(function(){ d.remove(); },400); }, 3000);
+}
+function setupScroll(){
+addEventListener('scroll', function(){ var t=$('#toTop'); if(t) t.classList.toggle('on', scrollY>350); });
+}
+function randomCh(){
+var idxs = _tab==='radio' ? _radIdx : _tvIdx;
+if(!idxs.length){ toast('Нет каналов'); return; }
+var r = idxs[Math.floor(Math.random()*idxs.length)];
+if(_tab==='radio') openAud(r); else openVid(r);
+toast('🎲 '+_channels[r].name);
+}
+function shareApp(){
+if(navigator.share) navigator.share({title:'S TV — ТВ и Радио', url:location.href});
+else navigator.clipboard.writeText(location.href).then(function(){ toast('✅ Ссылка скопирована!'); });
+}
+
+})();
 </script>
 </body>
 </html>
