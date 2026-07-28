@@ -2,55 +2,55 @@
 
 **Разработчик:** Safarali Group  
 **Версия:** 1.0.0  
-**Сайт:** [https://safarali-group.github.io/S_TV/](https://safarali-group.github.io/S_TV/)
+**Сайт:** [https://tojikontvru.github.io/S_TV/](https://tojikontvru.github.io/S_TV/)
 
 ## Возможности
 
 - 📺 850+ ТВ-каналов с автосканером
-- 📻 Радиостанции с визуализатором
-- 🎨 Современный дизайн (стекломорфизм, AMOLED-тема)
-- 📱 Полностью адаптивный (Mobile, Tablet, Desktop, TV)
-- ⚡ Автоопределение качества (HD / Full HD / SD)
-- 💾 Кеширование и оффлайн-доступ (PWA)
+- 📻 Радиостанции с CSS-визуализатором
+- 🎨 Современный тёмный дизайн (glassmorphism)
+- 📱 Полностью адаптивный (Mobile, Tablet, Desktop)
 - 🔍 Мгновенный поиск с подсветкой
-- ⭐ Система избранного с экспортом/импортом
+- ⭐ Система избранного (localStorage)
 - 🎲 Случайный канал
 - 🎬 Встроенный видеоплеер с HLS.js
-- 📻 Аудиоплеер с FFT-визуализатором
-- ⌨️ D-Pad / клавиатурная навигация
+- 📻 Аудиоплеер для радио
+- 🔗 Копирование URL потока
+- 📲 Web Share API
 
 ## Технологии
 
 - HTML5 + CSS3 + Vanilla JavaScript (ES6+)
+- HLS.js (CDN) — M3U8 потоки
+- Font Awesome 6 (CDN) — иконки
+- Google Fonts Inter — шрифт
 - CSS Grid + Flexbox
-- Canvas API (анимации, эквалайзер)
-- Web Audio API (FFT-анализ)
-- HLS.js (M3U8 потоки)
-- PWA (Service Worker + Manifest)
-- Google Fonts (Inter)
-- Font Awesome 6
+- Canvas API — splash-экран
+- localStorage — кеш и избранное
 
 ## Установка
 
 1. Клонируйте репозиторий:
 ```bash
-git clone https://github.com/safarali-group/S_TV.git
+git clone https://github.com/tojikontvru/S_TV.git
 ```
 
 2. Откройте `index.html` в браузере
 
-## Деплой на GitHub Pages
+## API
 
-1. Загрузите файлы в репозиторий `S_TV`
-2. В Settings → Pages выберите ветку `main`, папку `/ (root)`
-3. Сайт будет доступен по адресу: `https://ваш-username.github.io/S_TV/`
+Приложение сканирует 850 потоков через 3 зеркала:
+- `api.mediabay.tv`
+- `api.v1.mediabay.tv`
+- `api.v1.mediabay.uz`
+
+Кеширование результатов — 24 часа.
 
 ## Обратная связь
 
 - Telegram: [@Mushtariy_LLC](https://t.me/Mushtariy_LLC)
 - Email: support@safaraligroup.com
-- Сайт: [safaraligroup.com](https://safaraligroup.com)
 
 ## Лицензия
 
-MIT License. Свободное использование.
+MIT License
