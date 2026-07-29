@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>S TV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S TV — ТВ и Радио</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a14">
@@ -14,7 +14,7 @@
 :root{--bg:#0a0a14;--card:rgba(255,255,255,.03);--border:rgba(255,255,255,.06);--accent:#00d4ff;--radio:#ff5e94;--hd:#00e676;--sd:#ffd600;--text:#e8e8f0;--muted:#6e7191;--glass:rgba(10,10,20,.85)}
 html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 body::-webkit-scrollbar{display:none}
-#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
 #loader.hidden{opacity:0;pointer-events:none;visibility:hidden}
 #starsCanvas{position:absolute;inset:0;z-index:0}
 .loader-content{position:relative;z-index:1;text-align:center}
@@ -27,7 +27,7 @@ body::-webkit-scrollbar{display:none}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--radio));width:0%}
 .stat-row{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;color:var(--muted)}
 .mirror-indicator{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:8px 16px;border-radius:20px;font-size:13px;color:var(--accent);gap:8px;z-index:1}
-.mirror-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+.mirror-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 #app{position:relative;display:flex;flex-direction:column;height:100vh;visibility:hidden}
 #app.visible{visibility:inherit}
 header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
@@ -84,7 +84,7 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 .v-area{position:relative;background:#000;aspect-ratio:16/9}
 .v-area video{width:100%;height:100%}
 .controls{padding:16px 20px;background:var(--bg);display:flex;align-items:center;gap:16px;border-top:1px solid var(--border)}
-.-ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
 .ctrl:hover{border-color:var(--accent)}
 .ctrl.play{background:var(--accent);color:#000;width:44px;height:44px}
 .progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;cursor:pointer}
@@ -114,11 +114,11 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div id="loader">
   <div class="loader-content">
     <div class="s-logo">S TV</div>
-    <div class="s-subtitle">TV i Radio — vsegda pod rukoj</div>
-    <div class="s-dev">by Safarali Group</div>
+    <div class="s-subtitle">ТВ и Радио — всегда под рукой</div>
+    <div class="s-dev">by Safarali Group 🛡</div>
     <div class="s-ver">v1.0.0</div>
     <div class="progress-container"><div class="progress-bar"><div class="progress-fill" id="pfill"></div></div></div>
-    <div class="stat-row"><span>Skanirovanie...</span><span id="sc-count">TV: 0 | Radio: 0</span></div>
+    <div class="stat-row"><span>Сканирование...</span><span id="sc-count">ТВ: 0 | Радио: 0</span></div>
   </div>
   <div class="mirror-indicator"><div class="mirror-dot"></div><span id="mirror-text">api.v1.mediabay.tv</span></div>
 </div>
@@ -126,25 +126,25 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div id="app">
   <header>
     <div class="logo">S TV</div>
-    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Poisk kanalov..."></div>
+    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Поиск каналов..."></div>
     <div class="btn-group">
-      <button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>TV</button>
-      <button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Radio</button>
-      <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Nastrojki</button>
+      <button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>ТВ</button>
+      <button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Радио</button>
+      <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Настройки</button>
     </div>
   </header>
 
   <div class="tabs">
-    <div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Vse</div>
-    <div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Kino</div>
-    <div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Sport</div>
-    <div class="tv-tab" data-cat="news" onclick="setCat('news')">Novosti</div>
-    <div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Detskie</div>
-    <div class="tv-tab" data-cat="music" onclick="setCat('music')">Muzyka</div>
+    <div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Все</div>
+    <div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Кино</div>
+    <div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Спорт</div>
+    <div class="tv-tab" data-cat="news" onclick="setCat('news')">Новости</div>
+    <div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Детские</div>
+    <div class="tv-tab" data-cat="music" onclick="setCat('music')">Музыка</div>
     <div class="tv-tab" data-cat="hd" onclick="setCat('hd')">HD</div>
-    <div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Region</div>
-    <div class="tv-tab" data-cat="other" onclick="setCat('other')">Drugoe</div>
-    <div class="tv-tab" data-cat="fav" onclick="setCat('fav')">Izbrannoe</div>
+    <div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Регион</div>
+    <div class="tv-tab" data-cat="other" onclick="setCat('other')">Другое</div>
+    <div class="tv-tab" data-cat="fav" onclick="setCat('fav')">⭐ Избранное</div>
   </div>
 
   <div class="content" id="content">
@@ -157,52 +157,52 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
       <div class="grid" id="radiogrid" style="grid-template-columns:1fr"></div>
     </div>
     <div id="settingsview" style="display:none;max-width:600px;padding:20px">
-      <h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Nastrojki</h2>
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Настройки</h2>
       <div style="margin-bottom:24px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">Oformlenie</h3>
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🎨 Оформление</h3>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
           <button class="cat-pill active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button>
-          <button class="cat-pill" data-theme="dark" onclick="setTheme('dark',this)">Temnaya</button>
-          <button class="cat-pill" data-theme="gray" onclick="setTheme('gray',this)">Seraya</button>
+          <button class="cat-pill" data-theme="dark" onclick="setTheme('dark',this)">Тёмная</button>
+          <button class="cat-pill" data-theme="gray" onclick="setTheme('gray',this)">Серая</button>
         </div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-          <button class="cat-pill active" data-size="normal" onclick="setSize('normal',this)">Standart</button>
-          <button class="cat-pill" data-size="compact" onclick="setSize('compact',this)">Kompakt</button>
-          <button class="cat-pill" data-size="large" onclick="setSize('large',this)">Krupnyy</button>
+          <button class="cat-pill active" data-size="normal" onclick="setSize('normal',this)">Стандарт</button>
+          <button class="cat-pill" data-size="compact" onclick="setSize('compact',this)">Компакт</button>
+          <button class="cat-pill" data-size="large" onclick="setSize('large',this)">Крупный</button>
         </div>
       </div>
       <div style="margin-bottom:24px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">Dannye</h3>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Kesh: <span id="cachetxt" style="color:var(--text)">ne zagruzhen</span></p>
-        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Zerkalo: <span id="actmirr" style="color:var(--accent)">—</span></p>
-        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="startScan()"><i class="fas fa-sync-alt"></i>Obnovit kanaly</button>
-        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="clearCache()"><i class="fas fa-trash"></i>Ochistit kesh</button>
-        <button class="nav-btn" style="width:100%" onclick="clearFav()"><i class="fas fa-star"></i>Ochistit izbrannoe</button>
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🔄 Данные</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Кэш: <span id="cachetxt" style="color:var(--text)">не загружен</span></p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Зеркало: <span id="actmirr" style="color:var(--accent)">—</span></p>
+        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="startScan()"><i class="fas fa-sync-alt"></i>Обновить каналы</button>
+        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="clearCache()"><i class="fas fa-trash"></i>Очистить кэш</button>
+        <button class="nav-btn" style="width:100%" onclick="clearFav()"><i class="fas fa-star"></i>Очистить избранное</button>
       </div>
       <div style="margin-bottom:24px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">API</h3>
-        <p style="font-size:13px;color:var(--muted)">Osnovnoe: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p>
-        <p style="font-size:13px;color:var(--muted);margin-top:8px">Rezerv 1: <code style="color:var(--text)">api.mediabay.tv</code></p>
-        <p style="font-size:13px;color:var(--muted);margin-top:8px">Rezerv 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p>
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📡 API</h3>
+        <p style="font-size:13px;color:var(--muted)">Основное: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 1: <code style="color:var(--text)">api.mediabay.tv</code></p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p>
       </div>
       <div style="margin-bottom:24px">
-        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">O prilozhenii</h3>
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">ℹ️ О приложении</h3>
         <div style="text-align:center;padding:20px">
           <div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div>
-          <p style="font-size:14px;color:var(--muted);margin-top:8px">Versiya 1.0.0</p>
-          <p style="font-size:13px;color:var(--muted)">Razrabotchik: Safarali Group</p>
-          <p style="font-size:12px;color:var(--muted);margin-top:4px">2026 Safarali Group</p>
+          <p style="font-size:14px;color:var(--muted);margin-top:8px">Версия 1.0.0</p>
+          <p style="font-size:13px;color:var(--muted)">Разработчик: Safarali Group 🛡</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px">© 2026 Safarali Group</p>
         </div>
       </div>
       <div>
         <div style="margin-bottom:12px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:var(--muted)">Podelitsya</h3>
-          <button class="nav-btn" style="width:100%" onclick="share()"><i class="fas fa-share-alt"></i>Podelitsya</button>
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:var(--muted)">📤 Поделиться</h3>
+          <button class="nav-btn" style="width:100%" onclick="share()"><i class="fas fa-share-alt"></i>Поделиться</button>
         </div>
         <div style="margin-bottom:12px">
           <button class="nav-btn" style="width:100%" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')"><i class="fab fa-telegram"></i>@Mushtariy_LLC</button>
         </div>
-        <div><button class="nav-btn" style="width:100%"><i class="fab fa-github"></i>Ocenit na GitHub</button></div>
+        <div><button class="nav-btn" style="width:100%"><i class="fab fa-github"></i>Оценить на GitHub</button></div>
       </div>
     </div>
   </div>
@@ -211,7 +211,7 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div class="modal" id="vm">
   <div class="player">
     <div class="p-header">
-      <div class="p-title" id="ptitle">Kanal</div>
+      <div class="p-title" id="ptitle">Канал</div>
       <button class="p-close" onclick="closeV()"><i class="fas fa-times"></i></button>
     </div>
     <div class="v-area"><video id="vp"></video></div>
@@ -226,7 +226,7 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 
 <div class="audio-bar" id="ab">
   <div class="a-eq"><span></span><span></span><span></span><span></span><span></span></div>
-  <div class="a-info"><div class="a-name" id="araname">Radio</div></div>
+  <div class="a-info"><div class="a-name" id="araname">Радио</div></div>
   <button class="a-ctrl play" id="apb"><i class="fas fa-play"></i></button>
   <button class="a-ctrl" id="ast"><i class="fas fa-stop"></i></button>
 </div>
@@ -235,167 +235,515 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div class="scroll-top" onclick="document.querySelector('.content').scrollTop=0"><i class="fas fa-arrow-up"></i></div>
 
 <script>
-const state={channels:[],radios:[],fav:[],curTab:"tv",curCat:"all",search:"",actMirror:"",cacheTime:null,vEl:null,hls:null,aEl:null,pIdx:-1};
-const MIRRORS=["https://api.v1.mediabay.tv/v2/channels/thread/","https://api.mediabay.tv/v2/channels/thread/","https://api.v1.mediabay.uz/v2/channels/thread/"];
-const BATCH=30, TIMEOUT=10000;
+// ========== STATE ==========
+const state = {
+  channels: [],
+  radios: [],
+  fav: [],
+  curTab: 'tv',
+  curCat: 'all',
+  search: '',
+  actMirror: '',
+  cacheTime: null,
+  vEl: null,
+  hls: null,
+  aEl: null,
+  pIdx: -1
+};
 
-async function fetchChannel(thread){
-  const primary=MIRRORS[0]+thread;
-  const res1=await tryFetch(primary,TIMEOUT);
-  if(res1){state.actMirror=MIRRORS[0].split('/')[2];return res1;}
-  for(let i=1;i<MIRRORS.length;i++){
-    const url=MIRRORS[i]+thread;
-    const res=await tryFetch(url,TIMEOUT);
-    if(res){state.actMirror=MIRRORS[i].split('/')[2];console.log("Switch to: "+state.actMirror);return res;}
-  }
-  return null;
-}
+// ========== CONSTANTS ==========
+const MIRRORS = [
+  'https://api.v1.mediabay.tv/v2/channels/thread/',
+  'https://api.mediabay.tv/v2/channels/thread/',
+  'https://api.v1.mediabay.uz/v2/channels/thread/'
+];
+const BATCH = 30;
+const TIMEOUT = 10000;
 
-async function tryFetch(url,timeout){
-  try{
-    const ctrl=new AbortController(), tId=setTimeout(()=>ctrl.abort(),timeout);
-    const res=await fetch(url,{signal:ctrl.signal,headers:{"User-Agent":"Mozilla/5.0"}});
-    clearTimeout(tId);
-    if(res.status===200){
-      const d=await res.json();
-      if(d&&d.url)return{name:d.name,url:d.url};
-    }
-  }catch(e){}
-  return null;
-}
-
-async function startScan(){
-  if(state.scanning)return;
-  state.scanning=true;
-  document.getElementById("loader").classList.remove("hidden");
-  document.getElementById("app").classList.remove("visible");
-  const tv=[],rad=[],tvCount=0,radCount=0;
-  document.getElementById("sc-count").textContent="TV: 0 | Radio: 0";
-  for(let i=1;i<=850;i+=BATCH){
-    const e=Math.min(i+BATCH-1,850),prs=[];
-    for(let k=i;k<=e;k++)prs.push(fetchChannel(k));
-    await Promise.allSettled(prs);
-    const batchResults=prs.map(r=>r.status==="fulfilled"?r.value:null).filter(Boolean);
-    batchResults.forEach(item=>{
-      const name=(item||{}).name||"";
-      const isRadio=/radio|fm|music|hit|jazz|rock|retro|wave|talk|dance/i.test(name);
-      if(isRadio){rad.push({name:name,url:(item||{}).url,category:detRadCat(name)});radCount++;}else{tv.push({name:name,url:(item||{}).url||"",quality:detQuality(name),category:detCat(name)});tvCount++}
+// ========== FETCH WITH FALLBACK ==========
+async function tryFetch(url) {
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), TIMEOUT);
+    const res = await fetch(url, {
+      signal: ctrl.signal,
+      headers: { 'User-Agent': 'Mozilla/5.0' }
     });
-    document.getElementById("pfill").style.width=((e/850)*100)+"%";
-    document.getElementById("sc-count").textContent="TV: "+tvCount+" | Radio: "+radCount;
+    clearTimeout(tid);
+    if (res.status === 200) {
+      const d = await res.json();
+      if (d && d.url) return { name: d.name, url: d.url };
+    }
+  } catch (e) {}
+  return null;
+}
+
+async function fetchChannel(thread) {
+  // Try all mirrors in order
+  for (let i = 0; i < MIRRORS.length; i++) {
+    const url = MIRRORS[i] + thread;
+    const result = await tryFetch(url);
+    if (result) {
+      state.actMirror = MIRRORS[i].split('/')[2];
+      return result;
+    }
   }
-  state.channels=tv;state.radios=rad;state.cacheTime=Date.now();
-  saveCache();updateUI();
-  state.scanning=false;
-  document.getElementById("loader").classList.add("hidden");
-  document.getElementById("app").classList.add("visible");
-  toast("Updated: "+tv.length+" TV + "+rad.length+" Radio");
+  return null;
 }
 
-function detCat(n){n=n.toLowerCase();if(/movie|film|kino|serial|kinohd/.test(n))return"movie";if(/sport|football|hockey|basketball|tennis|fight|ufc/.test(n))return"sport";if(/news|novosti|vesti|24|cnn|bbc|euronews/.test(n))return"news";if(/kids|det|children|cartoon|mult|karusel|piter|tun/.test(n))return"kids";if(/music|hit|muz|top/.test(n))return"music";if(/hd|4k|fhd|uhd|fullhd/.test(n))return"hd";if(/regional|region|domashniy|local|oblast/.test(n))return"regional";return"other"}
-function detQuality(n){n=n.toLowerCase();if(/4k|full|fhd|uhd/.test(n))return"fhd";if(/hd/.test(n))return"hd";return"sd"}
-function detRadCat(n){n=n.toLowerCase();if(/pop|top|hit|hits|chart/.test(n))return"Pop";if(/rock|rok|metal|classic|alternative/.test(n))return"Rock";if(/jazz|blues|soul/.test(n))return"Jazz";if(/talk|news|info|inform/.test(n))return"Talk";if(/dance|house|techno|disco|electronic|club|edm/.test(n))return"Dance";return"Pop"}
-
-function updateUI(){renderTV();renderRad();renderCats();document.getElementById("actmirr").textContent=state.actMirror||apiMirror();document.getElementById("cachetxt").textContent=state.cacheTime?new Date(state.cacheTime).toLocaleString():"";}
-function apiMirror(){return MIRRORS[0].split('/')[2]}
-function renderTV(){
-  const g=document.getElementById("tvgrid"),s=document.getElementById("search").value.toLowerCase().trim();
-  let list=state.channels;
-  if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(c=>c.category===state.curCat);
-  if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes(i));
-  if(s)list=list.filter(c=>c.name.toLowerCase().includes(s));
-  g.innerHTML=list.length?list.map((c,i)=>{
-    const isFav=state.fav.includes(i);
-    return`<div class="card" data-idx="${i}" onclick="openV(${i})"><div class="card poster"><div class="s-silver">${c.name.charAt(0)}</div></div><div class="card info"><div class="c-name">${c.name}</div><div class="c-meta"><span class="c-q ${c.quality}">${c.quality.toUpperCase()}</span></div><div class="c-actions"><button class="c-play" onclick="event.stopPropagation();openV(${i})"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'tv')"><i class="far fa-star"></i></button></div></div></div>`;
-  }).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Kanali ne naydeny</p></div>';
-}
-function renderRad(){
-  const g=document.getElementById("radiogrid"),s=document.getElementById("search").value.toLowerCase().trim();
-  let list=state.radios;
-  if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(r=>r.category===state.curCat);
-  if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes('r'+i));
-  if(s)list=list.filter(r=>r.name.toLowerCase().includes(s));
-  g.innerHTML=list.length?list.map((r,i)=>{
-    const isFav=state.fav.includes('r'+i);
-    return`<div class="radio-card" onclick="playRad(${i})"><div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="r-info"><div class="r-name">${r.name}</div><div class="r-cat">${r.category}</div></div><button class="c-play"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="far fa-star"></i></button></div>`;
-  }).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Radiostantsii ne naydeny</p></div>';
-}
-function renderCats(){
-  document.getElementById("tcats").innerHTML=['movie','sport','news','kids','music','hd','regional','other','fav'].map(c=>`<div class="cat-pill ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'Izbrannoe':c}</div>`).join('');
-  document.getElementById("rcats").innerHTML=['Pop','Rock','Jazz','Talk','Dance','fav'].map(c=>`<div class="cat-pill radio-cat ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'Izbrannoe':c}</div>`).join('');
+// ========== CATEGORY DETECTORS ==========
+function detCat(n) {
+  n = n.toLowerCase();
+  if (/movie|film|kino|serial|kinohd/.test(n)) return 'movie';
+  if (/sport|football|hockey|basketball|tennis|fight|ufc/.test(n)) return 'sport';
+  if (/news|novosti|vesti|24|cnn|bbc|euronews/.test(n)) return 'news';
+  if (/kids|det|children|cartoon|mult|karusel|piter|tun/.test(n)) return 'kids';
+  if (/music|hit|muz|top/.test(n)) return 'music';
+  if (/hd|4k|fhd|uhd|fullhd/.test(n)) return 'hd';
+  if (/regional|region|domashniy|local|oblast/.test(n)) return 'regional';
+  return 'other';
 }
 
-function openV(idx){
-  const c=state.channels[idx];
-  if(!c||!c.url){toast("URL ne dostupen");return}
-  state.vEl=document.getElementById("vp");
-  state.pIdx=idx;
-  document.getElementById("ptitle").textContent=c.name;
-  document.getElementById("vm").classList.add("show");
-  if(c.url.includes(".m3u8")){
-    if(Hls.isSupported()){
-      state.hls=new Hls();
+function detQuality(n) {
+  n = n.toLowerCase();
+  if (/4k|full|fhd|uhd/.test(n)) return 'fhd';
+  if (/hd/.test(n)) return 'hd';
+  return 'sd';
+}
+
+function detRadCat(n) {
+  n = n.toLowerCase();
+  if (/pop|top|hit|hits|chart/.test(n)) return 'Pop';
+  if (/rock|rok|metal|classic|alternative/.test(n)) return 'Rock';
+  if (/jazz|blues|soul/.test(n)) return 'Jazz';
+  if (/talk|news|info|inform/.test(n)) return 'Talk';
+  if (/dance|house|techno|disco|electronic|club|edm/.test(n)) return 'Dance';
+  return 'Pop';
+}
+
+// ========== SCAN ==========
+async function startScan() {
+  if (state.scanning) return;
+  state.scanning = true;
+  document.getElementById('loader').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+
+  const tv = [];
+  const rad = [];
+  let tvCount = 0;
+  let radCount = 0;
+
+  document.getElementById('sc-count').textContent = 'ТВ: 0 | Радио: 0';
+
+  for (let i = 1; i <= 850; i += BATCH) {
+    const end = Math.min(i + BATCH - 1, 850);
+    const promises = [];
+
+    for (let k = i; k <= end; k++) {
+      promises.push(fetchChannel(k));
+    }
+
+    const results = await Promise.allSettled(promises);
+
+    results.forEach(r => {
+      if (r.status === 'fulfilled' && r.value) {
+        const name = r.value.name || '';
+        const url = r.value.url || '';
+        const isRadio = /radio|fm|music|hit|jazz|rock|retro|wave|talk|dance/i.test(name);
+
+        if (isRadio) {
+          rad.push({ name: name, url: url, category: detRadCat(name) });
+          radCount++;
+        } else {
+          tv.push({ name: name, url: url, quality: detQuality(name), category: detCat(name) });
+          tvCount++;
+        }
+      }
+    });
+
+    const pct = Math.round((end / 850) * 100);
+    document.getElementById('pfill').style.width = pct + '%';
+    document.getElementById('sc-count').textContent = 'ТВ: ' + tvCount + ' | Радио: ' + radCount;
+  }
+
+  state.channels = tv;
+  state.radios = rad;
+  state.cacheTime = Date.now();
+  saveCache();
+  updateUI();
+
+  state.scanning = false;
+  document.getElementById('loader').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  toast('Обновлено: ' + tv.length + ' ТВ + ' + rad.length + ' Радио');
+}
+
+// ========== UI ==========
+function updateUI() {
+  renderTV();
+  renderRad();
+  renderCats();
+  document.getElementById('actmirr').textContent = state.actMirror || apiMirror();
+  document.getElementById('cachetxt').textContent = state.cacheTime ? new Date(state.cacheTime).toLocaleString() : '';
+}
+
+function apiMirror() {
+  return MIRRORS[0].split('/')[2];
+}
+
+function renderTV() {
+  const g = document.getElementById('tvgrid');
+  const s = document.getElementById('search').value.toLowerCase().trim();
+  let list = state.channels;
+
+  if (state.curCat !== 'all' && state.curCat !== 'fav') {
+    list = list.filter(c => c.category === state.curCat);
+  }
+  if (state.curCat === 'fav') {
+    list = list.filter((_, i) => state.fav.includes(i));
+  }
+  if (s) {
+    list = list.filter(c => c.name.toLowerCase().includes(s));
+  }
+
+  if (list.length === 0) {
+    g.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';
+    return;
+  }
+
+  g.innerHTML = list.map((c, i) => {
+    const idx = state.channels.indexOf(c);
+    const isFav = state.fav.includes(idx);
+    return '<div class="card" data-idx="' + idx + '" onclick="openV(' + idx + ')">' +
+      '<div class="card poster"><div class="s-silver">' + c.name.charAt(0) + '</div></div>' +
+      '<div class="card info">' +
+        '<div class="c-name">' + c.name + '</div>' +
+        '<div class="c-meta"><span class="c-q ' + c.quality + '">' + c.quality.toUpperCase() + '</span></div>' +
+        '<div class="c-actions">' +
+          '<button class="c-play" onclick="event.stopPropagation();openV(' + idx + ')"><i class="fas fa-play"></i></button>' +
+          '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + idx + ',\'tv\')"><i class="far fa-star"></i></button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderRad() {
+  const g = document.getElementById('radiogrid');
+  const s = document.getElementById('search').value.toLowerCase().trim();
+  let list = state.radios;
+
+  if (state.curCat !== 'all' && state.curCat !== 'fav') {
+    list = list.filter(r => r.category === state.curCat);
+  }
+  if (state.curCat === 'fav') {
+    list = list.filter((_, i) => state.fav.includes('r' + i));
+  }
+  if (s) {
+    list = list.filter(r => r.name.toLowerCase().includes(s));
+  }
+
+  if (list.length === 0) {
+    g.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';
+    return;
+  }
+
+  g.innerHTML = list.map((r, i) => {
+    const isFav = state.fav.includes('r' + i);
+    return '<div class="radio-card" onclick="playRad(' + i + ')">' +
+      '<div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div>' +
+      '<div class="r-info">' +
+        '<div class="r-name">' + r.name + '</div>' +
+        '<div class="r-cat">' + r.category + '</div>' +
+      '</div>' +
+      '<button class="c-play"><i class="fas fa-play"></i></button>' +
+      '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + i + ',\'radio\')"><i class="far fa-star"></i></button>' +
+    '</div>';
+  }).join('');
+}
+
+function renderCats() {
+  const tvc = ['movie', 'sport', 'news', 'kids', 'music', 'hd', 'regional', 'other', 'fav'];
+  document.getElementById('tcats').innerHTML = tvc.map(function(c) {
+    return '<div class="cat-pill ' + (state.curCat === c ? 'active' : '') + '" onclick="setCat(\'' + c + '\')">' +
+      (c === 'fav' ? '⭐ Избранное' : c) + '</div>';
+  }).join('');
+
+  const rc = ['Pop', 'Rock', 'Jazz', 'Talk', 'Dance', 'fav'];
+  document.getElementById('rcats').innerHTML = rc.map(function(c) {
+    return '<div class="cat-pill radio-cat ' + (state.curCat === c ? 'active' : '') + '" onclick="setCat(\'' + c + '\')">' +
+      (c === 'fav' ? '⭐ Избранное' : c) + '</div>';
+  }).join('');
+}
+
+// ========== PLAYERS ==========
+function openV(idx) {
+  const c = state.channels[idx];
+  if (!c || !c.url) {
+    toast('URL канала недоступен');
+    return;
+  }
+  state.vEl = document.getElementById('vp');
+  state.pIdx = idx;
+  document.getElementById('ptitle').textContent = c.name;
+  document.getElementById('vm').classList.add('show');
+
+  if (c.url.includes('.m3u8')) {
+    if (Hls.isSupported()) {
+      state.hls = new Hls();
       state.hls.loadSource(c.url);
       state.hls.attachMedia(state.vEl);
-    }else{
-      state.vEl.src=c.url;
+    } else {
+      state.vEl.src = c.url;
     }
-  }else{
-    state.vEl.src=c.url;
+  } else {
+    state.vEl.src = c.url;
   }
 }
 
-function closeV(){
-  document.getElementById("vm").classList.remove("show");
-  if(state.hls){state.hls.destroy();state.hls=null}
-  if(state.vEl){state.vEl.pause();state.vEl.src=""}
+function closeV() {
+  document.getElementById('vm').classList.remove('show');
+  if (state.hls) {
+    state.hls.destroy();
+    state.hls = null;
+  }
+  if (state.vEl) {
+    state.vEl.pause();
+    state.vEl.src = '';
+  }
 }
 
-function playRad(idx){
-  const r=state.radios[idx];
-  if(!r)return;
-  document.getElementById("araname").textContent=r.name;
-  document.getElementById("ab").classList.add("show");
-  if(state.aEl){state.aEl.pause();state.aEl=null}
-  state.aEl=new Audio(r.url);
-  state.aEl.play().catch(()=>toast("Radio ne dostupno"));
+function playRad(idx) {
+  const r = state.radios[idx];
+  if (!r) return;
+  document.getElementById('araname').textContent = r.name;
+  document.getElementById('ab').classList.add('show');
+
+  if (state.aEl) {
+    state.aEl.pause();
+    state.aEl = null;
+  }
+  state.aEl = new Audio(r.url);
+  state.aEl.play().catch(function() {
+    toast('Радио недоступно');
+  });
 }
 
-function favIn(key){return state.fav.includes(key)}
-function toggleFav(idx,type){
-  const key=type==="radio"?"r"+idx:idx;
-  const pos=state.fav.indexOf(key);
-  if(pos>-1){state.fav.splice(pos,1);toast("Udaleno iz izbrannogo")}else{state.fav.push(key);toast("Dobavleno v izbrannoe")}
-  saveFav();renderTV();renderRad();
+function stopRad() {
+  if (state.aEl) {
+    state.aEl.pause();
+    state.aEl = null;
+  }
+  document.getElementById('ab').classList.remove('show');
 }
-function clearFav(){if(confirm("Ochistit izbrannoe?")){state.fav=[];saveFav();renderTV();renderRad();toast("Izbrannoe ochischeno")}}
-function saveFav(){localStorage.setItem("stv_fav",JSON.stringify(state.fav))}
-function saveCache(){localStorage.setItem("stv_cache",JSON.stringify({t:Date.now(),channels:state.channels.map(c=>({name:c.name,quality:c.quality,category:c.category})),radios:state.radios.map(r=>({name:r.name,category:r.category}))}))}
-function loadCache(){const cached=localStorage.getItem("stv_cache");if(!cached)return false;try{const d=JSON.parse(cached);if(Date.now()-d.t>86400000)return false;state.channels=d.channels.map(c=>({name:c.name,quality:c.quality,category:c.category,url:""}));state.radios=d.radios.map(r=>({name:r.name,category:r.category,url:""}));state.cacheTime=d.t;return true}catch(e){return false}}
 
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
-function switchTab(tab){state.curTab=tab;document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));event.target.closest(".nav-btn").classList.add("active");document.getElementById("tvview").style.display=tab==="tv"?"block":"none";document.getElementById("radioview").style.display=tab==="radio"?"block":"none";document.getElementById("settingsview").style.display=tab==="settings"?"block":"none"}
-function setCat(c){state.curCat=c;renderTV();renderRad();renderCats()}
-function setTheme(t,b){document.body.className=t==="gray"?"body-gray":"";localStorage.setItem("stv_theme",t)}
-function setSize(s,b){const g=document.getElementById("tvgrid");g.style.gridTemplateColumns=s==="compact"?"repeat(auto-fill,minmax(140px,1fr))":s==="large"?"repeat(auto-fill,minmax(260px,1fr))":"repeat(auto-fill,minmax(180px,1fr))";localStorage.setItem("stv_size",s)}
-function share(){if(navigator.share){navigator.share({title:"S TV",text:"TV i Radio - Safarali Group",url:location.href}).catch(()=>{})}else{toast("Link copied")}}
+// ========== FAVORITES ==========
+function favIn(key) {
+  return state.fav.includes(key);
+}
 
-function drawStars(){
-  const c=document.getElementById("starsCanvas"),ctx=c.getContext("2d"),w=c.width=innerWidth,h=c.height=innerHeight;
-  let stars=[];
-  function init(){stars=Array.from({length:200},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.5,a:Math.random()}))}
-  init();
-  function animate(){ctx.clearRect(0,0,w,h);stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle="rgba(0,212,255,"+(s.a*0.6)+")";ctx.fill()});requestAnimationFrame(animate)}
+function toggleFav(idx, type) {
+  const key = type === 'radio' ? 'r' + idx : idx;
+  const pos = state.fav.indexOf(key);
+  if (pos > -1) {
+    state.fav.splice(pos, 1);
+    toast('Удалено из избранного');
+  } else {
+    state.fav.push(key);
+    toast('Добавлено в избранное');
+  }
+  saveFav();
+  renderTV();
+  renderRad();
+}
+
+function clearFav() {
+  if (confirm('Очистить избранное?')) {
+    state.fav = [];
+    saveFav();
+    renderTV();
+    renderRad();
+    toast('Избранное очищено');
+  }
+}
+
+function saveFav() {
+  localStorage.setItem('stv_fav', JSON.stringify(state.fav));
+}
+
+// ========== CACHE ==========
+function saveCache() {
+  const data = {
+    t: Date.now(),
+    channels: state.channels.map(function(c) {
+      return { name: c.name, quality: c.quality, category: c.category };
+    }),
+    radios: state.radios.map(function(r) {
+      return { name: r.name, category: r.category };
+    })
+  };
+  localStorage.setItem('stv_cache', JSON.stringify(data));
+}
+
+function loadCache() {
+  const cached = localStorage.getItem('stv_cache');
+  if (!cached) return false;
+  try {
+    const d = JSON.parse(cached);
+    // 24 hours
+    if (Date.now() - d.t > 86400000) return false;
+
+    state.channels = d.channels.map(function(c) {
+      return { name: c.name, quality: c.quality, category: c.category, url: '' };
+    });
+    state.radios = d.radios.map(function(r) {
+      return { name: r.name, category: r.category, url: '' };
+    });
+    state.cacheTime = d.t;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function clearCache() {
+  if (confirm('Очистить кэш каналов?')) {
+    localStorage.removeItem('stv_cache');
+    toast('Кэш очищен');
+    document.getElementById('cachetxt').textContent = 'не загружен';
+  }
+}
+
+// ========== UTILS ==========
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() {
+    t.classList.remove('show');
+  }, 2500);
+}
+
+function switchTab(tab) {
+  state.curTab = tab;
+  document.querySelectorAll('.nav-btn').forEach(function(x) {
+    x.classList.remove('active');
+  });
+  event.target.closest('.nav-btn').classList.add('active');
+
+  document.getElementById('tvview').style.display = tab === 'tv' ? 'block' : 'none';
+  document.getElementById('radioview').style.display = tab === 'radio' ? 'block' : 'none';
+  document.getElementById('settingsview').style.display = tab === 'settings' ? 'block' : 'none';
+}
+
+function setCat(c) {
+  state.curCat = c;
+  renderTV();
+  renderRad();
+  renderCats();
+}
+
+function setTheme(t, el) {
+  document.body.className = t === 'gray' ? 'body-gray' : '';
+  localStorage.setItem('stv_theme', t);
+  document.querySelectorAll('[data-theme]').forEach(function(x) {
+    x.classList.remove('active');
+  });
+  el.classList.add('active');
+}
+
+function setSize(s, el) {
+  const g = document.getElementById('tvgrid');
+  if (s === 'compact') {
+    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(140px,1fr))';
+  } else if (s === 'large') {
+    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(260px,1fr))';
+  } else {
+    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(180px,1fr))';
+  }
+  localStorage.setItem('stv_size', s);
+  document.querySelectorAll('[data-size]').forEach(function(x) {
+    x.classList.remove('active');
+  });
+  el.classList.add('active');
+}
+
+function share() {
+  if (navigator.share) {
+    navigator.share({
+      title: 'S TV',
+      text: 'ТВ и Радио — Safarali Group',
+      url: location.href
+    }).catch(function() {});
+  } else {
+    toast('Ссылка скопирована');
+  }
+}
+
+// ========== STARS ==========
+function drawStars() {
+  const canvas = document.getElementById('starsCanvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+
+  function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+    initStars();
+  }
+
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < 200; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.5,
+        a: Math.random()
+      });
+    }
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < stars.length; i++) {
+      const s = stars[i];
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,212,255,' + (s.a * 0.6) + ')';
+      ctx.fill();
+    }
+    requestAnimationFrame(animate);
+  }
+
+  resize();
   animate();
-  window.addEventListener("resize",()=>{w=c.width=innerWidth;h=c.height=innerHeight;init()});
+  window.addEventListener('resize', resize);
 }
 
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape"&&document.getElementById("vm").classList.contains("show"))closeV();
-  if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();document.getElementById("search").focus()}
+// ========== EVENTS ==========
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('vm').classList.contains('show')) {
+    closeV();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+    e.preventDefault();
+    document.getElementById('search').focus();
+  }
 });
 
-if(loadCache()){updateUI()}else{startScan()}
+document.getElementById('search').oninput = function(e) {
+  state.search = e.target.value;
+  renderTV();
+  renderRad();
+};
+
+// ========== INIT ==========
+if (loadCache()) {
+  updateUI();
+} else {
+  startScan();
+}
 drawStars();
 </script>
 </body>
