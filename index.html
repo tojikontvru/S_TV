@@ -2,9 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
-<meta name="theme-color" content="#0a0a14">
-<meta name="description" content="S TV — защищённый ТВ и Радио плеер от Safarali Group">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>S TV — ТВ и Радио</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -17,1094 +15,738 @@
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#0a0a14;--card:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.06);
-  --accent:#00d4ff;--radio:#ff5e94;--hd:#00e676;--sd:#ffd600;--fullhd:#00e5ff;
-  --text:#ffffff;--text2:#989899;--text3:#6E6E7A;
-  --gradient:linear-gradient(135deg,#00d4ff,#0072ff);
+  --bg:#0a0a14;--bg2:#0d0d1a;--card:rgba(255,255,255,.03);
+  --border:rgba(255,255,255,.06);--accent:#00d4ff;--radio:#ff5e94;
+  --hd:#00e676;--sd:#ffd600;--text:#e8e8f0;--muted:#6e7191;
+  --glass:rgba(10,10,20,.85);--blur:20px;
+  --radius:16px;--trans:.3s ease;
 }
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+body.gray{--bg:#1a1a20;--bg2:#1e1e26}
 
-/* Splash */
-#splash{position:fixed;inset:0;z-index:999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease,visibility .6s ease}
-#splash.hidden{opacity:0;visibility:hidden;pointer-events:none}
-#splashCanvas{position:absolute;inset:0;width:100%;height:100%}
-.splash-logo{position:relative;z-index:1;width:120px;height:120px;border-radius:30px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:54px;font-weight:900;color:#fff;margin-bottom:24px;animation:splashScale .9s cubic-bezier(.34,1.56,.64,1) forwards,splashGlow 2s ease-in-out infinite .9s;transform:scale(0)}
-@keyframes splashScale{0%{transform:scale(0) rotate(-180deg)}60%{transform:scale(1.15) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
-@keyframes splashGlow{0%,100%{box-shadow:0 0 40px rgba(0,212,255,0.5),0 0 80px rgba(0,212,255,0.3)}50%{box-shadow:0 0 60px rgba(0,212,255,0.8),0 0 120px rgba(0,212,255,0.5)}}
-.splash-title{position:relative;z-index:1;font-size:48px;font-weight:900;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:6px;margin-bottom:12px;display:flex;gap:6px}
-.splash-title span{display:inline-block;opacity:0;transform:translateY(40px);animation:letterIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
-.splash-title span:nth-child(1){animation-delay:.3s}
-.splash-title span:nth-child(2){animation-delay:.4s}
-.splash-title span:nth-child(3){animation-delay:.5s}
-@keyframes letterIn{to{opacity:1;transform:translateY(0)}}
-.splash-slogan{position:relative;z-index:1;font-size:14px;font-weight:300;color:var(--text2);letter-spacing:1.5px;margin-bottom:32px}
-.splash-progress{position:relative;z-index:1;width:240px;height:3px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-bottom:12px}
-.splash-progress-bar{height:100%;background:var(--gradient);width:0;transition:width .2s ease;border-radius:3px}
-.splash-percent{position:relative;z-index:1;font-family:monospace;font-size:13px;color:var(--accent);margin-bottom:8px}
-.splash-stats{position:relative;z-index:1;font-size:11px;color:var(--text3);font-family:monospace}
-.splash-footer{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:1;font-size:12px;color:var(--text3);opacity:0;animation:fadeIn .8s ease 1s forwards;display:flex;align-items:center;gap:6px}
-@keyframes fadeIn{to{opacity:1}}
+/* ========== LOADER ========== */
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
+#loader.hide{opacity:0;pointer-events:none}
+#starCanvas{position:absolute;inset:0}
+.loader-logo{font-size:64px;font-weight:900;color:var(--accent);text-shadow:0 0 60px var(--accent),0 0 120px var(--accent);letter-spacing:-2px;z-index:1}
+.loader-slogan{margin-top:8px;font-size:14px;color:var(--muted);z-index:1}
+.loader-dev{margin-top:4px;font-size:12px;color:var(--muted);z-index:1}
+.loader-ver{margin-top:2px;font-size:11px;color:var(--muted);z-index:1}
+.progress-wrap{width:280px;margin-top:24px;z-index:1}
+.progress-bar{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--radio));border-radius:2px;transition:width .3s}
+.progress-info{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--muted)}
+.mirror-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4caf50;margin-right:6px;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-/* App */
-#app{display:none;opacity:0;transition:opacity .5s ease}
-#app.show{display:block;opacity:1}
+/* ========== APP ========== */
+#app{display:none;flex-direction:column;height:100vh}
+#app.show{display:flex}
 
 /* Header */
-.header{position:sticky;top:0;z-index:50;background:rgba(10,10,20,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:12px}
-.logo{display:flex;align-items:center;gap:10px}
-.logo-icon{width:36px;height:36px;border-radius:10px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px;box-shadow:0 0 16px rgba(0,212,255,0.3)}
-.logo-text{font-size:18px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-.search-box{flex:1;max-width:500px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;transition:all .3s}
-.search-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px rgba(0,212,255,0.1)}
-.search-box i{color:var(--text3);font-size:14px}
-.search-box input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:14px;font-family:inherit}
-.search-box input::placeholder{color:var(--text3)}
-.search-clear{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);display:none;align-items:center;justify-content:center;font-size:10px;cursor:pointer;border:none;color:#fff}
-.search-clear.show{display:flex}
-.header-actions{display:flex;align-items:center;gap:8px}
-.counter{font-size:12px;font-weight:600;color:var(--text2);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.counter .dot{width:6px;height:6px;border-radius:50%;background:var(--hd);box-shadow:0 0 8px var(--hd);animation:pulse 2s infinite}
-.counter .sep{color:var(--text3);opacity:.5}
-@keyframes pulse{50%{opacity:.5}}
-.icon-btn{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);transition:all .2s;cursor:pointer}
-.icon-btn:hover{background:rgba(255,255,255,0.06);color:var(--accent);border-color:rgba(0,212,255,0.3)}
-.icon-btn.spin i{animation:spin 1s linear infinite}
+header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(var(--blur));border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:900;color:var(--accent);letter-spacing:-1px;white-space:nowrap}
+.search-wrap{flex:1;min-width:180px;position:relative}
+.search-wrap input{width:100%;padding:8px 12px 8px 36px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border var(--trans)}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.counter{font-size:12px;color:var(--muted);white-space:nowrap}
+.mirror-badge{display:flex;align-items:center;font-size:11px;color:var(--muted);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);padding:4px 10px;border-radius:20px;white-space:nowrap}
+.mirror-badge .dot{width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:6px}
+.btn{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;display:flex;align-items:center;gap:6px;transition:all var(--trans);white-space:nowrap}
+.btn:hover{background:rgba(255,255,255,.08);border-color:var(--accent)}
+.btn:active{transform:scale(.96)}
+.btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:#00b8e6}
+.btn.spin i{animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* Tabs */
-.tabs{display:flex;gap:4px;padding:14px 16px 0;overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:10px 18px;border-radius:12px;background:var(--card);border:1px solid var(--border);font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .3s;white-space:nowrap;border:none;font-family:inherit}
-.tab:hover{background:rgba(255,255,255,0.06);color:#fff}
-.tab.active{background:var(--gradient);color:#fff;border-color:transparent;box-shadow:0 0 20px rgba(0,212,255,0.3)}
-
-/* Categories */
-.categories{display:flex;gap:6px;padding:14px 16px;overflow-x:auto;scrollbar-width:none}
-.categories::-webkit-scrollbar{display:none}
-.cat{flex-shrink:0;padding:8px 14px;border-radius:18px;background:var(--card);border:1px solid var(--border);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .3s;white-space:nowrap;border:none;font-family:inherit}
-.cat:hover{background:rgba(255,255,255,0.06);color:#fff}
-.cat.active{background:var(--gradient);color:#fff;border-color:transparent;box-shadow:0 0 16px rgba(0,212,255,0.3)}
+.tabs{display:flex;background:var(--glass);backdrop-filter:blur(var(--blur));border-bottom:1px solid var(--border);padding:0 20px}
+.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all var(--trans);display:flex;align-items:center;justify-content:center;gap:6px}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.radio-tab.active{color:var(--radio);border-bottom-color:var(--radio)}
+.tab:hover:not(.active){color:var(--text)}
 
 /* Content */
-.content{padding:0 16px 100px}
+.content{flex:1;overflow-y:auto;padding:16px;scroll-behavior:smooth}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+
+/* Categories */
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.cat{padding:6px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all var(--trans);color:var(--muted)}
+.cat.active,.cat:hover{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent)}
+.cat.radio-cat.active,.cat.radio-cat:hover{background:rgba(255,94,148,.12);border-color:var(--radio);color:var(--radio)}
 
 /* Grid */
-.grid{display:grid;gap:12px}
-.tv-grid{grid-template-columns:repeat(2,1fr)}
-.radio-grid{grid-template-columns:repeat(3,1fr);gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
+@media(min-width:1200px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
 
 /* Card */
-.card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;position:relative}
-.card:hover{transform:translateY(-4px);background:rgba(255,255,255,0.06);border-color:rgba(0,212,255,0.3);box-shadow:0 8px 30px rgba(0,212,255,0.15),0 8px 30px rgba(0,0,0,0.4)}
-.card.fav{border-color:rgba(255,214,0,0.4)}
-.card-preview{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(123,47,255,0.1));display:flex;align-items:center;justify-content:center;overflow:hidden}
-.card-preview::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,0.08) 50%,transparent 70%);transform:translateX(-100%);animation:shimmer 2s infinite}
-@keyframes shimmer{to{transform:translateX(100%)}}
-.card-logo{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,255,0.2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff;text-shadow:0 0 16px rgba(0,212,255,0.3)}
-.card-quality{position:absolute;top:6px;right:6px;padding:3px 8px;border-radius:6px;font-size:9px;font-weight:700;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);display:flex;align-items:center;gap:4px}
-.q-dot{width:5px;height:5px;border-radius:50%}
-.q-hd{color:var(--hd)}.q-hd .q-dot{background:var(--hd);box-shadow:0 0 6px var(--hd)}
-.q-sd{color:var(--sd)}.q-sd .q-dot{background:var(--sd)}
-.q-fullhd{color:var(--fullhd)}.q-fullhd .q-dot{background:var(--fullhd);box-shadow:0 0 6px var(--fullhd)}
-.card-fav{position:absolute;top:6px;left:6px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,0.6);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;color:#FFD600;font-size:11px;opacity:0;transition:opacity .3s;cursor:pointer;z-index:2;border:none}
-.card.fav .card-fav{opacity:1}
-.card:hover .card-fav{opacity:1}
-.card-info{padding:12px}
-.card-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
-.card-meta{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3)}
-.live-dot{width:5px;height:5px;border-radius:50%;background:#FF3B30;box-shadow:0 0 6px #FF3B30;animation:pulse 1.5s infinite}
-.watch-btn{margin-top:8px;padding:8px;border-radius:8px;background:var(--gradient);color:#fff;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px;opacity:0;transform:translateY(8px);transition:all .3s;border:none;width:100%;cursor:pointer;font-family:inherit}
-.card:hover .watch-btn{opacity:1;transform:translateY(0)}
+.card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all var(--trans);position:relative}
+.card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.3);box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.card.poster{aspect-ratio:16/9;background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(255,94,148,.05));display:flex;align-items:center;justify-content:center}
+.card.poster .letter{font-size:42px;font-weight:900;color:rgba(0,212,255,.15)}
+.card.info{padding:12px}
+.card-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{display:flex;align-items:center;gap:6px;margin-top:6px}
+.quality{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px}
+.quality.hd{background:rgba(0,230,118,.12);color:var(--hd)}
+.quality.sd{background:rgba(255,214,0,.12);color:var(--sd)}
+.quality.fhd{background:rgba(0,212,255,.12);color:var(--accent)}
+.card-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.btn-play{background:var(--accent);color:#000;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--trans)}
+.btn-play:hover{background:#00b8e6;transform:scale(1.04)}
+.btn-play:active{transform:scale(.96)}
+.star{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;transition:all var(--trans);padding:4px}
+.star.active{color:#ffd700;transform:scale(1.2)}
+.star:hover{transform:scale(1.1)}
 
-/* Radio Card */
-.radio-card{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:16px;padding:16px 8px;text-align:center;cursor:pointer;transition:all .3s;position:relative}
-.radio-card:hover{transform:translateY(-4px);background:rgba(255,255,255,0.06);border-color:rgba(255,94,148,0.3);box-shadow:0 8px 30px rgba(255,94,148,0.15)}
-.radio-card.active{border-color:var(--radio);background:rgba(255,94,148,0.08)}
-.radio-card.active::before{content:'';position:absolute;inset:-2px;border-radius:16px;border:2px solid var(--radio);animation:pulseRing 2s infinite;pointer-events:none}
-@keyframes pulseRing{0%{transform:scale(1);opacity:1}100%{transform:scale(1.1);opacity:0}}
-.radio-cover{width:60px;height:60px;border-radius:50%;margin:0 auto 10px;background:linear-gradient(135deg,rgba(255,94,148,0.2),rgba(123,47,255,0.2));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;position:relative;overflow:hidden}
-.eq{display:flex;align-items:flex-end;justify-content:center;gap:2px;height:22px;position:absolute;inset:0;background:rgba(0,0,0,0.4);opacity:0;transition:opacity .3s}
-.radio-card:hover .eq,.radio-card.active .eq{opacity:1}
-.eq span{width:3px;background:var(--radio);border-radius:2px;animation:eqBounce .8s infinite ease-in-out}
-.eq span:nth-child(1){height:30%;animation-delay:0s}
-.eq span:nth-child(2){height:60%;animation-delay:.1s}
-.eq span:nth-child(3){height:40%;animation-delay:.2s}
-.eq span:nth-child(4){height:80%;animation-delay:.3s}
-.eq span:nth-child(5){height:50%;animation-delay:.15s}
-@keyframes eqBounce{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.5)}}
-.radio-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
-.radio-genre{font-size:10px;color:var(--text3)}
-.radio-actions{display:flex;gap:4px;justify-content:center;margin-top:8px}
-.radio-btn{padding:4px 10px;border-radius:8px;background:var(--card);border:1px solid var(--border);color:var(--text2);font-size:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:4px;font-family:inherit}
-.radio-btn:hover{background:rgba(255,255,255,0.06);color:var(--radio)}
-.radio-btn.fav-active{color:#FFD600;background:rgba(255,214,0,0.1);border-color:rgba(255,214,0,0.3)}
+/* Radio card */
+.radio-card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all var(--trans);display:flex;align-items:center;gap:12px}
+.radio-card:hover{border-color:rgba(255,94,148,.3);transform:translateY(-2px)}
+.eq{display:flex;gap:3px;height:32px;align-items:flex-end}
+.eq-bar{width:4px;background:var(--radio);border-radius:2px;animation:eq .8s ease-in-out infinite alternate}
+.eq-bar:nth-child(1){height:12px;animation-delay:0s}
+.eq-bar:nth-child(2){height:20px;animation-delay:.15s}
+.eq-bar:nth-child(3){height:28px;animation-delay:.3s}
+.eq-bar:nth-child(4){height:16px;animation-delay:.45s}
+.eq-bar:nth-child(5){height:24px;animation-delay:.6s}
+@keyframes eq{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}
+.radio-info{flex:1}
+.radio-name{font-size:15px;font-weight:600}
+.radio-cat{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* Empty */
-.empty{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--text3)}
-.empty-icon{font-size:54px;margin-bottom:14px;opacity:.3}
-.empty-title{font-size:16px;font-weight:600;color:var(--text2);margin-bottom:6px}
-.empty-text{font-size:13px}
-
-/* Bottom Nav */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(10,10,20,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);padding:8px 8px 12px;display:flex;justify-content:space-around}
-.bnav{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 16px;border-radius:12px;font-size:10px;color:var(--text3);cursor:pointer;transition:all .3s;background:transparent;border:none;font-family:inherit;position:relative}
-.bnav i{font-size:18px}
-.bnav:hover{color:var(--text2)}
-.bnav.active{color:var(--accent);background:rgba(0,212,255,0.1)}
-.bnav .badge{position:absolute;top:6px;right:14px;min-width:14px;height:14px;border-radius:7px;background:var(--radio);color:#fff;font-size:8px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0 4px}
-
-/* Modal */
-.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn .3s ease}
+/* Player modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center}
 .modal.show{display:flex}
-.modal-content{background:#0a0a14;border:1px solid var(--border);border-radius:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;animation:scaleIn .4s cubic-bezier(.34,1.56,.64,1)}
-@keyframes scaleIn{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#0a0a14;z-index:1}
-.modal-title{font-size:17px;font-weight:700}
-.modal-close{width:36px;height:36px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);cursor:pointer;transition:all .2s}
-.modal-close:hover{transform:rotate(90deg);color:#fff}
-.modal-body{padding:22px}
+.player-box{width:90%;max-width:900px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.player-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.player-title{font-size:18px;font-weight:700}
+.player-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
+.player-close:hover{color:var(--text)}
+.player-vid{width:100%;aspect-ratio:16/9;background:#000}
+.player-vid video{width:100%;height:100%}
+.player-controls{display:flex;align-items:center;gap:12px;padding:16px 20px}
+.btn-ctrl{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--trans)}
+.btn-ctrl:hover{background:rgba(255,255,255,.1);border-color:var(--accent)}
+.btn-ctrl.play{background:var(--accent);color:#000;border-color:var(--accent)}
+.progress-wrap-player{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;cursor:pointer;position:relative}
+.progress-fill-player{height:100%;background:var(--accent);border-radius:3px;width:0}
+.time{font-size:12px;color:var(--muted);white-space:nowrap}
 
-/* Player Modal */
-#playerModal{background:#000;padding:0;align-items:stretch}
-#playerModal .modal-content{background:#000;border:none;max-width:100%;max-height:100%;height:100%;border-radius:0;display:flex;flex-direction:column}
-.player-wrap{position:relative;flex:1;width:100%;background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
-.player-wrap video{width:100%;height:100%;object-fit:contain}
-.player-loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:42px;background:rgba(0,0,0,0.5);z-index:2}
-.player-loader.hidden{display:none}
-.player-bar{padding:14px 20px 20px;background:#000}
-.player-title-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.player-logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,rgba(0,212,255,0.2),rgba(123,47,255,0.2));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
-.player-text{flex:1;min-width:0}
-.player-name{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.player-meta{font-size:11px;color:var(--text3)}
-.progress-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.progress-bar{flex:1;height:5px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;cursor:pointer;position:relative}
-.progress-fill{height:100%;width:0;background:var(--gradient);border-radius:3px;transition:width .2s}
-.time-display{font-family:monospace;font-size:11px;color:var(--text2);min-width:90px;text-align:center}
-.controls{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ctl{width:42px;height:42px;border-radius:50%;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--text2);cursor:pointer;transition:all .2s}
-.ctl:hover{background:rgba(255,255,255,0.06);color:#fff;transform:scale(1.05)}
-.ctl.play{width:60px;height:60px;background:var(--gradient);color:#fff;border-color:transparent;font-size:22px;box-shadow:0 0 24px rgba(0,212,255,0.4)}
-.ctl.play:hover{box-shadow:0 0 32px rgba(0,212,255,0.6)}
-.volume-row{display:flex;align-items:center;gap:6px}
-.vol-slider{width:60px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;cursor:pointer;position:relative}
-.vol-fill{height:100%;width:70%;background:var(--accent);border-radius:2px}
-
-/* Audio Player */
-.audio-player{position:fixed;bottom:80px;left:16px;right:16px;z-index:45;background:#14141a;border:1px solid var(--border);backdrop-filter:blur(20px);border-radius:16px;padding:14px 16px;display:none;align-items:center;gap:12px;animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 40px rgba(0,0,0,0.5)}
-@keyframes slideUp{from{transform:translateY(120%);opacity:0}to{transform:translateY(0);opacity:1}}
-.audio-player.show{display:flex}
-.audio-cover{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,rgba(255,94,148,0.2),rgba(123,47,255,0.2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;position:relative;overflow:hidden}
-.audio-text{flex:1;min-width:0}
+/* Audio bar */
+.audio-bar{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--glass);backdrop-filter:blur(var(--blur));border-top:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:150;transform:translateY(100%);transition:transform .3s}
+.audio-bar.show{transform:translateY(0)}
+.audio-info{flex:1;min-width:0}
 .audio-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.audio-genre{font-size:11px;color:var(--text3)}
-.audio-controls{display:flex;align-items:center;gap:6px}
-.audio-btn{width:34px;height:34px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:all .2s;border:none;color:#fff}
-.audio-btn:hover{background:rgba(255,255,255,0.06)}
+.audio-eq{display:flex;gap:2px;height:20px;align-items:flex-end;margin-top:4px}
+.audio-eq span{width:3px;background:var(--radio);border-radius:1px;animation:eq .6s ease-in-out infinite alternate}
+.audio-eq span:nth-child(1){height:8px;animation-delay:0s}
+.audio-eq span:nth-child(2){height:14px;animation-delay:.2s}
+.audio-eq span:nth-child(3){height:10px;animation-delay:.4s}
+.audio-eq span:nth-child(4){height:18px;animation-delay:.1s}
+.audio-eq span:nth-child(5){height:12px;animation-delay:.3s}
 
 /* Toast */
-.toast{position:fixed;bottom:180px;left:50%;transform:translateX(-50%) translateY(20px);background:#14141a;border:1px solid var(--border);backdrop-filter:blur(20px);padding:11px 18px;border-radius:14px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;z-index:200;opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);box-shadow:0 10px 30px rgba(0,0,0,0.5);pointer-events:none}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);padding:12px 24px;border-radius:12px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast i{color:var(--hd);font-size:14px}
 
-/* FAB */
-.fab{position:fixed;right:16px;width:48px;height:48px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 6px 20px rgba(0,212,255,0.4);z-index:30;cursor:pointer;transition:all .3s;opacity:0;transform:translateY(20px);pointer-events:none;border:none}
-.fab.show{opacity:1;transform:translateY(0);pointer-events:auto}
-.fab:hover{transform:scale(1.05)}
-#fabTop{bottom:140px}
-#fabRandom{bottom:200px;background:linear-gradient(135deg,#7B2FFF,#ff5e94);box-shadow:0 6px 20px rgba(123,47,255,0.4)}
+/* Skeleton */
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* Settings */
-.settings-section{margin-bottom:18px}
-.settings-section h3{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding:0 16px}
-.setting-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:8px}
-.setting-info h4{font-size:14px;font-weight:600;margin-bottom:2px}
-.setting-info p{font-size:11px;color:var(--text3)}
-.choices{display:flex;gap:4px;background:rgba(0,0,0,0.2);padding:3px;border-radius:8px}
-.choice{padding:6px 12px;border-radius:6px;font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;border:none;background:transparent;font-family:inherit}
-.choice.active{background:var(--accent);color:#fff}
-.toggle{position:relative;width:44px;height:24px;background:rgba(255,255,255,0.1);border-radius:12px;transition:background .3s;cursor:pointer;border:none}
-.toggle::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .3s}
-.toggle.on{background:var(--accent)}
-.toggle.on::after{transform:translateX(20px)}
-.about-card{text-align:center;padding:24px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;margin-bottom:16px}
-.about-logo{width:70px;height:70px;margin:0 auto 12px;border-radius:18px;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#fff;box-shadow:0 0 30px rgba(0,212,255,0.4)}
-.about-name{font-size:20px;font-weight:800;margin-bottom:2px}
-.about-version{font-size:12px;color:var(--text3);margin-bottom:4px}
-.about-dev{font-size:13px;color:var(--text2)}
-.about-link{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:linear-gradient(135deg,#0088cc,#005580);border-radius:12px;color:#fff;font-weight:600;text-decoration:none;margin-top:12px;font-size:14px}
-.about-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;color:var(--text);font-weight:500;cursor:pointer;margin-top:8px;font-size:13px;font-family:inherit;width:100%}
-.about-btn:hover{background:rgba(255,255,255,0.06)}
-.about-btn i{color:var(--accent)}
+/* Scroll to top */
+.scroll-top{position:fixed;bottom:90px;right:20px;width:44px;height:44px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all var(--trans);z-index:100}
+.scroll-top.show{display:flex}
+.scroll-top:hover{background:var(--accent);color:#000}
 
-/* Highlight */
-mark{background:rgba(0,212,255,0.3);color:#fff;padding:0 2px;border-radius:2px}
+/* Empty */
+.empty{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty i{font-size:48px;margin-bottom:16px;opacity:.3}
+.empty p{font-size:14px}
 
 /* Responsive */
-@media(min-width:768px){
-  .tv-grid{grid-template-columns:repeat(3,1fr);gap:14px}
-  .radio-grid{grid-template-columns:repeat(4,1fr)}
-}
-@media(min-width:1024px){
-  .tv-grid{grid-template-columns:repeat(4,1fr);gap:16px}
-  .radio-grid{grid-template-columns:repeat(5,1fr)}
-  .header{padding:14px 24px}
-  .content{padding:0 24px 40px}
-  .modal-content{max-width:720px}
-  .audio-player{left:280px;bottom:24px}
-}
-@media(min-width:1440px){
-  .tv-grid{grid-template-columns:repeat(5,1fr)}
-  .radio-grid{grid-template-columns:repeat(6,1gr)}
-  .content{max-width:1600px;margin:0 auto}
+@media(max-width:599px){
+  header{padding:10px 12px;gap:8px}
+  .logo{font-size:18px}
+  .search-wrap{min-width:120px}
+  .counter{display:none}
+  .grid{gap:10px}
+  .card-info{padding:10px}
+  .btn{padding:6px 10px;font-size:12px}
 }
 </style>
 </head>
 <body>
 
-<!-- Splash -->
-<div id="splash">
-  <canvas id="splashCanvas"></canvas>
-  <div class="splash-logo">S</div>
-  <div class="splash-title"><span>S</span><span>T</span><span>V</span></div>
-  <div class="splash-slogan">ТВ и Радио — всегда под рукой</div>
-  <div class="splash-progress"><div class="splash-progress-bar" id="splashBar"></div></div>
-  <div class="splash-percent" id="splashPercent">0%</div>
-  <div class="splash-stats" id="splashStats">Инициализация...</div>
-  <div class="splash-footer">by Safarali Group 🛡</div>
+<!-- ========== LOADER ========== -->
+<div id="loader">
+  <canvas id="starCanvas"></canvas>
+  <div class="loader-logo">S TV</div>
+  <div class="loader-slogan">ТВ и Радио — всегда под рукой</div>
+  <div class="loader-dev">by Safarali Group 🛡</div>
+  <div class="loader-ver">v1.0.0</div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-info">
+      <span id="progressTxt">Сканирование...</span>
+      <span id="progressCount">ТВ: 0 | Радио: 0</span>
+    </div>
+  </div>
+  <div class="mirror-badge" id="mirrorBadge" style="margin-top:16px;z-index:1"><span class="dot"></span><span id="mirrorName">Подключение...</span></div>
 </div>
 
-<!-- App -->
+<!-- ========== APP ========== -->
 <div id="app">
-<header class="header">
-  <div class="logo">
-    <div class="logo-icon">S</div>
-    <div class="logo-text">S TV</div>
-  </div>
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input type="text" id="searchInput" placeholder="Поиск каналов...">
-    <button class="search-clear" id="searchClear"><i class="fas fa-times"></i></button>
-  </div>
-  <div class="header-actions">
-    <div class="counter"><span class="dot"></span><span><b id="tvCount">0</b> ТВ</span><span class="sep">|</span><span><b id="radioCount">0</b> Радио</span></div>
-    <button class="icon-btn" id="randomBtn" title="Случайный"><i class="fas fa-dice"></i></button>
-    <button class="icon-btn" id="refreshBtn" title="Обновить"><i class="fas fa-sync-alt"></i></button>
-  </div>
-</header>
+  <header>
+    <div class="logo">S TV</div>
+    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Поиск каналов..."></div>
+    <div class="counter" id="counter">ТВ: 0 | Радио: 0</div>
+    <div class="mirror-badge"><span class="dot"></span><span id="headerMirror">—</span></div>
+    <button class="btn" id="randomBtn"><i class="fas fa-dice"></i>Случайный</button>
+    <button class="btn" id="refreshBtn"><i class="fas fa-sync-alt"></i>Обновить</button>
+  </header>
 
-<div class="tabs">
-  <button class="tab active" data-tab="tv">📺 ТВ</button>
-  <button class="tab" data-tab="radio">📻 Радио</button>
-  <button class="tab" data-tab="fav">⭐ Избранное <span class="badge" id="favBadge" style="position:relative;margin-left:4px">0</span></button>
-  <button class="tab" data-tab="settings">⚙️ Настройки</button>
-</div>
-
-<main class="content">
-<section class="tab-page" data-page="tv" style="display:block">
-  <div class="categories" id="tvCats">
-    <button class="cat active" data-cat="all">🔥 Все</button>
-    <button class="cat" data-cat="movie">🎬 Кино</button>
-    <button class="cat" data-cat="sport">⚽ Спорт</button>
-    <button class="cat" data-cat="news">📰 Новости</button>
-    <button class="cat" data-cat="kids">👶 Детские</button>
-    <button class="cat" data-cat="music">🎵 Музыка</button>
-    <button class="cat" data-cat="hd">✨ HD</button>
-    <button class="cat" data-cat="regional">🌍 Регион</button>
+  <div class="tabs">
+    <div class="tab active" data-tab="tv"><i class="fas fa-tv"></i>ТВ</div>
+    <div class="tab radio-tab" data-tab="radio"><i class="fas fa-broadcast-tower"></i>Радио</div>
+    <div class="tab" data-tab="settings"><i class="fas fa-cog"></i>Настройки</div>
   </div>
-  <div class="grid tv-grid" id="tvGrid"></div>
-</section>
 
-<section class="tab-page" data-page="radio" style="display:none">
-  <div class="categories" id="radioCats">
-    <button class="cat active" data-cat="all">🎤 Все</button>
-    <button class="cat" data-cat="pop">🎤 Хиты</button>
-    <button class="cat" data-cat="rock">🎸 Рок</button>
-    <button class="cat" data-cat="jazz">🎷 Джаз</button>
-    <button class="cat" data-cat="talk">📡 Разговорное</button>
-    <button class="cat" data-cat="dance">💃 Танцевальная</button>
-  </div>
-  <div class="grid radio-grid" id="radioGrid"></div>
-</section>
-
-<section class="tab-page" data-page="fav" style="display:none">
-  <div class="categories" id="favCats">
-    <button class="cat active" data-cat="all">⭐ Все</button>
-    <button class="cat" data-cat="tv">📺 ТВ</button>
-    <button class="cat" data-cat="radio">📻 Радио</button>
-  </div>
-  <div class="grid tv-grid" id="favGrid"></div>
-</section>
-
-<section class="tab-page" data-page="settings" style="display:none">
-  <div class="settings-section">
-    <h3>Внешний вид</h3>
-    <div class="setting-row">
-      <div class="setting-info"><h4>Тема</h4><p>Цветовая схема</p></div>
-      <div class="choices" id="themeChoice">
-        <button class="choice active" data-val="amoled">AMOLED</button>
-        <button class="choice" data-val="dark">Тёмная</button>
-        <button class="choice" data-val="gray">Серая</button>
-      </div>
+  <div class="content" id="content">
+    <!-- TV -->
+    <div id="tvTab">
+      <div class="cats" id="tvCats"></div>
+      <div class="grid" id="tvGrid"></div>
     </div>
-    <div class="setting-row">
-      <div class="setting-info"><h4>Размер карточек</h4><p>Плотность сетки</p></div>
-      <div class="choices" id="sizeChoice">
-        <button class="choice" data-val="compact">Мелкий</button>
-        <button class="choice active" data-val="normal">Стандарт</button>
-        <button class="choice" data-val="large">Крупный</button>
-      </div>
+    <!-- Radio -->
+    <div id="radioTab" style="display:none">
+      <div class="cats" id="radioCats"></div>
+      <div class="grid" id="radioGrid" style="grid-template-columns:1fr"></div>
     </div>
-  </div>
-  <div class="settings-section">
-    <h3>Каналы</h3>
-    <div class="setting-row">
-      <div class="setting-info"><h4>🔄 Обновить каналы</h4><p>Пересканировать источники</p></div>
-      <button class="choice" id="refreshSettingsBtn" style="background:var(--accent);color:#fff">Запуск</button>
-    </div>
-    <div class="setting-row">
-      <div class="setting-info"><h4>🗑 Очистить кеш</h4><p>Удалить сохранённые каналы</p></div>
-      <button class="choice" id="clearCacheBtn" style="background:#ff5e94;color:#fff">Очистить</button>
-    </div>
-    <div class="setting-row">
-      <div class="setting-info"><h4>🗑 Очистить избранное</h4><p>Удалить все избранные</p></div>
-      <button class="choice" id="clearFavBtn" style="background:#ff5e94;color:#fff">Очистить</button>
-    </div>
-  </div>
-  <div class="settings-section">
-    <div class="about-card">
-      <div class="about-logo">S</div>
-      <div class="about-name">S TV</div>
-      <div class="about-version">Версия 1.0.0</div>
-      <div class="about-dev">Safarali Group 🛡</div>
-      <a href="https://t.me/Mushtariy_LLC" target="_blank" class="about-link">
-        <i class="fab fa-telegram"></i> Telegram @Mushtariy_LLC
-      </a>
-      <button class="about-btn" id="shareBtn"><i class="fas fa-share-alt"></i> Поделиться приложением</button>
-    </div>
-  </div>
-</section>
-</main>
+    <!-- Settings -->
+    <div id="settingsTab" style="display:none">
+      <div style="max-width:600px;margin:0 auto;padding:20px">
+        <h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Настройки</h2>
 
-<nav class="bottom-nav">
-  <button class="bnav active" data-tab="tv"><i class="fas fa-tv"></i><span>ТВ</span></button>
-  <button class="bnav" data-tab="radio"><i class="fas fa-radio"></i><span>Радио</span></button>
-  <button class="bnav" data-tab="fav"><i class="fas fa-star"></i><span>Избранное</span><span class="badge" id="favBadgeMobile">0</span></button>
-  <button class="bnav" data-tab="settings"><i class="fas fa-cog"></i><span>Настройки</span></button>
-</nav>
-</div>
-
-<!-- FABs -->
-<button class="fab" id="fabTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
-<button class="fab" id="fabRandom" onclick="randomChannel()"><i class="fas fa-dice"></i></button>
-
-<!-- Audio Player (URL only in JS memory) -->
-<audio id="audioPlayer" style="display:none"></audio>
-
-<!-- Audio Player UI -->
-<div class="audio-player" id="audioPlayerUI">
-  <div class="audio-cover" id="audioCover">R<div class="eq" style="display:flex"><span></span><span></span><span></span><span></span><span></span></div></div>
-  <div class="audio-text">
-    <div class="audio-name" id="audioName">Радио</div>
-    <div class="audio-genre">📻 Онлайн</div>
-  </div>
-  <div class="audio-controls">
-    <button class="audio-btn" id="audioPlay"><i class="fas fa-pause"></i></button>
-    <button class="audio-btn" onclick="closeAudio()"><i class="fas fa-times"></i></button>
-  </div>
-</div>
-
-<!-- Player Modal (NO URL inside) -->
-<div class="modal" id="playerModal">
-  <div class="modal-content">
-    <div class="player-wrap">
-      <video id="videoPlayer" playsinline></video>
-      <div class="player-loader" id="playerLoader"><i class="fas fa-spinner"></i></div>
-    </div>
-    <div class="player-bar">
-      <div class="player-title-row">
-        <div class="player-logo" id="playerLogo">TV</div>
-        <div class="player-text">
-          <div class="player-name" id="playerName">Канал</div>
-          <div class="player-meta" id="playerMeta">Прямой эфир</div>
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🎨 Оформление</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+            <button class="btn cat active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button>
+            <button class="btn cat" data-theme="dark" onclick="setTheme('dark',this)">Тёмная</button>
+            <button class="btn cat" data-theme="gray" onclick="setTheme('gray',this)">Серая</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+            <button class="btn cat active" data-size="normal" onclick="setCardSize('normal',this)">Стандарт</button>
+            <button class="btn cat" data-size="compact" onclick="setCardSize('compact',this)">Компакт</button>
+            <button class="btn cat" data-size="large" onclick="setCardSize('large',this)">Крупный</button>
+          </div>
+          <button class="btn" id="animToggle" onclick="toggleAnim()"><i class="fas fa-magic"></i>Анимации: Вкл</button>
         </div>
-        <button class="ctl" id="playerFav"><i class="far fa-star"></i></button>
-        <button class="ctl" onclick="closePlayer()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="progress-row">
-        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-        <div class="time-display" id="timeDisplay">00:00 / 00:00</div>
-      </div>
-      <div class="controls">
-        <div class="volume-row">
-          <button class="ctl" onclick="toggleMute()"><i class="fas fa-volume-up" id="volIcon"></i></button>
-          <div class="vol-slider" id="volSlider"><div class="vol-fill" id="volFill"></div></div>
+
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🔄 Данные</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Кэш: <span id="cacheStatus" style="color:var(--text)">не загружен</span></p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Зеркало: <span id="activeMirror" style="color:var(--accent)">—</span></p>
+          <button class="btn primary" onclick="startScan()" style="margin-bottom:10px;width:100%"><i class="fas fa-sync-alt"></i>Обновить каналы</button>
+          <button class="btn" onclick="clearCache()" style="margin-bottom:10px;width:100%"><i class="fas fa-trash"></i>Очистить кэш</button>
+          <button class="btn" onclick="clearFav()" style="width:100%"><i class="fas fa-star"></i>Очистить избранное</button>
         </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <button class="ctl play" id="playBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📡 API</h3>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:4px">Основное: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:4px">Резерв 1: <code style="color:var(--text)">api.mediabay.tv</code></p>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Резерв 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Таймаут: <select id="timeoutSel" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit"><option value="5000">5с</option><option value="10000" selected>10с</option><option value="15000">15с</option></select></p>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Пачка: <select id="batchSel" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit"><option value="20">20</option><option value="30" selected>30</option><option value="50">50</option></select></p>
         </div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="ctl" id="pipBtn"><i class="fas fa-external-link-alt"></i></button>
-          <button class="ctl" id="fsBtn"><i class="fas fa-expand"></i></button>
+
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">ℹ️ О приложении</h3>
+          <div style="text-align:center;padding:20px">
+            <div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div>
+            <p style="font-size:14px;color:var(--muted);margin-top:8px">Версия 1.0.0</p>
+            <p style="font-size:13px;color:var(--muted)">Разработчик: Safarali Group 🛡</p>
+            <p style="font-size:12px;color:var(--muted);margin-top:4px">© 2026 Safarali Group</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📤 Поделиться</h3>
+          <button class="btn" onclick="shareApp()" style="width:100%;margin-bottom:10px"><i class="fas fa-share-alt"></i>Поделиться S TV</button>
+          <button class="btn" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')" style="width:100%;margin-bottom:10px"><i class="fab fa-telegram"></i>Telegram: @Mushtariy_LLC</button>
+          <button class="btn" onclick="window.open('https://github.com/tojikontvru/S_TV','_blank')" style="width:100%"><i class="fab fa-github"></i>⭐ Оценить на GitHub</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"><i class="fas fa-check-circle"></i><span id="toastMsg"></span></div>
+<!-- ========== VIDEO PLAYER ========== -->
+<div class="modal" id="videoModal">
+  <div class="player-box">
+    <div class="player-top">
+      <div class="player-title" id="playerTitle">Канал</div>
+      <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="player-vid"><video id="videoPlayer" playsinline></video></div>
+    <div class="player-controls">
+      <button class="btn-ctrl" id="prevBtn"><i class="fas fa-step-backward"></i></button>
+      <button class="btn-ctrl play" id="playPauseBtn"><i class="fas fa-play"></i></button>
+      <button class="btn-ctrl" id="nextBtn"><i class="fas fa-step-forward"></i></button>
+      <div class="progress-wrap-player" id="progressPlayer"><div class="progress-fill-player" id="progressFillPlayer"></div></div>
+      <span class="time" id="timeDisplay">0:00 / 0:00</span>
+      <button class="btn-ctrl" id="muteBtn"><i class="fas fa-volume-up"></i></button>
+      <button class="btn-ctrl" id="fsBtn"><i class="fas fa-expand"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== AUDIO BAR ========== -->
+<div class="audio-bar" id="audioBar">
+  <div class="audio-eq"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="audio-info"><div class="audio-name" id="audioName">Радио</div></div>
+  <button class="btn-ctrl play" id="audioPlayPause"><i class="fas fa-play"></i></button>
+  <button class="btn-ctrl" id="audioStop"><i class="fas fa-stop"></i></button>
+  <button class="btn-ctrl" id="audioMute"><i class="fas fa-volume-up"></i></button>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== SCROLL TOP ========== -->
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
 <script>
 /* ============================================================
-   🔒 ЗАЩИЩЁННОЕ ХРАНИЛИЩЕ ПОТОКОВ
-   URL потоков НИКОГДА не попадают в DOM, localStorage или атрибуты
-   Только индексы в массивах — данные извлекаются в момент воспроизведения
+   S TV — защищённый медиаплеер
+   Автор: Safarali Group 🛡 v1.0.0
    ============================================================ */
 
-// Защищённые массивы в памяти (НЕ в DOM)
-let channelsData = [];      // ТВ: {name, quality, category, url}
-let radioData = [];         // Радио: {name, category, url}
-let favorites = JSON.parse(localStorage.getItem('stv_fav_idx') || '[]');  // ТОЛЬКО ИНДЕКСЫ
-
+/* ========== STATE ========== */
 const state = {
-  tab: 'tv', tvCat: 'all', radioCat: 'all', favCat: 'all', search: '',
-  scanning: false, playingIdx: -1, audioIdx: -1, hlsInstance: null,
-  currentAudio: null
+  channels: [],   // {name, quality, category, url} — только в памяти
+  radios: [],     // {name, url, category}
+  favs: JSON.parse(localStorage.getItem('stv_fav') || '[]'),
+  currentTab: 'tv',
+  tvFilter: 'all',
+  radioFilter: 'all',
+  search: '',
+  activeMirror: '—',
+  cacheTime: null,
+  animOn: true,
+  theme: localStorage.getItem('stv_theme') || 'default',
+  cardSize: localStorage.getItem('stv_size') || 'normal',
+  videoEl: null,
+  hls: null,
+  audioEl: null,
+  playerIdx: -1
 };
 
-/* ========== SPLASH ========== */
-const canvas = document.getElementById('splashCanvas');
-const ctx2d = canvas.getContext('2d');
-let stars = [], mouse = { x: 0, y: 0 };
+/* ========== MIRRORS ========== */
+const MIRRORS = [
+  'https://api.v1.mediabay.tv/v2/channels/thread/',
+  'https://api.mediabay.tv/v2/channels/thread/',
+  'https://api.v1.mediabay.uz/v2/channels/thread/'
+];
+const TIMEOUT = parseInt(localStorage.getItem('stv_timeout') || '10000');
+const BATCH = parseInt(localStorage.getItem('stv_batch') || '30');
 
-function initSplash() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  for (let i = 0; i < 200; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 1.5 + 0.4,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
-      d: Math.random()
-    });
+/* ========== FETCH CHANNEL ========== */
+async function fetchChannel(thread) {
+  const mirrors = [
+    `https://api.v1.mediabay.tv/v2/channels/thread/${thread}`,
+    `https://api.mediabay.tv/v2/channels/thread/${thread}`,
+    `https://api.v1.mediabay.uz/v2/channels/thread/${thread}`
+  ];
+  for (const url of mirrors) {
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), TIMEOUT);
+      const res = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 S_TV' } });
+      clearTimeout(tid);
+      if (res.status === 200) {
+        const data = await res.json();
+        if (data && data.url) return data;
+      }
+    } catch (e) { /* try next */ }
   }
-  document.addEventListener('mousemove', e => {
-    mouse.x = (e.clientX - innerWidth / 2) / 50;
-    mouse.y = (e.clientY - innerHeight / 2) / 50;
-  });
-  animateSplash();
-}
-function animateSplash() {
-  ctx2d.clearRect(0, 0, canvas.width, canvas.height);
-  stars.forEach(s => {
-    s.x += s.vx; s.y += s.vy;
-    if (s.x < 0) s.x = canvas.width;
-    if (s.x > canvas.width) s.x = 0;
-    if (s.y < 0) s.y = canvas.height;
-    if (s.y > canvas.height) s.y = 0;
-    const px = s.x + mouse.x * s.d * 3;
-    const py = s.y + mouse.y * s.d * 3;
-    ctx2d.fillStyle = `rgba(255,255,255,${0.2 + s.d * 0.5})`;
-    ctx2d.beginPath();
-    ctx2d.arc(px, py, s.r * (0.5 + s.d), 0, Math.PI * 2);
-    ctx2d.fill();
-  });
-  requestAnimationFrame(animateSplash);
+  return null;
 }
 
-/* ========== ПУБЛИЧНЫЙ API ========== */
-const TV_SOURCE = 'https://iptv-org.github.io/iptv/index.m3u';
-const RADIO_SOURCE = './public_radio.m3u';
-const BATCH = 30;
+/* ========== STARS ========== */
+function drawStars() {
+  const canvas = document.getElementById('starCanvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; initStars(); }
+  function initStars() { stars = Array.from({length: 200}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.5 + 0.5, a: Math.random() })); }
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(0,212,255,${s.a * 0.6})`; ctx.fill(); });
+    requestAnimationFrame(draw);
+  }
+  resize(); draw();
+  window.addEventListener('resize', resize);
+}
 
+/* ========== SCAN ========== */
 async function startScan() {
   if (state.scanning) return;
   state.scanning = true;
   document.getElementById('refreshBtn').classList.add('spin');
-  const tvList = [];   // {name, quality, category, url}
-  const radList = [];
-  let tvCount = 0, radCount = 0;
+  const tvList = [], radList = [];
+  let tvCount = 0, radCount = 0, currentMirrorIdx = 0;
+  const mirrorName = MIRRORS[currentMirrorIdx].split('/')[2];
 
-  // Загружаем TV через IPTV-org
-  try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 15000);
-    const res = await fetch(TV_SOURCE, { signal: ctrl.signal });
-    clearTimeout(tid);
-    const text = await res.text();
-    const lines = text.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line.startsWith('#EXTINF')) {
-        const match = line.match(/tvg-name="([^"]*)"/);
-        const name = match ? match[1] : 'TV Channel';
-        const urlMatch = lines[i + 1];
-        if (urlMatch && urlMatch.startsWith('http')) {
-          tvList.push({
-            name,
-            url: urlMatch.trim(),
-            quality: detectQuality(name),
-            category: detectCategory(name)
-          });
+  document.getElementById('mirrorName').textContent = mirrorName;
+  document.getElementById('progressTxt').textContent = `Сканирование 1-${850}...`;
+
+  for (let i = 1; i <= 850; i += BATCH) {
+    const end = Math.min(i + BATCH - 1, 850);
+    const promises = [];
+    for (let k = i; k <= end; k++) promises.push(fetchChannel(k));
+    const results = await Promise.allSettled(promises);
+    results.forEach(r => {
+      if (r.status === 'fulfilled' && r.value) {
+        const name = String(r.value.name).trim();
+        const url = r.value.url;
+        const isRadio = /radio|fm|музыка|хит|джаз|рок|ретро|волна|эхо|танцевальный|разговорный/i.test(name);
+        if (isRadio) {
+          radList.push({ name, url, category: detectRadioCat(name) });
+          radCount++;
+        } else {
+          tvList.push({ name, url, quality: detectQuality(name), category: detectCat(name) });
           tvCount++;
         }
       }
-    }
-    console.log(`✓ Загружено TV: ${tvCount}`);
-  } catch (e) {
-    console.error('❌ TV fetch failed:', e);
-  }
-
-  // Загружаем Radio из файла
-  try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 10000);
-    const res = await fetch(RADIO_SOURCE, { signal: ctrl.signal });
-    clearTimeout(tid);
-    const text = await res.text();
-    const lines = text.split('\n');
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (line.startsWith('#EXTINF')) {
-        const match = line.match(/tvg-name="([^"]*)"/);
-        const name = match ? match[1] : 'Radio Station';
-        const urlMatch = lines[i + 1];
-        if (urlMatch && urlMatch.startsWith('http')) {
-          radList.push({
-            name,
-            url: urlMatch.trim(),
-            quality: 'MP3',
-            category: detectRadioCategory(name)
-          });
-          radCount++;
-        }
-      }
-    }
-    console.log(`✓ Загружено Radio: ${radCount}`);
-  } catch (e) {
-    console.error('❌ Radio fetch failed:', e);
+    });
+    const pct = Math.round((end / 850) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = `ТВ: ${tvCount} | Радио: ${radCount}`;
+    document.getElementById('progressTxt').textContent = `Сканирование ${i}-${end}...`;
   }
 
   state.channels = tvList;
   state.radios = radList;
+  state.cacheTime = Date.now();
+  localStorage.setItem('stv_cache', JSON.stringify({ t: Date.now(), channels: tvList.map(c => ({ n: c.name, q: c.quality, cat: c.category })), radios: radList.map(r => ({ n: r.name, cat: r.category })) }));
   updateUI();
   state.scanning = false;
   document.getElementById('refreshBtn').classList.remove('spin');
-  saveMetaCache();
-}
-        if (isRadio(r.value.name)) { radList.push(r.value); radCount++; }
-        else { tvList.push(r.value); tvCount++; }
-      }
-    });
-    const pct = Math.round((end / 850) * 100);
-    document.getElementById('splashBar').style.width = pct + '%';
-    document.getElementById('splashPercent').textContent = pct + '%';
-    document.getElementById('splashStats').textContent =
-      `Сканирование: ${end}/850 | ТВ: ${tvCount} | Радио: ${radCount}`;
-  }
-
-  // Сохраняем в защищённые массивы (только в памяти, URL не в DOM)
-  channelsData = tvList;
-  radioData = radList;
-  saveMetaCache();
-  renderAll();
-  updateCounters();
-  document.getElementById('refreshBtn').classList.remove('spin');
-  state.scanning = false;
-  toast('🔄 Каналы обновлены');
+  document.getElementById('loader').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  toast('✅ Каналы обновлены');
 }
 
-// Сохраняем ТОЛЬКО метаданные без URL
-function saveMetaCache() {
-  try {
-    const meta = {
-      channels: channelsData.map(c => ({ name: c.name, quality: c.quality, category: c.category })),
-      radio: radioData.map(r => ({ name: r.name, category: r.category })),
-      time: Date.now()
-    };
-    localStorage.setItem('stv_meta', JSON.stringify(meta));
-  } catch (e) {}
+/* ========== DETECTORS ========== */
+function detectQuality(n) {
+  n = n.toLowerCase();
+  if (n.includes('4k') || n.includes('full hd') || n.includes('fhd')) return 'fhd';
+  if (n.includes(' hd') || n.endsWith(' hd')) return 'hd';
+  return 'sd';
+}
+function detectCat(n) {
+  n = n.toLowerCase();
+  if (/кино|movie|film|сериал|kino|cinema/.test(n)) return 'Кино';
+  if (/спорт|sport|футбол|матч|hockey|box|ufc|fight|tennis|баскетбол/.test(n)) return 'Спорт';
+  if (/новост|news|24|vesti|информ|bbc|cnn|euronews/.test(n)) return 'Новости';
+  if (/дет|kids|children|cartoon|мульт|карусель|piter|multi|тун/.test(n)) return 'Детские';
+  if (/музык|music|muz|hit|top/.test(n)) return 'Музыка';
+  if (/hd|4k|full hd|fhd|uhd/.test(n)) return 'HD';
+  if (/регион|regional|домашн|local|oblast|tv-/.test(n)) return 'Регион';
+  return 'Другое';
+}
+function detectRadioCat(n) {
+  n = n.toLowerCase();
+  if (/pop|top|хит|поп/.test(n)) return 'Хиты';
+  if (/rock|рок|metal|classic rock|альтерна/.test(n)) return 'Рок';
+  if (/jazz|джаз|блюз|blues/.test(n)) return 'Джаз';
+  if (/talk|новост|news|радио 1|информ|радио марат/.test(n)) return 'Разговорное';
+  if (/dance|house|техно|techno|диско|electronic|топ 40|club/.test(n)) return 'Танцевальное';
+  if (/европ|europa|europe|радио марат|радио 1/.test(n)) return 'Регион';
+  return 'Хиты';
 }
 
-function loadMetaCache() {
-  try {
-    const m = JSON.parse(localStorage.getItem('stv_meta') || '{}');
-    if (m.channels && m.time && (Date.now() - m.time < 86400000)) {
-      channelsData = m.channels.map(c => ({ ...c, url: null }));
-      radioData = m.radio.map(r => ({ ...r, url: null }));
-      return true;
-    }
-  } catch (e) {}
-  return false;
+/* ========== UI ========== */
+function updateUI() {
+  renderTV();
+  renderRadio();
+  renderCats();
+  document.getElementById('counter').textContent = `ТВ: ${state.channels.length} | Радио: ${state.radios.length}`;
+  document.getElementById('headerMirror').textContent = state.activeMirror || '—';
+  document.getElementById('activeMirror').textContent = state.activeMirror || '—';
+  document.getElementById('cacheStatus').textContent = state.cacheTime ? new Date(state.cacheTime).toLocaleString('ru') : 'не загружен';
 }
-
-/* ========== РЕНДЕР БЕЗ URL ========== */
-function escRx(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-function hl(name) {
-  if (!state.search) return name;
-  return name.replace(new RegExp('(' + escRx(state.search) + ')', 'gi'), '<mark>$1</mark>');
-}
-
-function renderAll() {
-  renderTV(); renderRadio(); renderFav();
-}
-
 function renderTV() {
   const grid = document.getElementById('tvGrid');
-  const filtered = [];
-  channelsData.forEach((c, idx) => {
-    const mc = state.tvCat === 'all' || c.category === state.tvCat;
-    const ms = !state.search || c.name.toLowerCase().includes(state.search);
-    if (mc && ms) filtered.push({ ...c, idx });
-  });
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty"><div class="empty-icon">📺</div><div class="empty-title">Каналы не найдены</div><div class="empty-text">Попробуйте обновить или изменить фильтры</div></div>';
-    return;
-  }
-  grid.innerHTML = filtered.map(c => cardHTML(c, c.idx, 'tv')).join('');
-  attachTVEvents(grid);
+  const q = state.tvFilter;
+  const s = state.search.toLowerCase();
+  let list = state.channels;
+  if (q !== 'all' && q !== 'fav') list = list.filter(c => c.category === q);
+  if (q === 'fav') list = list.filter((_, i) => state.favs.includes(i));
+  if (s) list = list.filter(c => c.name.toLowerCase().includes(s));
+  grid.innerHTML = list.map((c, i) => {
+    const idx = state.channels.indexOf(c);
+    const isFav = state.favs.includes(idx);
+    return `<div class="card" data-idx="${idx}">
+      <div class="card poster"><span class="letter">${c.name.charAt(0)}</span></div>
+      <div class="card info">
+        <div class="card-name">${c.name}</div>
+        <div class="card-meta"><span class="quality ${c.quality}">${c.quality.toUpperCase()}</span></div>
+        <div class="card-actions"><button class="btn-play" onclick="event.stopPropagation();openPlayer(${idx})"><i class="fas fa-play"></i>Смотреть</button><button class="star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${idx},'tv')"><i class="fas fa-star"></i></button></div>
+      </div>
+    </div>`;
+  }).join('');
+  if (!list.length) grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';
 }
-
 function renderRadio() {
   const grid = document.getElementById('radioGrid');
-  const filtered = [];
-  radioData.forEach((r, idx) => {
-    const mc = state.radioCat === 'all' || r.name.toLowerCase().includes(state.radioCat);
-    const ms = !state.search || r.name.toLowerCase().includes(state.search);
-    if (mc && ms) filtered.push({ ...r, idx });
-  });
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty"><div class="empty-icon">📻</div><div class="empty-title">Станции не найдены</div></div>';
-    return;
-  }
-  grid.innerHTML = filtered.map(r => radioHTML(r, r.idx)).join('');
-  attachRadioEvents(grid);
+  const q = state.radioFilter;
+  const s = state.search.toLowerCase();
+  let list = state.radios;
+  if (q !== 'all' && q !== 'fav') list = list.filter(c => c.category === q);
+  if (q === 'fav') list = list.filter((_, i) => state.favs.includes('r' + i));
+  if (s) list = list.filter(c => c.name.toLowerCase().includes(s));
+  grid.innerHTML = list.map((r, i) => {
+    const idx = state.radios.indexOf(r);
+    const isFav = state.favs.includes('r' + i);
+    return `<div class="radio-card" data-idx="${i}">
+      <div class="eq"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div>
+      <div class="radio-info"><div class="radio-name">${r.name}</div><div class="radio-cat">${r.category}</div></div>
+      <button class="btn-play" onclick="event.stopPropagation();playRadio(${i})"><i class="fas fa-play"></i>Слушать</button>
+      <button class="star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="fas fa-star"></i></button>
+    </div>`;
+  }).join('');
+  if (!list.length) grid.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';
+}
+function renderCats() {
+  const tvCats = ['all','Кино','Спорт','Новости','Детские','Музыка','HD','Регион','Другое','fav'];
+  document.getElementById('tvCats').innerHTML = tvCats.map(c => `<div class="cat${c===state.tvFilter?' active':''}" onclick="setTvFilter('${c}')">${c==='all'?'Все':c==='fav'?'⭐ Избранное':c}</div>`).join('');
+  const rCats = ['all','Хиты','Рок','Джаз','Разговорное','Танцевальное','Регион','fav'];
+  document.getElementById('radioCats').innerHTML = rCats.map(c => `<div class="cat radio-cat${c===state.radioFilter?' active':''}" onclick="setRadioFilter('${c}')">${c==='all'?'Все':c==='fav'?'⭐ Избранное':c}</div>`).join('');
 }
 
-function renderFav() {
-  const grid = document.getElementById('favGrid');
-  const items = [];
-  favorites.forEach(f => {
-    if (f.type === 'tv' && channelsData[f.idx]) items.push({ ...channelsData[f.idx], idx: f.idx, type: 'tv' });
-    else if (f.type === 'radio' && radioData[f.idx]) items.push({ ...radioData[f.idx], idx: f.idx, type: 'radio' });
-  });
-  const filtered = items.filter(c => {
-    const isR = c.type === 'radio';
-    const mt = state.favCat === 'all' || (state.favCat === 'tv' ? !isR : isR);
-    const ms = !state.search || c.name.toLowerCase().includes(state.search);
-    return mt && ms;
-  });
-  if (!filtered.length) {
-    grid.innerHTML = '<div class="empty"><div class="empty-icon">⭐</div><div class="empty-title">Нет избранного</div><div class="empty-text">Добавьте каналы кнопкой ⭐</div></div>';
-    return;
-  }
-  grid.innerHTML = filtered.map(c => c.type === 'radio' ? radioHTML(c, c.idx) : cardHTML(c, c.idx, 'tv')).join('');
-  if (state.tab === 'fav' && state.favCat === 'all' || state.tab === 'fav') {
-    document.querySelectorAll('#favGrid .card').forEach(el => attachTVEvents(document.getElementById('favGrid')));
-    document.querySelectorAll('#favGrid .radio-card').forEach(el => attachRadioEvents(document.getElementById('favGrid')));
-  }
-}
+/* ========== FILTERS ========== */
+function setTvFilter(cat) { state.tvFilter = cat; renderCats(); renderTV(); }
+function setRadioFilter(cat) { state.radioFilter = cat; renderCats(); renderRadio(); }
 
-// Карточка — ТОЛЬКО индекс в data, URL нигде
-function cardHTML(c, idx, type) {
-  const isFav = favorites.some(f => f.idx === idx && f.type === 'tv');
-  return `<div class="card ${isFav ? 'fav' : ''}" data-idx="${idx}" data-type="${type}">
-    <button class="card-fav" data-idx="${idx}" data-type="${type}"><i class="fas fa-star"></i></button>
-    <div class="card-preview">
-      <div class="card-logo">${c.name.charAt(0).toUpperCase()}</div>
-      <div class="card-quality q-${c.quality}"><span class="q-dot"></span>${c.quality === 'fullhd' ? 'FULL HD' : c.quality.toUpperCase()}</div>
-    </div>
-    <div class="card-info">
-      <div class="card-title">${hl(c.name)}</div>
-      <div class="card-meta"><span class="live-dot"></span><span>Прямой эфир</span></div>
-      <button class="watch-btn" data-idx="${idx}" data-type="${type}"><i class="fas fa-play"></i> Смотреть</button>
-    </div>
-  </div>`;
-}
+/* ========== SEARCH ========== */
+document.getElementById('searchInput').addEventListener('input', e => { state.search = e.target.value; renderTV(); renderRadio(); });
 
-function radioHTML(c, idx) {
-  const isFav = favorites.some(f => f.idx === idx && f.type === 'radio');
-  return `<div class="radio-card ${isFav ? 'fav' : ''}" data-idx="${idx}" data-type="radio">
-    <div class="radio-cover">${c.name.charAt(0).toUpperCase()}<div class="eq"><span></span><span></span><span></span><span></span><span></span></div></div>
-    <div class="radio-name">${hl(c.name)}</div>
-    <div class="radio-genre">📻 Онлайн</div>
-    <div class="radio-actions">
-      <button class="radio-btn play-radio" data-idx="${idx}"><i class="fas fa-play"></i> Слушать</button>
-      <button class="radio-btn ${isFav ? 'fav-active' : ''}" data-idx="${idx}" data-fav="1"><i class="fas fa-star"></i></button>
-    </div>
-  </div>`;
-}
-
-function attachTVEvents(grid) {
-  grid.querySelectorAll('.card').forEach(card => {
-    const idx = parseInt(card.dataset.idx);
-    card.addEventListener('click', e => {
-      if (e.target.closest('.card-fav') || e.target.closest('.watch-btn')) return;
-      openPlayer(idx, 'tv');
-    });
-    const favBtn = card.querySelector('.card-fav');
-    if (favBtn) favBtn.addEventListener('click', e => { e.stopPropagation(); toggleFav(idx, 'tv'); });
-    const watchBtn = card.querySelector('.watch-btn');
-    if (watchBtn) watchBtn.addEventListener('click', e => { e.stopPropagation(); openPlayer(idx, 'tv'); });
-  });
-}
-function attachRadioEvents(grid) {
-  grid.querySelectorAll('.radio-card').forEach(card => {
-    const idx = parseInt(card.dataset.idx);
-    const playBtn = card.querySelector('.play-radio');
-    if (playBtn) playBtn.addEventListener('click', e => { e.stopPropagation(); playRadio(idx); });
-    const favBtn = card.querySelector('[data-fav]');
-    if (favBtn) favBtn.addEventListener('click', e => { e.stopPropagation(); toggleFav(idx, 'radio'); });
-  });
-}
-
-/* ========== 🔒 ОТКРЫТИЕ ВИДЕОПЛЕЕРА — URL ИЗ ПАМЯТИ ========== */
-function openPlayer(idx, type) {
-  const channel = channelsData[idx];
-  if (!channel) return;
-  state.playingIdx = idx;
-  document.getElementById('playerName').textContent = channel.name;
-  document.getElementById('playerMeta').textContent = 'Прямой эфир • ' + channel.quality.toUpperCase();
-  document.getElementById('playerLogo').textContent = channel.name.charAt(0).toUpperCase();
-  const isFav = favorites.some(f => f.idx === idx && f.type === 'tv');
-  document.getElementById('playerFav').innerHTML = isFav
-    ? '<i class="fas fa-star" style="color:#FFD600"></i>'
-    : '<i class="far fa-star"></i>';
-  document.getElementById('playerModal').classList.add('show');
-  document.body.style.overflow = 'hidden';
-  document.getElementById('playerLoader').classList.remove('hidden');
-
-  // 🔒 URL передаётся ТОЛЬКО как аргумент функции — не сохраняется в DOM
-  loadStream(channel.url);
-}
-
-function loadStream(url) {
-  if (!url) {
-    // URL нет в кеше — нужно пересканировать
-    document.getElementById('playerLoader').classList.add('hidden');
-    toast('⚠️ Кеш пуст — обновите каналы');
-    return;
-  }
-  if (state.hlsInstance) { state.hlsInstance.destroy(); state.hlsInstance = null; }
-
-  const video = document.getElementById('videoPlayer');
-
-  if (url.includes('.m3u8')) {
-    if (Hls.isSupported()) {
-      state.hlsInstance = new Hls();
-      state.hlsInstance.loadSource(url);
-      state.hlsInstance.attachMedia(video);
-      state.hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = url;
-      video.play().catch(() => toast('❌ Не удалось запустить'));
-    }
-  } else {
-    video.src = url;
-    video.play().catch(() => toast('❌ Не удалось запустить'));
-  }
-  video.onplaying = () => {
-    document.getElementById('playerLoader').classList.add('hidden');
-    document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
-  };
-  video.onwaiting = () => document.getElementById('playerLoader').classList.remove('hidden');
-  video.onerror = () => {
-    document.getElementById('playerLoader').classList.add('hidden');
-    toast('❌ Поток недоступен');
-  };
-}
-
-function togglePlay() {
-  const v = document.getElementById('videoPlayer');
-  if (v.paused) { v.play(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>'; }
-  else { v.pause(); document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>'; }
-}
-function closePlayer() {
-  document.getElementById('playerModal').classList.remove('show');
-  document.body.style.overflow = '';
-  const v = document.getElementById('videoPlayer');
-  v.pause(); if (state.hlsInstance) { state.hlsInstance.destroy(); state.hlsInstance = null; }
-  state.playingIdx = -1;
-}
-function toggleMute() {
-  const v = document.getElementById('videoPlayer');
-  v.muted = !v.muted;
-  document.getElementById('volIcon').className = v.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
-}
-document.getElementById('volSlider').onclick = e => {
-  const r = e.currentTarget.getBoundingClientRect();
-  const p = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
-  document.getElementById('videoPlayer').volume = p;
-  document.getElementById('volFill').style.width = (p * 100) + '%';
-};
-document.getElementById('progressBar').onclick = e => {
-  const v = document.getElementById('videoPlayer');
-  if (!v.duration) return;
-  const r = e.currentTarget.getBoundingClientRect();
-  v.currentTime = ((e.clientX - r.left) / r.width) * v.duration;
-};
-document.getElementById('videoPlayer').ontimeupdate = function () {
-  const p = (this.currentTime / this.duration) * 100 || 0;
-  document.getElementById('progressFill').style.width = p + '%';
-  document.getElementById('timeDisplay').textContent = fmt(this.currentTime) + ' / ' + fmt(this.duration);
-};
-document.getElementById('pipBtn').onclick = async () => {
-  try {
-    const v = document.getElementById('videoPlayer');
-    if (document.pictureInPictureElement) await document.exitPictureInPicture();
-    else await v.requestPictureInPicture();
-  } catch (e) { toast('❌ PiP недоступен'); }
-};
-document.getElementById('fsBtn').onclick = () => {
-  if (document.fullscreenElement) document.exitFullscreen();
-  else document.querySelector('.player-wrap').requestFullscreen();
-};
-document.getElementById('playerFav').onclick = () => {
-  if (state.playingIdx >= 0) {
-    toggleFav(state.playingIdx, 'tv');
-    const isFav = favorites.some(f => f.idx === state.playingIdx && f.type === 'tv');
-    document.getElementById('playerFav').innerHTML = isFav
-      ? '<i class="fas fa-star" style="color:#FFD600"></i>'
-      : '<i class="far fa-star"></i>';
-  }
-};
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && document.getElementById('playerModal').classList.contains('show')) closePlayer();
-  if (document.getElementById('playerModal').classList.contains('show') && e.code === 'Space') {
-    e.preventDefault(); togglePlay();
-  }
-});
-
-/* ========== 🔒 АУДИОПЛЕЕР — URL ИЗ ПАМЯТИ ========== */
-function playRadio(idx) {
-  const station = radioData[idx];
-  if (!station) return;
-  state.audioIdx = idx;
-  document.getElementById('audioName').textContent = station.name;
-  document.getElementById('audioCover').innerHTML =
-    station.name.charAt(0).toUpperCase() +
-    '<div class="eq" style="display:flex"><span></span><span></span><span></span><span></span><span></span></div>';
-  document.getElementById('audioPlayerUI').classList.add('show');
-  document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active'));
-  const target = document.querySelector(`.radio-card[data-idx="${idx}"]`);
-  if (target) target.classList.add('active');
-
-  // 🔒 URL — прямо из защищённого массива
-  const audioEl = document.getElementById('audioPlayer');
-  if (state.currentAudio) { state.currentAudio.pause(); state.currentAudio = null; }
-  if (!station.url) { toast('⚠️ Кеш пуст — обновите каналы'); return; }
-  state.currentAudio = new Audio(station.url);
-  state.currentAudio.play().catch(() => toast('❌ Поток недоступен'));
-  document.getElementById('audioPlay').innerHTML = '<i class="fas fa-pause"></i>';
-}
-function closeAudio() {
-  document.getElementById('audioPlayerUI').classList.remove('show');
-  if (state.currentAudio) state.currentAudio.pause();
-  state.currentAudio = null; state.audioIdx = -1;
-  document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('active'));
-}
-document.getElementById('audioPlay').onclick = () => {
-  if (!state.currentAudio) return;
-  if (state.currentAudio.paused) {
-    state.currentAudio.play();
-    document.getElementById('audioPlay').innerHTML = '<i class="fas fa-pause"></i>';
-  } else {
-    state.currentAudio.pause();
-    document.getElementById('audioPlay').innerHTML = '<i class="fas fa-play"></i>';
-  }
-};
-
-/* ========== ИЗБРАННОЕ — ТОЛЬКО ИНДЕКСЫ ========== */
+/* ========== FAVORITES ========== */
 function toggleFav(idx, type) {
-  const ex = favorites.findIndex(f => f.idx === idx && f.type === type);
-  if (ex >= 0) { favorites.splice(ex, 1); toast('⭐ Удалено из избранного'); }
-  else { favorites.push({ idx, type }); toast('⭐ Добавлено в избранное'); }
-  localStorage.setItem('stv_fav_idx', JSON.stringify(favorites));
-  renderAll();
-  updateFavBadge();
+  const key = type === 'radio' ? 'r' + idx : idx;
+  const pos = state.favs.indexOf(key);
+  if (pos > -1) { state.favs.splice(pos, 1); toast('🗑 Удалено из избранного'); }
+  else { state.favs.push(key); toast('⭐ Добавлено в избранное'); }
+  localStorage.setItem('stv_fav', JSON.stringify(state.favs));
+  renderTV(); renderRadio();
 }
-function updateFavBadge() {
-  document.getElementById('favBadge').textContent = favorites.length;
-  document.getElementById('favBadgeMobile').textContent = favorites.length;
-  document.getElementById('favBadgeMobile').style.display = favorites.length ? 'flex' : 'none';
+function clearFav() { if (confirm('Очистить избранное?')) { state.favs = []; localStorage.removeItem('stv_fav'); renderTV(); renderRadio(); toast('🗑 Избранное очищено'); } }
+
+/* ========== PLAYER ========== */
+function openPlayer(idx) {
+  const ch = state.channels[idx];
+  if (!ch || !ch.url) return;
+  state.playerIdx = idx;
+  document.getElementById('playerTitle').textContent = ch.name;
+  const modal = document.getElementById('videoModal');
+  modal.classList.add('show');
+  const video = document.getElementById('videoPlayer');
+  if (state.hls) state.hls.destroy();
+  if (ch.url.includes('.m3u8')) {
+    if (Hls.isSupported()) { state.hls = new Hls(); state.hls.loadSource(ch.url); state.hls.attachMedia(video); state.hls.on(Hls.Events.MANIFEST_PARSED, () => video.play()); }
+    else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = ch.url; video.play(); }
+  } else { video.src = ch.url; video.play(); }
 }
-updateFavBadge();
 
-/* ========== TABS / CATS / SEARCH ========== */
-document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => switchTab(b.dataset.tab)));
-function switchTab(tab) {
-  state.tab = tab;
-  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-  document.querySelectorAll('.tab-page').forEach(p => p.style.display = p.dataset.page === tab ? 'block' : 'none');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (tab === 'fav') renderFav();
+function playRadio(idx) {
+  const r = state.radios[idx];
+  if (!r || !r.url) return;
+  const bar = document.getElementById('audioBar');
+  document.getElementById('audioName').textContent = r.name;
+  bar.classList.add('show');
+  if (state.audioEl) { state.audioEl.pause(); state.audioEl = null; }
+  state.audioEl = new Audio(r.url);
+  state.audioEl.play().catch(() => toast('❌ Не удалось воспроизвести'));
 }
-document.getElementById('tvCats').addEventListener('click', e => {
-  if (e.target.classList.contains('cat')) {
-    state.tvCat = e.target.dataset.cat;
-    document.querySelectorAll('#tvCats .cat').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active'); renderTV();
-  }
-});
-document.getElementById('radioCats').addEventListener('click', e => {
-  if (e.target.classList.contains('cat')) {
-    state.radioCat = e.target.dataset.cat;
-    document.querySelectorAll('#radioCats .cat').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active'); renderRadio();
-  }
-});
-document.getElementById('favCats').addEventListener('click', e => {
-  if (e.target.classList.contains('cat')) {
-    state.favCat = e.target.dataset.cat;
-    document.querySelectorAll('#favCats .cat').forEach(c => c.classList.remove('active'));
-    e.target.classList.add('active'); renderFav();
-  }
-});
 
-const sInput = document.getElementById('searchInput');
-const sClear = document.getElementById('searchClear');
-sInput.addEventListener('input', e => {
-  state.search = e.target.value.toLowerCase().trim();
-  sClear.classList.toggle('show', state.search);
-  if (state.tab === 'tv') renderTV();
-  else if (state.tab === 'radio') renderRadio();
-  else renderFav();
-});
-sClear.onclick = () => { sInput.value = ''; state.search = ''; sClear.classList.remove('show'); renderAll(); };
-
-/* ========== КНОПКИ ========== */
-document.getElementById('refreshBtn').onclick = startScan;
-document.getElementById('randomBtn').onclick = randomChannel;
-function randomChannel() {
-  if (!channelsData.length) return toast('❌ Нет каналов');
-  openPlayer(Math.floor(Math.random() * channelsData.length), 'tv');
+function closePlayer() {
+  const modal = document.getElementById('videoModal');
+  modal.classList.remove('show');
+  const video = document.getElementById('videoPlayer');
+  video.pause(); video.src = '';
+  if (state.hls) { state.hls.destroy(); state.hls = null; }
+  state.playerIdx = -1;
 }
-document.getElementById('refreshSettingsBtn').onclick = startScan;
-document.getElementById('clearCacheBtn').onclick = () => {
-  if (confirm('Очистить весь кеш?')) {
-    localStorage.removeItem('stv_meta');
-    channelsData = []; radioData = []; renderAll(); updateCounters();
-    toast('🗑 Кеш очищен');
-  }
-};
-document.getElementById('clearFavBtn').onclick = () => {
-  if (confirm('Очистить избранное?')) {
-    favorites = []; localStorage.removeItem('stv_fav_idx'); renderAll(); updateFavBadge();
-    toast('🗑 Избранное очищено');
-  }
-};
-document.getElementById('shareBtn').onclick = () => {
-  if (navigator.share) navigator.share({ title: 'S TV', text: 'ТВ и Радио онлайн', url: location.href });
-  else { navigator.clipboard.writeText(location.href); toast('✅ Ссылка скопирована'); }
-};
 
-/* ========== НАСТРОЙКИ (тема, размер) ========== */
-document.getElementById('themeChoice').addEventListener('click', e => {
-  if (!e.target.classList.contains('choice')) return;
-  document.querySelectorAll('#themeChoice .choice').forEach(c => c.classList.remove('active'));
-  e.target.classList.add('active');
-  const v = e.target.dataset.val;
-  document.body.style.background = v === 'gray' ? '#1a1a20' : '#0a0a14';
-  localStorage.setItem('stv_theme', v);
+/* ========== VIDEO CONTROLS ========== */
+const videoPlayer = document.getElementById('videoPlayer');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const progressPlayer = document.getElementById('progressPlayer');
+const progressFillPlayer = document.getElementById('progressFillPlayer');
+const timeDisplay = document.getElementById('timeDisplay');
+
+playPauseBtn.addEventListener('click', () => { videoPlayer.paused ? videoPlayer.play() : videoPlayer.pause(); });
+videoPlayer.addEventListener('play', () => playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>');
+videoPlayer.addEventListener('pause', () => playPauseBtn.innerHTML = '<i class="fas fa-play"></i>');
+videoPlayer.addEventListener('timeupdate', () => {
+  if (videoPlayer.duration) {
+    const pct = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+    progressFillPlayer.style.width = pct + '%';
+    timeDisplay.textContent = `${fmt(videoPlayer.currentTime)} / ${fmt(videoPlayer.duration)}`;
+  }
+});
+progressPlayer.addEventListener('click', e => {
+  if (!videoPlayer.duration) return;
+  const rect = progressPlayer.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  videoPlayer.currentTime = pct * videoPlayer.duration;
+});
+document.getElementById('muteBtn').addEventListener('click', function() {
+  videoPlayer.muted = !videoPlayer.muted;
+  this.innerHTML = videoPlayer.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+});
+document.getElementById('fsBtn').addEventListener('click', () => { videoPlayer.requestFullscreen?.() || videoPlayer.webkitRequestFullscreen?.(); });
+document.getElementById('prevBtn').addEventListener('click', () => { if (state.playerIdx > 0) openPlayer(state.playerIdx - 1); });
+document.getElementById('nextBtn').addEventListener('click', () => { if (state.playerIdx < state.channels.length - 1) openPlayer(state.playerIdx + 1); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); if (e.key === ' ' && document.getElementById('videoModal').classList.contains('show')) { e.preventDefault(); playPauseBtn.click(); } });
+document.getElementById('videoModal').addEventListener('click', e => { if (e.target === document.getElementById('videoModal')) closePlayer(); });
+
+/* ========== AUDIO CONTROLS ========== */
+document.getElementById('audioPlayPause').addEventListener('click', () => {
+  if (!state.audioEl) return;
+  state.audioEl.paused ? state.audioEl.play() : state.audioEl.pause();
+});
+document.getElementById('audioPlayPause').addEventListener('click', function() {
+  if (!state.audioEl) return;
+  if (state.audioEl.paused) { state.audioEl.play(); this.innerHTML = '<i class="fas fa-pause"></i>'; }
+  else { state.audioEl.pause(); this.innerHTML = '<i class="fas fa-play"></i>'; }
+});
+document.getElementById('audioStop').addEventListener('click', () => {
+  if (state.audioEl) { state.audioEl.pause(); state.audioEl.currentTime = 0; }
+  document.getElementById('audioBar').classList.remove('show');
+});
+document.getElementById('audioMute').addEventListener('click', function() {
+  if (!state.audioEl) return;
+  state.audioEl.muted = !state.audioEl.muted;
+  this.innerHTML = state.audioEl.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
 });
 
-/* ========== API КЛЮЧ ========== */
-function getApiKey() {
-  let key = localStorage.getItem('stv_api_key');
-  if (!key) {
-    key = prompt('Введите API-ключ mediabay:');
-    if (key) {
-      localStorage.setItem('stv_api_key', key);
-    } else {
-      alert('API-ключ обязателен для работы');
-      return '';
-    }
-  }
-  return key;
+/* ========== RANDOM ========== */
+document.getElementById('randomBtn').addEventListener('click', () => {
+  if (state.currentTab === 'tv' && state.channels.length) { const r = state.channels[Math.floor(Math.random() * state.channels.length)]; openPlayer(state.channels.indexOf(r)); }
+  else if (state.currentTab === 'radio' && state.radios.length) { const r = state.radios[Math.floor(Math.random() * state.radios.length)]; playRadio(state.radios.indexOf(r)); }
+});
+
+/* ========== REFRESH ========== */
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  document.getElementById('loader').classList.remove('hide');
+  document.getElementById('app').classList.remove('show');
+  startScan();
+});
+
+/* ========== TABS ========== */
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    const tab = t.dataset.tab;
+    state.currentTab = tab;
+    document.getElementById('tvTab').style.display = tab === 'tv' ? '' : 'none';
+    document.getElementById('radioTab').style.display = tab === 'radio' ? '' : 'none';
+    document.getElementById('settingsTab').style.display = tab === 'settings' ? '' : 'none';
+  });
+});
+
+/* ========== THEME / SIZE ========== */
+function setTheme(theme, el) {
+  state.theme = theme;
+  document.body.className = theme === 'gray' ? 'gray' : '';
+  localStorage.setItem('stv_theme', theme);
+  document.querySelectorAll('[data-theme]').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
 }
-document.getElementById('sizeChoice').addEventListener('click', e => {
-  if (!e.target.classList.contains('choice')) return;
-  document.querySelectorAll('#sizeChoice .choice').forEach(c => c.classList.remove('active'));
-  e.target.classList.add('active');
-  const v = e.target.dataset.val;
-  const g = document.querySelector('.tv-grid');
-  if (!g) return;
-  g.style.gridTemplateColumns = v === 'compact' ? 'repeat(3,1fr)' : v === 'large' ? 'repeat(2,1fr)' : '';
-  localStorage.setItem('stv_size', v);
-});
+function setCardSize(size, el) {
+  state.cardSize = size;
+  const g = document.querySelector('.grid');
+  if (size === 'compact') g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(140px,1fr))';
+  else if (size === 'large') g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(260px,1fr))';
+  else g.style.gridTemplateColumns = '';
+  localStorage.setItem('stv_size', size);
+  document.querySelectorAll('[data-size]').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleAnim() {
+  state.animOn = !state.animOn;
+  document.body.style.setProperty('--trans', state.animOn ? '.3s ease' : '0s');
+  document.getElementById('animToggle').innerHTML = `<i class="fas fa-magic"></i>Анимации: ${state.animOn ? 'Вкл' : 'Выкл'}`;
+}
 
-/* ========== СЧЁТЧИКИ ========== */
-function updateCounters() {
-  document.getElementById('tvCount').textContent = channelsData.length;
-  document.getElementById('radioCount').textContent = radioData.length;
+/* ========== CACHE ========== */
+function clearCache() {
+  if (confirm('Очистить кэш каналов?')) {
+    localStorage.removeItem('stv_cache');
+    toast('🗑 Кэш очищен');
+    document.getElementById('cacheStatus').textContent = 'не загружен';
+  }
+}
+function loadCache() {
+  const cached = localStorage.getItem('stv_cache');
+  if (!cached) return false;
+  try {
+    const d = JSON.parse(cached);
+    if (Date.now() - d.t > 86400000) return false; // 24h
+    state.channels = d.channels.map(c => ({ name: c.n, quality: c.q, category: c.cat, url: '' }));
+    state.radios = d.radios.map(r => ({ name: r.n, category: r.cat, url: '' }));
+    state.cacheTime = d.t;
+    return true;
+  } catch { return false; }
 }
 
 /* ========== TOAST ========== */
-let toastT;
 function toast(msg) {
   const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
+  t.textContent = msg;
   t.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-/* ========== FAB ========== */
-window.addEventListener('scroll', () => {
-  document.getElementById('fabTop').classList.toggle('show', window.scrollY > 300);
+/* ========== SHARE ========== */
+function shareApp() {
+  if (navigator.share) navigator.share({ title: 'S TV', text: '📺 S TV — 850+ каналов. Разработчик: Safarali Group', url: location.href }).catch(() => {});
+  else { navigator.clipboard.writeText(location.href); toast('🔗 Ссылка скопирована'); }
+}
+
+/* ========== SCROLL ========== */
+document.getElementById('content').addEventListener('scroll', () => {
+  document.getElementById('scrollTop').classList.toggle('show', document.getElementById('content').scrollTop > 300);
 });
 
-/* ========== УТИЛИТЫ ========== */
-function fmt(s) {
-  if (isNaN(s)) return '00:00';
-  return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
-}
+/* ========== HELPERS ========== */
+function fmt(s) { if (!s || isNaN(s)) return '0:00'; const m = Math.floor(s / 60), sec = Math.floor(s % 60); return `${m}:${sec.toString().padStart(2, '0')}`; }
 
 /* ========== INIT ========== */
 window.addEventListener('load', () => {
-  initSplash();
-  const cached = loadMetaCache();
-  if (cached) { renderAll(); updateCounters(); }
-  setTimeout(() => {
-    document.getElementById('splash').classList.add('hidden');
+  drawStars();
+  if (loadCache()) {
+    updateUI();
+    document.getElementById('loader').classList.add('hide');
     document.getElementById('app').classList.add('show');
-    if (!cached) startScan();
-    else toast('📦 Загружено из кеша');
-  }, 1200);
-});
-window.addEventListener('resize', () => { canvas.width = innerWidth; canvas.height = innerHeight; });
-
-/* ========== 🔒 ДОПОЛНИТЕЛЬНАЯ ЗАЩИТА ========== */
-// Блокируем контекстное меню и выделение на всём сайте (защита от копирования URL через DOM)
-document.addEventListener('contextmenu', e => {
-  if (e.target.closest('.card') || e.target.closest('.radio-card')) {
-    // Разрешаем контекстное меню только на карточках (для будущих функций)
-    return;
-  }
-  e.preventDefault();
-  e.stopPropagation();
-});
-
-/* ========== PWA SERVICE WORKER ========== */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js')
-    .then(() => console.log('✅ sw.js registered'))
-    .catch(err => console.log('❌ sw.js failed:', err));
-}
-  }
-  e.preventDefault();
+    toast('📦 Загружен кэш');
+    if (Date.now() - state.cacheTime > 86400000) startScan();
+  } else { startScan(); }
 });
 </script>
 </body>
