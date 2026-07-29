@@ -5,749 +5,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>S TV — ТВ и Радио</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<meta property="og:title" content="S TV — ТВ и Радио">
-<meta property="og:description" content="Защищённый медиаплеер с 850+ каналами и радио">
-<meta property="og:image" content="og-image.png">
-<meta property="og:type" content="website">
-<meta name="twitter:card" content="summary_large_image">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#0a0a14">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0a0a14;--bg2:#0d0d1a;--card:rgba(255,255,255,.03);
-  --border:rgba(255,255,255,.06);--accent:#00d4ff;--radio:#ff5e94;
-  --hd:#00e676;--sd:#ffd600;--text:#e8e8f0;--muted:#6e7191;
-  --glass:rgba(10,10,20,.85);--blur:20px;
-  --radius:16px;--trans:.3s ease;
-}
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
-body.gray{--bg:#1a1a20;--bg2:#1e1e26}
-
-/* ========== LOADER ========== */
-#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s}
-#loader.hide{opacity:0;pointer-events:none}
-#starCanvas{position:absolute;inset:0}
-.loader-logo{font-size:64px;font-weight:900;color:var(--accent);text-shadow:0 0 60px var(--accent),0 0 120px var(--accent);letter-spacing:-2px;z-index:1}
-.loader-slogan{margin-top:8px;font-size:14px;color:var(--muted);z-index:1}
-.loader-dev{margin-top:4px;font-size:12px;color:var(--muted);z-index:1}
-.loader-ver{margin-top:2px;font-size:11px;color:var(--muted);z-index:1}
-.progress-wrap{width:280px;margin-top:24px;z-index:1}
-.progress-bar{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--radio));border-radius:2px;transition:width .3s}
-.progress-info{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--muted)}
-.mirror-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4caf50;margin-right:6px;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
-/* ========== APP ========== */
-#app{display:none;flex-direction:column;height:100vh}
-#app.show{display:flex}
-
-/* Header */
-header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(var(--blur));border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.logo{font-size:22px;font-weight:900;color:var(--accent);letter-spacing:-1px;white-space:nowrap}
-.search-wrap{flex:1;min-width:180px;position:relative}
-.search-wrap input{width:100%;padding:8px 12px 8px 36px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border var(--trans)}
-.search-wrap input:focus{border-color:var(--accent)}
-.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
-.counter{font-size:12px;color:var(--muted);white-space:nowrap}
-.mirror-badge{display:flex;align-items:center;font-size:11px;color:var(--muted);background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.15);padding:4px 10px;border-radius:20px;white-space:nowrap}
-.mirror-badge .dot{width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:6px}
-.btn{background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;display:flex;align-items:center;gap:6px;transition:all var(--trans);white-space:nowrap}
-.btn:hover{background:rgba(255,255,255,.08);border-color:var(--accent)}
-.btn:active{transform:scale(.96)}
-.btn.primary{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
-.btn.primary:hover{background:#00b8e6}
-.btn.spin i{animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* Tabs */
-.tabs{display:flex;background:var(--glass);backdrop-filter:blur(var(--blur));border-bottom:1px solid var(--border);padding:0 20px}
-.tab{flex:1;padding:14px;text-align:center;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;transition:all var(--trans);display:flex;align-items:center;justify-content:center;gap:6px}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.tab.radio-tab.active{color:var(--radio);border-bottom-color:var(--radio)}
-.tab:hover:not(.active){color:var(--text)}
-
-/* Content */
-.content{flex:1;overflow-y:auto;padding:16px;scroll-behavior:smooth}
-.content::-webkit-scrollbar{width:4px}
-.content::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
-
-/* Categories */
-.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.cat{padding:6px 14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all var(--trans);color:var(--muted)}
-.cat.active,.cat:hover{background:rgba(0,212,255,.12);border-color:var(--accent);color:var(--accent)}
-.cat.radio-cat.active,.cat.radio-cat:hover{background:rgba(255,94,148,.12);border-color:var(--radio);color:var(--radio)}
-
-/* Grid */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
-@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
-@media(min-width:900px){.grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
-@media(min-width:1200px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
-
-/* Card */
-.card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all var(--trans);position:relative}
-.card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.3);box-shadow:0 12px 40px rgba(0,0,0,.4)}
-.card.poster{aspect-ratio:16/9;background:linear-gradient(135deg,rgba(0,212,255,.05),rgba(255,94,148,.05));display:flex;align-items:center;justify-content:center}
-.card.poster .letter{font-size:42px;font-weight:900;color:rgba(0,212,255,.15)}
-.card.info{padding:12px}
-.card-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-meta{display:flex;align-items:center;gap:6px;margin-top:6px}
-.quality{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px}
-.quality.hd{background:rgba(0,230,118,.12);color:var(--hd)}
-.quality.sd{background:rgba(255,214,0,.12);color:var(--sd)}
-.quality.fhd{background:rgba(0,212,255,.12);color:var(--accent)}
-.card-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
-.btn-play{background:var(--accent);color:#000;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--trans)}
-.btn-play:hover{background:#00b8e6;transform:scale(1.04)}
-.btn-play:active{transform:scale(.96)}
-.star{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;transition:all var(--trans);padding:4px}
-.star.active{color:#ffd700;transform:scale(1.2)}
-.star:hover{transform:scale(1.1)}
-
-/* Radio card */
-.radio-card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all var(--trans);display:flex;align-items:center;gap:12px}
-.radio-card:hover{border-color:rgba(255,94,148,.3);transform:translateY(-2px)}
-.eq{display:flex;gap:3px;height:32px;align-items:flex-end}
-.eq-bar{width:4px;background:var(--radio);border-radius:2px;animation:eq .8s ease-in-out infinite alternate}
-.eq-bar:nth-child(1){height:12px;animation-delay:0s}
-.eq-bar:nth-child(2){height:20px;animation-delay:.15s}
-.eq-bar:nth-child(3){height:28px;animation-delay:.3s}
-.eq-bar:nth-child(4){height:16px;animation-delay:.45s}
-.eq-bar:nth-child(5){height:24px;animation-delay:.6s}
-@keyframes eq{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}
-.radio-info{flex:1}
-.radio-name{font-size:15px;font-weight:600}
-.radio-cat{font-size:11px;color:var(--muted);margin-top:2px}
-
-/* Player modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center}
-.modal.show{display:flex}
-.player-box{width:90%;max-width:900px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.player-top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
-.player-title{font-size:18px;font-weight:700}
-.player-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
-.player-close:hover{color:var(--text)}
-.player-vid{width:100%;aspect-ratio:16/9;background:#000}
-.player-vid video{width:100%;height:100%}
-.player-controls{display:flex;align-items:center;gap:12px;padding:16px 20px}
-.btn-ctrl{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--trans)}
-.btn-ctrl:hover{background:rgba(255,255,255,.1);border-color:var(--accent)}
-.btn-ctrl.play{background:var(--accent);color:#000;border-color:var(--accent)}
-.progress-wrap-player{flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;cursor:pointer;position:relative}
-.progress-fill-player{height:100%;background:var(--accent);border-radius:3px;width:0}
-.time{font-size:12px;color:var(--muted);white-space:nowrap}
-
-/* Audio bar */
-.audio-bar{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--glass);backdrop-filter:blur(var(--blur));border-top:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:150;transform:translateY(100%);transition:transform .3s}
-.audio-bar.show{transform:translateY(0)}
-.audio-info{flex:1;min-width:0}
-.audio-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.audio-eq{display:flex;gap:2px;height:20px;align-items:flex-end;margin-top:4px}
-.audio-eq span{width:3px;background:var(--radio);border-radius:1px;animation:eq .6s ease-in-out infinite alternate}
-.audio-eq span:nth-child(1){height:8px;animation-delay:0s}
-.audio-eq span:nth-child(2){height:14px;animation-delay:.2s}
-.audio-eq span:nth-child(3){height:10px;animation-delay:.4s}
-.audio-eq span:nth-child(4){height:18px;animation-delay:.1s}
-.audio-eq span:nth-child(5){height:12px;animation-delay:.3s}
-
-/* Toast */
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);padding:12px 24px;border-radius:12px;font-size:13px;z-index:300;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* Skeleton */
-.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-
-/* Scroll to top */
-.scroll-top{position:fixed;bottom:90px;right:20px;width:44px;height:44px;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:all var(--trans);z-index:100}
-.scroll-top.show{display:flex}
-.scroll-top:hover{background:var(--accent);color:#000}
-
-/* Empty */
-.empty{text-align:center;padding:60px 20px;color:var(--muted)}
-.empty i{font-size:48px;margin-bottom:16px;opacity:.3}
-.empty p{font-size:14px}
-
-/* Responsive */
-@media(max-width:599px){
-  header{padding:10px 12px;gap:8px}
-  .logo{font-size:18px}
-  .search-wrap{min-width:120px}
-  .counter{display:none}
-  .grid{gap:10px}
-  .card-info{padding:10px}
-  .btn{padding:6px 10px;font-size:12px}
-}
-</style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a14;--card:rgba(255,255,255,.03);--border:rgba(255,255,255,.06);--accent:#00d4ff;--radio:#ff5e94;--hd:#00e676;--sd:#ffd600;--text:#e8e8f0;--muted:#6e7191;--glass:rgba(10,10,20,.85)}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;background-attachment:fixed}
+body::-webkit-scrollbar{display:none}
+#loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out}
+#loader.hidden{opacity:0;pointer-events:none;visibility:hidden}
+.stars-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+.loader-content{position:relative;z-index:1;text-align:center}.s-logo{font-size:72px;font-weight:900;color:var(--accent);text-shadow:0 0 40px var(--accent),0 0 80px var(--accent);letter-spacing:-4px;margin-bottom:8px}.s-subtitle{font-size:16px;color:var(--muted);margin-bottom:24px;font-weight:400}.s-dev{font-size:14px;color:var(--muted);margin-bottom:8px}.s-version{font-size:12px;color:var(--muted);margin-bottom:24px}.progress-container{width:320px;margin-bottom:20px}.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--radio));width:0%}.stat-row{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;color:var(--muted)}.mirror-indicator{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:8px 16px;border-radius:20px;font-size:13px;color:var(--accent);gap:8px;z-index:1}.mirror-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+#app{position:relative;display:flex;flex-direction:column;height:100vh;visibility:hidden}.app-visible{visibility:inherit}
+header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}.logo{font-size:24px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-right:8px}.search-wrap{flex:1;min-width:200px;position:relative}.search-wrap input{width:100%;padding:10px 40px 10px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border .3s}.search-wrap input:focus{border-color:var(--accent)}.search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}.btn-group{display:flex;gap:8px;align-items:center}
+.nav-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;transition:.3s}.nav-btn:hover{border-color:var(--accent);color:var(--text)}.nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.tabs{display:flex;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0;position:relative}
+.tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:.3s;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}.tab.radio-tab.active{color:var(--radio);border-bottom-color:var(--radio)}.tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.02)}
+.content{flex:1;overflow-y:auto;padding:16px;scroll-snap-type:y mandatory}
+.category-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:0 16px}
+.cat-pill{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:.3s}.cat-pill:hover{border-color:var(--accent);color:var(--text)}.cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}.cat-pill.radio-cat.active{background:var(--radio);color:#fff;border-color:var(--radio)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;padding:0 16px 16px 16px;scroll-snap-align:start}
+.card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.3);box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.card.poster{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative}
+.card.poster .s-silver{font-size:48px;font-weight:900;color:rgba(0,212,255,.15)}.card.info{padding:12px;display:flex;flex-direction:column;flex:1}.c-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}.c-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.c-q{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}.c-q.sd{color:var(--sd);background:rgba(255,214,0,.1)}.c-q.hd{color:var(--hd);background:rgba(0,230,118,.1)}.c-q.fhd{color:#fff;background:rgba(0,212,255,.25)}.c-actions{margin-top:auto;display:flex;justify-content:space-between;align-items:center}.c-play{background:var(--accent);color:#000;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s}.c-play:hover{background:#00b8e6;transform:scale(1.05)}.c-star{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;transition:.2s}.c-star.active{color:#ffd700;transform:scale(1.1)}
+.radio-card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:16px}.radio-card:hover{border-color:rgba(255,94,148,.3);transform:translateY(-2px)}.r-eq{display:flex;gap:2px;height:32px;align-items:flex-end}.r-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .8s ease-in-out infinite alternate}@keyframes r-eq{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}.r-info{flex:1}.r-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}.r-cat{font-size:12px;color:var(--muted)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal.show{display:flex}.player{width:90%;max-width:900px;background:#000;border:1px solid var(--border);border-radius:16px;overflow-hidden}.p-header{padding:16px 20px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}.p-title{font-size:18px;font-weight:700;color:var(--text)}.p-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}.p-close:hover{color:var(--accent)}.v-area{position:relative;background:#000;aspect-ratio:16/9}.v-area video{width:100%;height:100%}.controls{padding:16px 20px;background:var(--bg);display:flex;align-items:center;gap:16px;border-top:1px solid var(--border)}.ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}.ctrl:hover{border-color:var(--accent)}.ctrl.play{background:var(--accent);color:#000;width:44px;height:44px}.progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;cursor:pointer}.progress-bar{height:100%;width:0;background:var(--accent);transition:0.2s}.time{font-size:12px;color:var(--muted);min-width:80px;text-align:right}
+.audio-bar{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--glass);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:150;transform:translateY(100%)}.audio-bar.show{transform:translateY(0)}.a-info{flex:1;min-width:0}.a-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.a-eq{display:flex;gap:2px;height:18px;align-items:flex-end;margin-top:2px}.a-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .6s ease-in-out infinite alternate}.a-ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}.a-ctrl:hover{border-color:var(--accent)}.a-ctrl.play{background:var(--radio);color:#000;border-color:var(--radio)}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(20px);padding:12px 24px;border-radius:12px;font-size:14px;z-index:300;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.empty{padding:60px 20px;text-align:center;color:var(--muted)}.empty i{font-size:48px;margin-bottom:16px;opacity:.3}.empty p{font-size:14px}
+.scroll-top{position:fixed;bottom:96px;right:20px;width:44px;height:44px;background:var(--glass);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:.3s;z-index:100}.scroll-top.show{display:flex}.scroll-top:hover{background:var(--accent);color:#000}</style>
 </head>
 <body>
+<canvas class="stars-canvas" id="stars"></canvas>
+<div id="loader"><div class="loader-content"><div class="s-logo">S TV</div><div class="s-subtitle">ТВ и Радио — всегда под рукой</div><div class="s-dev">by Safarali Group 🛡</div><div class="s-version">v1.0.0</div><div class="progress-container"><div class="progress-bar"><div class="progress-fill" id="pfill"></div></div></div><div class="stat-row"><span>Сканирование...</span><span id="sc-count">ТВ: 0 | Радио: 0</span></div></div><div class="mirror-indicator"><div class="mirror-dot"></div><span id="mirror-text">api.v1.mediabay.tv</span></div></div>
 
-<!-- ========== LOADER ========== -->
-<div id="loader">
-  <canvas id="starCanvas"></canvas>
-  <div class="loader-logo">S TV</div>
-  <div class="loader-slogan">ТВ и Радио — всегда под рукой</div>
-  <div class="loader-dev">by Safarali Group 🛡</div>
-  <div class="loader-ver">v1.0.0</div>
-  <div class="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-info">
-      <span id="progressTxt">Сканирование...</span>
-      <span id="progressCount">ТВ: 0 | Радио: 0</span>
-    </div>
-  </div>
-  <div class="mirror-badge" id="mirrorBadge" style="margin-top:16px;z-index:1"><span class="dot"></span><span id="mirrorName">Подключение...</span></div>
-</div>
-
-<!-- ========== APP ========== -->
-<div id="app">
-  <header>
-    <div class="logo">S TV</div>
-    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Поиск каналов..."></div>
-    <div class="counter" id="counter">ТВ: 0 | Радио: 0</div>
-    <div class="mirror-badge"><span class="dot"></span><span id="headerMirror">—</span></div>
-    <button class="btn" id="randomBtn"><i class="fas fa-dice"></i>Случайный</button>
-    <button class="btn" id="refreshBtn"><i class="fas fa-sync-alt"></i>Обновить</button>
-  </header>
-
-  <div class="tabs">
-    <div class="tab active" data-tab="tv"><i class="fas fa-tv"></i>ТВ</div>
-    <div class="tab radio-tab" data-tab="radio"><i class="fas fa-broadcast-tower"></i>Радио</div>
-    <div class="tab" data-tab="settings"><i class="fas fa-cog"></i>Настройки</div>
-  </div>
-
-  <div class="content" id="content">
-    <!-- TV -->
-    <div id="tvTab">
-      <div class="cats" id="tvCats"></div>
-      <div class="grid" id="tvGrid"></div>
-    </div>
-    <!-- Radio -->
-    <div id="radioTab" style="display:none">
-      <div class="cats" id="radioCats"></div>
-      <div class="grid" id="radioGrid" style="grid-template-columns:1fr"></div>
-    </div>
-    <!-- Settings -->
-    <div id="settingsTab" style="display:none">
-      <div style="max-width:600px;margin:0 auto;padding:20px">
-        <h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Настройки</h2>
-
-        <div style="margin-bottom:24px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🎨 Оформление</h3>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-            <button class="btn cat active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button>
-            <button class="btn cat" data-theme="dark" onclick="setTheme('dark',this)">Тёмная</button>
-            <button class="btn cat" data-theme="gray" onclick="setTheme('gray',this)">Серая</button>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
-            <button class="btn cat active" data-size="normal" onclick="setCardSize('normal',this)">Стандарт</button>
-            <button class="btn cat" data-size="compact" onclick="setCardSize('compact',this)">Компакт</button>
-            <button class="btn cat" data-size="large" onclick="setCardSize('large',this)">Крупный</button>
-          </div>
-          <button class="btn" id="animToggle" onclick="toggleAnim()"><i class="fas fa-magic"></i>Анимации: Вкл</button>
-        </div>
-
-        <div style="margin-bottom:24px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🔄 Данные</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Кэш: <span id="cacheStatus" style="color:var(--text)">не загружен</span></p>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Зеркало: <span id="activeMirror" style="color:var(--accent)">—</span></p>
-          <button class="btn primary" onclick="startScan()" style="margin-bottom:10px;width:100%"><i class="fas fa-sync-alt"></i>Обновить каналы</button>
-          <button class="btn" onclick="clearCache()" style="margin-bottom:10px;width:100%"><i class="fas fa-trash"></i>Очистить кэш</button>
-          <button class="btn" onclick="clearFav()" style="width:100%"><i class="fas fa-star"></i>Очистить избранное</button>
-        </div>
-
-        <div style="margin-bottom:24px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📡 API</h3>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:4px">Основное: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:4px">Резерв 1: <code style="color:var(--text)">api.mediabay.tv</code></p>
-          <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Резерв 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Таймаут: <select id="timeoutSel" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit"><option value="5000">5с</option><option value="10000" selected>10с</option><option value="15000">15с</option></select></p>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Пачка: <select id="batchSel" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);padding:4px 8px;border-radius:6px;font-family:inherit"><option value="20">20</option><option value="30" selected>30</option><option value="50">50</option></select></p>
-        </div>
-
-        <div style="margin-bottom:24px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">ℹ️ О приложении</h3>
-          <div style="text-align:center;padding:20px">
-            <div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div>
-            <p style="font-size:14px;color:var(--muted);margin-top:8px">Версия 1.0.0</p>
-            <p style="font-size:13px;color:var(--muted)">Разработчик: Safarali Group 🛡</p>
-            <p style="font-size:12px;color:var(--muted);margin-top:4px">© 2026 Safarali Group</p>
-          </div>
-        </div>
-
-        <div style="margin-bottom:24px">
-          <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📤 Поделиться</h3>
-          <button class="btn" onclick="shareApp()" style="width:100%;margin-bottom:10px"><i class="fas fa-share-alt"></i>Поделиться S TV</button>
-          <button class="btn" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')" style="width:100%;margin-bottom:10px"><i class="fab fa-telegram"></i>Telegram: @Mushtariy_LLC</button>
-          <button class="btn" onclick="window.open('https://github.com/tojikontvru/S_TV','_blank')" style="width:100%"><i class="fab fa-github"></i>⭐ Оценить на GitHub</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== VIDEO PLAYER ========== -->
-<div class="modal" id="videoModal">
-  <div class="player-box">
-    <div class="player-top">
-      <div class="player-title" id="playerTitle">Канал</div>
-      <button class="player-close" onclick="closePlayer()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="player-vid"><video id="videoPlayer" playsinline></video></div>
-    <div class="player-controls">
-      <button class="btn-ctrl" id="prevBtn"><i class="fas fa-step-backward"></i></button>
-      <button class="btn-ctrl play" id="playPauseBtn"><i class="fas fa-play"></i></button>
-      <button class="btn-ctrl" id="nextBtn"><i class="fas fa-step-forward"></i></button>
-      <div class="progress-wrap-player" id="progressPlayer"><div class="progress-fill-player" id="progressFillPlayer"></div></div>
-      <span class="time" id="timeDisplay">0:00 / 0:00</span>
-      <button class="btn-ctrl" id="muteBtn"><i class="fas fa-volume-up"></i></button>
-      <button class="btn-ctrl" id="fsBtn"><i class="fas fa-expand"></i></button>
-    </div>
-  </div>
-</div>
-
-<!-- ========== AUDIO BAR ========== -->
-<div class="audio-bar" id="audioBar">
-  <div class="audio-eq"><span></span><span></span><span></span><span></span><span></span></div>
-  <div class="audio-info"><div class="audio-name" id="audioName">Радио</div></div>
-  <button class="btn-ctrl play" id="audioPlayPause"><i class="fas fa-play"></i></button>
-  <button class="btn-ctrl" id="audioStop"><i class="fas fa-stop"></i></button>
-  <button class="btn-ctrl" id="audioMute"><i class="fas fa-volume-up"></i></button>
-</div>
-
-<!-- ========== TOAST ========== -->
-<div class="toast" id="toast"></div>
-
-<!-- ========== SCROLL TOP ========== -->
-<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+<div id="app" class="app-hidden"><header><div class="logo">S TV</div><div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Поиск каналов..."></div><div class="btn-group"><button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>ТВ</button><button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Радио</button><button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Настройки</button></div></header><div class="tabs"><div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Все</div><div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Кино</div><div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Спорт</div><div class="tv-tab" data-cat="news" onclick="setCat('news')">Новости</div><div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Детские</div><div class="tv-tab" data-cat="music" onclick="setCat('music')">Музыка</div><div class="tv-tab" data-cat="hd" onclick="setCat('hd')">HD</div><div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Регион</div><div class="tv-tab" data-cat="other" onclick="setCat('other')">Другое</div><div class="tv-tab" data-cat="fav" onclick="setCat('fav')">⭐ Избранное</div></div><div class="content" id="content"><div id="tvview"><div class="category-filters" id="tcats"></div><div class="grid" id="tvgrid"></div></div><div id="radioview" style="display:none"><div class="category-filters" id="rcats"></div><div class="grid" id="radiogrid" style="grid-template-columns:1fr"></div></div><div id="settingsview" style="display:none;max-width:600px;padding:20px"><h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Настройки</h2><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🎨 Оформление</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px"><button class="cat-pill active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button><button class="cat-pill" data-theme="dark" onclick="setTheme('dark',this)">Тёмная</button><button class="cat-pill" data-theme="gray" onclick="setTheme('gray',this)">Серая</button></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px"><button class="cat-pill active" data-size="normal" onclick="setSize('normal',this)">Стандарт</button><button class="cat-pill" data-size="compact" onclick="setSize('compact',this)">Компакт</button><button class="cat-pill" data-size="large" onclick="setSize('large',this)">Крупный</button></div></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🔄 Данные</h3><p style="font-size:13px;color:var(--muted);margin-bottom:8px">Кэш: <span id="cachetxt">не загружен</span></p><p style="font-size:13px;color:var(--muted);margin-bottom:16px">Зеркало: <span id="actmirr" style="color:var(--accent)">—</span></p><button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="startScan()"><i class="fas fa-sync-alt"></i>Обновить каналы</button><button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="clearCache()"><i class="fas fa-trash"></i>Очистить кэш</button><button class="nav-btn" style="width:100%" onclick="clearFav()"><i class="fas fa-star"></i>Очистить избранное</button></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📡 API</h3><p style="font-size:13px;color:var(--muted)">Основное: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p><p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 1: <code style="color:var(--text)">api.mediabay.tv</code></p><p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">ℹ️ О приложении</h3><div style="text-align:center;padding:20px"><div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div><p style="font-size:14px;color:var(--muted);margin-top:8px">Версия 1.0.0</p><p style="font-size:13px;color:var(--muted)">Разработчик: Safarali Group 🛡</p><p style="font-size:12px;color:var(--muted);margin-top:4px">© 2026 Safarali Group</p></div></div><div><div style="margin-bottom:12px"><h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:var(--muted)">📤 Поделиться</h3><button class="nav-btn" style="width:100%" onclick="share()"><i class="fas fa-share-alt"></i>Поделиться</button></div><div style="margin-bottom:12px"><button class="nav-btn" style="width:100%" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')"><i class="fab fa-telegram"></i>@Mushtariy_LLC</button></div><div><button class="nav-btn" style="width:100%"><i class="fab fa-github"></i>Оценить на GitHub</button></div></div></div></div><div class="modal" id="vm"><div class="player"><div class="p-header"><div class="p-title" id="ptitle">Канал</div><button class="p-close" onclick="closeV()"><i class="fas fa-times"></i></button></div><div class="v-area"><video id="vp"></video></div><div class="controls"><button class="ctrl" id="pb"><i class="fas fa-play"></i></button><div class="progress"><div class="progress-bar" id="pb2"></div></div><button class="ctrl" id="fs"><i class="fas fa-expand"></i></button><span class="time" id="td">0:00 / 0:00</span></div></div></div><div class="audio-bar" id="ab"><div class="a-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="a-info"><div class="a-name" id="araname">Радио</div></div><button class="a-ctrl play" id="apb"><i class="fas fa-play"></i></button><button class="a-ctrl" id="ast"><i class="fas fa-stop"></i></button></div><div class="toast" id="toast"></div><div class="scroll-top" onclick="document.querySelector('.content').scrollTop=0"><i class="fas fa-arrow-up"></i></div>
 
 <script>
-/* ============================================================
-   S TV — защищённый медиаплеер
-   Автор: Safarali Group 🛡 v1.0.0
-   ============================================================ */
+const state={channels:[],radios:[],fav:[],curTab:"tv",curCat:"all",search:"",actMirror:"",cacheTime:null,vEl:null,hls:null,aEl:null,pIdx:-1};
+const MIRRORS=["https://api.v1.mediabay.tv/v2/channels/thread/","https://api.mediabay.tv/v2/channels/thread/","https://api.v1.mediabay.uz/v2/channels/thread/"];
+const BATCH=30, TIMEOUT=10000;
 
-/* ========== STATE ========== */
-const state = {
-  channels: [],   // {name, quality, category, url} — только в памяти
-  radios: [],     // {name, url, category}
-  favs: JSON.parse(localStorage.getItem('stv_fav') || '[]'),
-  currentTab: 'tv',
-  tvFilter: 'all',
-  radioFilter: 'all',
-  search: '',
-  activeMirror: '—',
-  cacheTime: null,
-  animOn: true,
-  theme: localStorage.getItem('stv_theme') || 'default',
-  cardSize: localStorage.getItem('stv_size') || 'normal',
-  videoEl: null,
-  hls: null,
-  audioEl: null,
-  playerIdx: -1
-};
-
-/* ========== MIRRORS ========== */
-const MIRRORS = [
-  'https://api.v1.mediabay.tv/v2/channels/thread/',
-  'https://api.mediabay.tv/v2/channels/thread/',
-  'https://api.v1.mediabay.uz/v2/channels/thread/'
-];
-const TIMEOUT = parseInt(localStorage.getItem('stv_timeout') || '10000');
-const BATCH = parseInt(localStorage.getItem('stv_batch') || '30');
-
-/* ========== FETCH CHANNEL ========== */
-async function fetchChannel(thread) {
-  const mirrors = [
-    `https://api.v1.mediabay.tv/v2/channels/thread/${thread}`,
-    `https://api.mediabay.tv/v2/channels/thread/${thread}`,
-    `https://api.v1.mediabay.uz/v2/channels/thread/${thread}`
-  ];
-  for (const url of mirrors) {
-    try {
-      const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), TIMEOUT);
-      const res = await fetch(url, { signal: ctrl.signal, headers: { 'User-Agent': 'Mozilla/5.0 S_TV' } });
-      clearTimeout(tid);
-      if (res.status === 200) {
-        const data = await res.json();
-        if (data && data.url) return data;
-      }
-    } catch (e) { /* try next */ }
+async function fetchChannel(thread){
+  const primary=MIRRORS[0]+thread;
+  const res1=await tryFetch(primary,TIMEOUT);
+  if(res1){state.actMirror=MIRRORS[0].split('/')[2];return res1;}
+  for(let i=1;i<MIRRORS.length;i++){
+    const url=MIRRORS[i]+thread;
+    const res=await tryFetch(url,TIMEOUT);
+    if(res){state.actMirror=MIRRORS[i].split('/')[2];console.log("⚡ Switch to reserve: "+state.actMirror);return res;}
   }
   return null;
 }
 
-/* ========== STARS ========== */
-function drawStars() {
-  const canvas = document.getElementById('starCanvas');
-  const ctx = canvas.getContext('2d');
-  let stars = [];
-  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; initStars(); }
-  function initStars() { stars = Array.from({length: 200}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.5 + 0.5, a: Math.random() })); }
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(0,212,255,${s.a * 0.6})`; ctx.fill(); });
-    requestAnimationFrame(draw);
-  }
-  resize(); draw();
-  window.addEventListener('resize', resize);
+async function tryFetch(url,timeout){
+  try{
+    const ctrl=new AbortController(), tId=setTimeout(()=>ctrl.abort(),timeout);
+    const res=await fetch(url,{signal:ctrl.signal,headers:{"User-Agent":"Mozilla/5.0"}});
+    clearTimeout(tId);
+    if(res.status===200){
+      const d=await res.json();
+      if(d&&d.url)return{name:d.name,url:d.url};
+    }
+  }catch(e){}
+  return null;
 }
 
-/* ========== SCAN ========== */
-async function startScan() {
-  if (state.scanning) return;
-  state.scanning = true;
-  document.getElementById('refreshBtn').classList.add('spin');
-  const tvList = [], radList = [];
-  let tvCount = 0, radCount = 0, currentMirrorIdx = 0;
-  const mirrorName = MIRRORS[currentMirrorIdx].split('/')[2];
-
-  document.getElementById('mirrorName').textContent = mirrorName;
-  document.getElementById('progressTxt').textContent = `Сканирование 1-${850}...`;
-
-  for (let i = 1; i <= 850; i += BATCH) {
-    const end = Math.min(i + BATCH - 1, 850);
-    const promises = [];
-    for (let k = i; k <= end; k++) promises.push(fetchChannel(k));
-    const results = await Promise.allSettled(promises);
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value) {
-        const name = String(r.value.name).trim();
-        const url = r.value.url;
-        const isRadio = /radio|fm|музыка|хит|джаз|рок|ретро|волна|эхо|танцевальный|разговорный/i.test(name);
-        if (isRadio) {
-          radList.push({ name, url, category: detectRadioCat(name) });
-          radCount++;
-        } else {
-          tvList.push({ name, url, quality: detectQuality(name), category: detectCat(name) });
-          tvCount++;
-        }
-      }
+async function startScan(){
+  if(state.scanning)return;state.scanning=true;
+  document.getElementById("loader").classList.remove("hidden");document.getElementById("app").classList.add("app-hidden");
+  const tv=[],rad=[],tvCount=0,radCount=0;
+  document.getElementById("sc-count").textContent="ТВ: 0 | Радио: 0";
+  for(let i=1;i<=850;i+=BATCH){
+    const e=Math.min(i+BATCH-1,850),prs=[];
+    for(let k=i;k<=e;k++)prs.push(fetchChannel(k));
+    await Promise.allSettled(prs);
+    const batchResults=prs.map(r=>r.status==="fulfilled"?r.value:null).filter(Boolean);
+    batchResults.forEach(item=>{
+      const name=(item||{}).name||"";
+      const isRadio=/radio|fm|музыка|хит|джаз|рок|ретро|волна|эхо|танцевальный|разговорный/i.test(name);
+      if(isRadio){rad.push({name:name,url:(item||{}).url,category:detRadCat(name)});radCount++;}else{tv.push({name:name,url:(item||{}).url||"",quality:detQuality(name),category:detCat(name)});tvCount++;}
     });
-    const pct = Math.round((end / 850) * 100);
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressCount').textContent = `ТВ: ${tvCount} | Радио: ${radCount}`;
-    document.getElementById('progressTxt').textContent = `Сканирование ${i}-${end}...`;
+    document.getElementById("pfill").style.width=((e/850)*100)+"%";
+    document.getElementById("sc-count").textContent=`ТВ: ${tvCount} | Радио: ${radCount}`;
   }
-
-  state.channels = tvList;
-  state.radios = radList;
-  state.cacheTime = Date.now();
-  localStorage.setItem('stv_cache', JSON.stringify({ t: Date.now(), channels: tvList.map(c => ({ n: c.name, q: c.quality, cat: c.category })), radios: radList.map(r => ({ n: r.name, cat: r.category })) }));
-  updateUI();
-  state.scanning = false;
-  document.getElementById('refreshBtn').classList.remove('spin');
-  document.getElementById('loader').classList.add('hide');
-  document.getElementById('app').classList.add('show');
-  toast('✅ Каналы обновлены');
+  state.channels=tv;state.radios=rad;state.cacheTime=Date.now();saveCache();updateUI();
+  state.scanning=false;document.getElementById("loader").classList.add("hidden");document.getElementById("app").classList.remove("app-hidden");
 }
 
-/* ========== DETECTORS ========== */
-function detectQuality(n) {
-  n = n.toLowerCase();
-  if (n.includes('4k') || n.includes('full hd') || n.includes('fhd')) return 'fhd';
-  if (n.includes(' hd') || n.endsWith(' hd')) return 'hd';
-  return 'sd';
-}
-function detectCat(n) {
-  n = n.toLowerCase();
-  if (/кино|movie|film|сериал|kino|cinema/.test(n)) return 'Кино';
-  if (/спорт|sport|футбол|матч|hockey|box|ufc|fight|tennis|баскетбол/.test(n)) return 'Спорт';
-  if (/новост|news|24|vesti|информ|bbc|cnn|euronews/.test(n)) return 'Новости';
-  if (/дет|kids|children|cartoon|мульт|карусель|piter|multi|тун/.test(n)) return 'Детские';
-  if (/музык|music|muz|hit|top/.test(n)) return 'Музыка';
-  if (/hd|4k|full hd|fhd|uhd/.test(n)) return 'HD';
-  if (/регион|regional|домашн|local|oblast|tv-/.test(n)) return 'Регион';
-  return 'Другое';
-}
-function detectRadioCat(n) {
-  n = n.toLowerCase();
-  if (/pop|top|хит|поп/.test(n)) return 'Хиты';
-  if (/rock|рок|metal|classic rock|альтерна/.test(n)) return 'Рок';
-  if (/jazz|джаз|блюз|blues/.test(n)) return 'Джаз';
-  if (/talk|новост|news|радио 1|информ|радио марат/.test(n)) return 'Разговорное';
-  if (/dance|house|техно|techno|диско|electronic|топ 40|club/.test(n)) return 'Танцевальное';
-  if (/европ|europa|europe|радио марат|радио 1/.test(n)) return 'Регион';
-  return 'Хиты';
+function detCat(n){n=n.toLowerCase();if(/кино|movie|film|сериал|kino/.test(n))return"movie";if(/спорт|sport|футбол|матч|hockey|basketball/.test(n))return"sport";if(/новост|news|24|vesti|cnn/.test(n))return"news";if(/дет|kids|cartoon|мульт/.test(n))return"kids";if(/музык|music|hit|muz/.test(n))return"music";if(/hd|4k|full hd|fhd|uhd/.test(n))return"hd";if(/регион|regional|домашн|local/.test(n))return"regional";return"other";}
+function detQuality(n){n=n.toLowerCase();if(/4k|full|fhd/.test(n))return"fhd";if(/hd/.test(n))return"hd";return"sd";}
+function detRadCat(n){n=n.toLowerCase();if(/pop|top|хит|поп/.test(n))return"Хиты";if(/rock|рок|classic/.test(n))return"Рок";if(/jazz|джаз/.test(n))return"Джаз";if(/talk|новост|news|информ/.test(n))return"Разговорное";if(/dance|house|техно|techno/.test(n))return"Танцевальное";return"Хиты";}
+
+function updateUI(){renderTV();renderRad();renderCats();document.getElementById("actmirr").textContent=state.actMirror||apiMirror();document.getElementById("cachetxt").textContent=state.cacheTime?new Date(state.cacheTime).toLocaleString():'';}
+function apiMirror(){return MIRRORS[0].split('/')[2];}
+function renderTV(){
+  const g=document.getElementById("tvgrid"),s=document.getElementById("search").value.toLowerCase().trim();
+  let list=state.channels;if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(c=>c.category===state.curCat);
+  if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes(i));
+  if(s)list=list.filter(c=>c.name.toLowerCase().includes(s));
+  g.innerHTML=list.length?list.map((c,i)=>{const isFav=favIn(i);const idx=i;return`<div class="card" data-idx="${idx}" onclick="openV(${idx})"><div class="card poster"><div class="s-silver">${c.name.charAt(0)}</div></div><div class="card info"><div class="c-name">${c.name}</div><div class="c-meta"><span class="c-q ${c.quality}">${c.quality.toUpperCase()}</span></div><div class="c-actions"><button class="c-play" onclick="event.stopPropagation();openV(${idx})"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${idx},'tv')"><i class="far fa-star"></i></button></div></div></div>`}).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';}
+function renderRad(){
+  const g=document.getElementById("radiogrid"),s=document.getElementById("search").value.toLowerCase().trim();
+  let list=state.radios;if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(r=>r.category===state.curCat);
+  if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes('r'+i));
+  if(s)list=list.filter(r=>r.name.toLowerCase().includes(s));
+  g.innerHTML=list.length?list.map((r,i)=>{const isFav=favIn('r'+i);return`<div class="radio-card" onclick="playRad(${i})"><div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="r-info"><div class="r-name">${r.name}</div><div class="r-cat">${r.category}</div></div><button class="c-play"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="far fa-star"></i></button></div>`}).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';}
+function renderCats(){
+  document.getElementById("tcats").innerHTML=['movie','sport','news','kids','music','hd','regional','other','fav'].map(c=>`<div class="cat-pill ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'⭐ Избранное':c}</div>`).join('');
+  document.getElementById("rcats").innerHTML=['Хиты','Рок','Джаз','Разговорное','Танцевальное','Регион','fav'].map(c=>`<div class="cat-pill radio-cat ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'⭐ Избранное':c}</div>`).join('');
 }
 
-/* ========== UI ========== */
-function updateUI() {
-  renderTV();
-  renderRadio();
-  renderCats();
-  document.getElementById('counter').textContent = `ТВ: ${state.channels.length} | Радио: ${state.radios.length}`;
-  document.getElementById('headerMirror').textContent = state.activeMirror || '—';
-  document.getElementById('activeMirror').textContent = state.activeMirror || '—';
-  document.getElementById('cacheStatus').textContent = state.cacheTime ? new Date(state.cacheTime).toLocaleString('ru') : 'не загружен';
-}
-function renderTV() {
-  const grid = document.getElementById('tvGrid');
-  const q = state.tvFilter;
-  const s = state.search.toLowerCase();
-  let list = state.channels;
-  if (q !== 'all' && q !== 'fav') list = list.filter(c => c.category === q);
-  if (q === 'fav') list = list.filter((_, i) => state.favs.includes(i));
-  if (s) list = list.filter(c => c.name.toLowerCase().includes(s));
-  grid.innerHTML = list.map((c, i) => {
-    const idx = state.channels.indexOf(c);
-    const isFav = state.favs.includes(idx);
-    return `<div class="card" data-idx="${idx}">
-      <div class="card poster"><span class="letter">${c.name.charAt(0)}</span></div>
-      <div class="card info">
-        <div class="card-name">${c.name}</div>
-        <div class="card-meta"><span class="quality ${c.quality}">${c.quality.toUpperCase()}</span></div>
-        <div class="card-actions"><button class="btn-play" onclick="event.stopPropagation();openPlayer(${idx})"><i class="fas fa-play"></i>Смотреть</button><button class="star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${idx},'tv')"><i class="fas fa-star"></i></button></div>
-      </div>
-    </div>`;
-  }).join('');
-  if (!list.length) grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';
-}
-function renderRadio() {
-  const grid = document.getElementById('radioGrid');
-  const q = state.radioFilter;
-  const s = state.search.toLowerCase();
-  let list = state.radios;
-  if (q !== 'all' && q !== 'fav') list = list.filter(c => c.category === q);
-  if (q === 'fav') list = list.filter((_, i) => state.favs.includes('r' + i));
-  if (s) list = list.filter(c => c.name.toLowerCase().includes(s));
-  grid.innerHTML = list.map((r, i) => {
-    const idx = state.radios.indexOf(r);
-    const isFav = state.favs.includes('r' + i);
-    return `<div class="radio-card" data-idx="${i}">
-      <div class="eq"><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div></div>
-      <div class="radio-info"><div class="radio-name">${r.name}</div><div class="radio-cat">${r.category}</div></div>
-      <button class="btn-play" onclick="event.stopPropagation();playRadio(${i})"><i class="fas fa-play"></i>Слушать</button>
-      <button class="star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="fas fa-star"></i></button>
-    </div>`;
-  }).join('');
-  if (!list.length) grid.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';
-}
-function renderCats() {
-  const tvCats = ['all','Кино','Спорт','Новости','Детские','Музыка','HD','Регион','Другое','fav'];
-  document.getElementById('tvCats').innerHTML = tvCats.map(c => `<div class="cat${c===state.tvFilter?' active':''}" onclick="setTvFilter('${c}')">${c==='all'?'Все':c==='fav'?'⭐ Избранное':c}</div>`).join('');
-  const rCats = ['all','Хиты','Рок','Джаз','Разговорное','Танцевальное','Регион','fav'];
-  document.getElementById('radioCats').innerHTML = rCats.map(c => `<div class="cat radio-cat${c===state.radioFilter?' active':''}" onclick="setRadioFilter('${c}')">${c==='all'?'Все':c==='fav'?'⭐ Избранное':c}</div>`).join('');
-}
+function openV(idx){const c=state.channels[idx];if(!c||!c.url){toast('❌ URL канала недоступен');return;}state.vEl=document.getElementById("vp");state.pIdx=idx;document.getElementById("ptitle").textContent=c.name;document.getElementById("vm").classList.add("show");if(c.url.includes(".m3u8")){if(Hls.isSupported()){state.hls=new Hls();state.hls.loadSource(c.url);}else{state.vEl.src=c.url;}}}
+function closeV(){document.getElementById("vm").classList.remove("show");if(state.hls){state.hls.destroy();state.hls=null;}if(state.vEl){state.vEl.pause();state.vEl.src="";}}
+function playRad(idx){const r=state.radios[idx];if(!r)return;document.getElementById("araname").textContent=r.name;document.getElementById("ab").classList.add("show");state.aEl=new Audio(r.url);state.aEl.play().catch(()=>toast('❌ Радио недоступно'));}
+function stopRad(){if(state.aEl){state.aEl.pause();state.aEl=null;document.getElementById("ab").classList.remove("show");}}
 
-/* ========== FILTERS ========== */
-function setTvFilter(cat) { state.tvFilter = cat; renderCats(); renderTV(); }
-function setRadioFilter(cat) { state.radioFilter = cat; renderCats(); renderRadio(); }
+function favIn(key){return state.fav.includes(key);}
+function toggleFav(idx,type){const key=type==="radio"?"r"+idx:idx;const pos=state.fav.indexOf(key);if(pos>-1){state.fav.splice(pos,1);toast('❌ Удалено из избранного');}else{state.fav.push(key);toast('⭐ Добавлено в избранное');}saveFav();renderTV();renderRad();}
+function clearFav(){if(confirm("Очистить избранное?")){state.fav=[];saveFav();renderTV();renderRad();toast('🗑 Избранное очищено');}}
+function saveFav(){localStorage.setItem("stv_fav",JSON.stringify(state.fav));}
+function saveCache(){localStorage.setItem("stv_cache",JSON.stringify({t:Date.now(),channels:state.channels.map(c=>({name:c.name,quality:c.quality,category:c.category})),radios:state.radios.map(r=>({name:r.name,category:r.category}))}));}
+function loadCache(){const cached=localStorage.getItem("stv_cache");if(!cached)return false;try{const d=JSON.parse(cached);if(Date.now()-d.t>86400000)return false;state.channels=d.channels.map(c=>({name:c.name,quality:c.quality,category:c.category,url:""}));state.radios=d.radios.map(r=>({name:r.name,category:r.category,url:""}));state.cacheTime=d.t;return true}catch(e){return false;}}
 
-/* ========== SEARCH ========== */
-document.getElementById('searchInput').addEventListener('input', e => { state.search = e.target.value; renderTV(); renderRadio(); });
-
-/* ========== FAVORITES ========== */
-function toggleFav(idx, type) {
-  const key = type === 'radio' ? 'r' + idx : idx;
-  const pos = state.favs.indexOf(key);
-  if (pos > -1) { state.favs.splice(pos, 1); toast('🗑 Удалено из избранного'); }
-  else { state.favs.push(key); toast('⭐ Добавлено в избранное'); }
-  localStorage.setItem('stv_fav', JSON.stringify(state.favs));
-  renderTV(); renderRadio();
-}
-function clearFav() { if (confirm('Очистить избранное?')) { state.favs = []; localStorage.removeItem('stv_fav'); renderTV(); renderRadio(); toast('🗑 Избранное очищено'); } }
-
-/* ========== PLAYER ========== */
-function openPlayer(idx) {
-  const ch = state.channels[idx];
-  if (!ch || !ch.url) return;
-  state.playerIdx = idx;
-  document.getElementById('playerTitle').textContent = ch.name;
-  const modal = document.getElementById('videoModal');
-  modal.classList.add('show');
-  const video = document.getElementById('videoPlayer');
-  if (state.hls) state.hls.destroy();
-  if (ch.url.includes('.m3u8')) {
-    if (Hls.isSupported()) { state.hls = new Hls(); state.hls.loadSource(ch.url); state.hls.attachMedia(video); state.hls.on(Hls.Events.MANIFEST_PARSED, () => video.play()); }
-    else if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = ch.url; video.play(); }
-  } else { video.src = ch.url; video.play(); }
-}
-
-function playRadio(idx) {
-  const r = state.radios[idx];
-  if (!r || !r.url) return;
-  const bar = document.getElementById('audioBar');
-  document.getElementById('audioName').textContent = r.name;
-  bar.classList.add('show');
-  if (state.audioEl) { state.audioEl.pause(); state.audioEl = null; }
-  state.audioEl = new Audio(r.url);
-  state.audioEl.play().catch(() => toast('❌ Не удалось воспроизвести'));
-}
-
-function closePlayer() {
-  const modal = document.getElementById('videoModal');
-  modal.classList.remove('show');
-  const video = document.getElementById('videoPlayer');
-  video.pause(); video.src = '';
-  if (state.hls) { state.hls.destroy(); state.hls = null; }
-  state.playerIdx = -1;
-}
-
-/* ========== VIDEO CONTROLS ========== */
-const videoPlayer = document.getElementById('videoPlayer');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const progressPlayer = document.getElementById('progressPlayer');
-const progressFillPlayer = document.getElementById('progressFillPlayer');
-const timeDisplay = document.getElementById('timeDisplay');
-
-playPauseBtn.addEventListener('click', () => { videoPlayer.paused ? videoPlayer.play() : videoPlayer.pause(); });
-videoPlayer.addEventListener('play', () => playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>');
-videoPlayer.addEventListener('pause', () => playPauseBtn.innerHTML = '<i class="fas fa-play"></i>');
-videoPlayer.addEventListener('timeupdate', () => {
-  if (videoPlayer.duration) {
-    const pct = (videoPlayer.currentTime / videoPlayer.duration) * 100;
-    progressFillPlayer.style.width = pct + '%';
-    timeDisplay.textContent = `${fmt(videoPlayer.currentTime)} / ${fmt(videoPlayer.duration)}`;
-  }
-});
-progressPlayer.addEventListener('click', e => {
-  if (!videoPlayer.duration) return;
-  const rect = progressPlayer.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  videoPlayer.currentTime = pct * videoPlayer.duration;
-});
-document.getElementById('muteBtn').addEventListener('click', function() {
-  videoPlayer.muted = !videoPlayer.muted;
-  this.innerHTML = videoPlayer.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-});
-document.getElementById('fsBtn').addEventListener('click', () => { videoPlayer.requestFullscreen?.() || videoPlayer.webkitRequestFullscreen?.(); });
-document.getElementById('prevBtn').addEventListener('click', () => { if (state.playerIdx > 0) openPlayer(state.playerIdx - 1); });
-document.getElementById('nextBtn').addEventListener('click', () => { if (state.playerIdx < state.channels.length - 1) openPlayer(state.playerIdx + 1); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closePlayer(); if (e.key === ' ' && document.getElementById('videoModal').classList.contains('show')) { e.preventDefault(); playPauseBtn.click(); } });
-document.getElementById('videoModal').addEventListener('click', e => { if (e.target === document.getElementById('videoModal')) closePlayer(); });
-
-/* ========== AUDIO CONTROLS ========== */
-document.getElementById('audioPlayPause').addEventListener('click', () => {
-  if (!state.audioEl) return;
-  state.audioEl.paused ? state.audioEl.play() : state.audioEl.pause();
-});
-document.getElementById('audioPlayPause').addEventListener('click', function() {
-  if (!state.audioEl) return;
-  if (state.audioEl.paused) { state.audioEl.play(); this.innerHTML = '<i class="fas fa-pause"></i>'; }
-  else { state.audioEl.pause(); this.innerHTML = '<i class="fas fa-play"></i>'; }
-});
-document.getElementById('audioStop').addEventListener('click', () => {
-  if (state.audioEl) { state.audioEl.pause(); state.audioEl.currentTime = 0; }
-  document.getElementById('audioBar').classList.remove('show');
-});
-document.getElementById('audioMute').addEventListener('click', function() {
-  if (!state.audioEl) return;
-  state.audioEl.muted = !state.audioEl.muted;
-  this.innerHTML = state.audioEl.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
-});
-
-/* ========== RANDOM ========== */
-document.getElementById('randomBtn').addEventListener('click', () => {
-  if (state.currentTab === 'tv' && state.channels.length) { const r = state.channels[Math.floor(Math.random() * state.channels.length)]; openPlayer(state.channels.indexOf(r)); }
-  else if (state.currentTab === 'radio' && state.radios.length) { const r = state.radios[Math.floor(Math.random() * state.radios.length)]; playRadio(state.radios.indexOf(r)); }
-});
-
-/* ========== REFRESH ========== */
-document.getElementById('refreshBtn').addEventListener('click', () => {
-  document.getElementById('loader').classList.remove('hide');
-  document.getElementById('app').classList.remove('show');
-  startScan();
-});
-
-/* ========== TABS ========== */
-document.querySelectorAll('.tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    const tab = t.dataset.tab;
-    state.currentTab = tab;
-    document.getElementById('tvTab').style.display = tab === 'tv' ? '' : 'none';
-    document.getElementById('radioTab').style.display = tab === 'radio' ? '' : 'none';
-    document.getElementById('settingsTab').style.display = tab === 'settings' ? '' : 'none';
-  });
-});
-
-/* ========== THEME / SIZE ========== */
-function setTheme(theme, el) {
-  state.theme = theme;
-  document.body.className = theme === 'gray' ? 'gray' : '';
-  localStorage.setItem('stv_theme', theme);
-  document.querySelectorAll('[data-theme]').forEach(x => x.classList.remove('active'));
-  el.classList.add('active');
-}
-function setCardSize(size, el) {
-  state.cardSize = size;
-  const g = document.querySelector('.grid');
-  if (size === 'compact') g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(140px,1fr))';
-  else if (size === 'large') g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(260px,1fr))';
-  else g.style.gridTemplateColumns = '';
-  localStorage.setItem('stv_size', size);
-  document.querySelectorAll('[data-size]').forEach(x => x.classList.remove('active'));
-  el.classList.add('active');
-}
-function toggleAnim() {
-  state.animOn = !state.animOn;
-  document.body.style.setProperty('--trans', state.animOn ? '.3s ease' : '0s');
-  document.getElementById('animToggle').innerHTML = `<i class="fas fa-magic"></i>Анимации: ${state.animOn ? 'Вкл' : 'Выкл'}`;
-}
-
-/* ========== CACHE ========== */
-function clearCache() {
-  if (confirm('Очистить кэш каналов?')) {
-    localStorage.removeItem('stv_cache');
-    toast('🗑 Кэш очищен');
-    document.getElementById('cacheStatus').textContent = 'не загружен';
-  }
-}
-function loadCache() {
-  const cached = localStorage.getItem('stv_cache');
-  if (!cached) return false;
-  try {
-    const d = JSON.parse(cached);
-    if (Date.now() - d.t > 86400000) return false; // 24h
-    state.channels = d.channels.map(c => ({ name: c.n, quality: c.q, category: c.cat, url: '' }));
-    state.radios = d.radios.map(r => ({ name: r.n, category: r.cat, url: '' }));
-    state.cacheTime = d.t;
-    return true;
-  } catch { return false; }
-}
-
-/* ========== TOAST ========== */
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-/* ========== SHARE ========== */
-function shareApp() {
-  if (navigator.share) navigator.share({ title: 'S TV', text: '📺 S TV — 850+ каналов. Разработчик: Safarali Group', url: location.href }).catch(() => {});
-  else { navigator.clipboard.writeText(location.href); toast('🔗 Ссылка скопирована'); }
-}
-
-/* ========== SCROLL ========== */
-document.getElementById('content').addEventListener('scroll', () => {
-  document.getElementById('scrollTop').classList.toggle('show', document.getElementById('content').scrollTop > 300);
-});
-
-/* ========== HELPERS ========== */
-function fmt(s) { if (!s || isNaN(s)) return '0:00'; const m = Math.floor(s / 60), sec = Math.floor(s % 60); return `${m}:${sec.toString().padStart(2, '0')}`; }
-
-/* ========== INIT ========== */
-window.addEventListener('load', () => {
-  drawStars();
-  if (loadCache()) {
-    updateUI();
-    document.getElementById('loader').classList.add('hide');
-    document.getElementById('app').classList.add('show');
-    toast('📦 Загружен кэш');
-    if (Date.now() - state.cacheTime > 86400000) startScan();
-  } else { startScan(); }
-});
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
+function switchTab(tab){state.curTab=tab;document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));event.target.closest(".nav-btn").classList.add("active");document.getElementById("tvview").style.display=tab==="tv"?"":"none";document.getElementById("radioview").style.display=tab==="radio"?"":"none";document.getElementById("settingsview").style.display=tab==="settings"?"":"none";}
+function setCat(c){state.curCat=c;renderTV();renderRad();renderCats();}
+function setTheme(t,b){document.body.className=t==="gray"?"";localStorage.setItem("stv_theme",t);}
+function setSize(s,b){document.getElementById("tvgrid").style.gridTemplateColumns=s==="compact"?"repeat(auto-fill,minmax(140px,1fr))":s==="large"?"repeat(auto-fill,minmax(260px,1fr))":"";localStorage.setItem("stv_size",s);}
+function share(){navigator.share?navigator.share({title:"S TV",text:"850+ каналов - Safarali Group",url:location.href}):alert("Ссылка скопирована!");}
+function drawStars(){const c=document.getElementById("stars"),x=c.getContext("2d"),w=c.width=innerWidth,h=c.height=innerHeight;let stars=[];function init(){stars=Array.from({length:200},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.5,a:Math.random()}));}init();function animate(){x.clearRect(0,0,w,h);stars.forEach(s=>{x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);x.fillStyle=`rgba(0,212,255,${s.a*0.6})`;x.fill();});requestAnimationFrame(animate);}animate();window.onresize=()=>{w=c.width=innerWidth;h=c.height=innerHeight;init();}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("vm").classList.contains("show"))closeV();if((e.ctrlKey||e.metaKey)&&e.key==="f"){document.getElementById("search").focus();}});
+loadCache()?updateUI():startScan();drawStars();
 </script>
 </body>
 </html>

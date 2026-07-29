@@ -1,26 +1,27 @@
 {
-  "name": "S TV — ТВ и Радио",
+  "name": "S TV",
   "short_name": "S TV",
-  "description": "Современный медиаплеер ТВ и Радио с защитой URL потоков",
+  "description": "ТВ и Радио медиаплеер с защитой URL потоков",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0a0a14",
   "theme_color": "#0a0a14",
   "orientation": "portrait",
   "lang": "ru",
-  "categories": ["entertainment", "music"],
+  "categories": [
+    "entertainment",
+    "music"
+  ],
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }

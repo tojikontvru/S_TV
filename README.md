@@ -1,10 +1,6 @@
 # S TV — Защищённый медиаплеер ТВ и Радио
 
-> **Современный одностраничный веб-плеер** с публичными источниками данных, футуристичным AMOLED-дизайном и **максимальной защитой URL потоков**.
-
-![S TV](og-image.png)
-
----
+**Современный одностраничный веб-плеер** с агрегацией 3 API-зеркал, футуристичным AMOLED-дизайном и **максимальной защитой URL потоков**.
 
 ## 🔒 Защита URL потоков
 
@@ -14,14 +10,13 @@
 |---|---|---|
 | **DOM-разметка** | `data-idx` (только индекс) | ❌ Нет |
 | **Атрибуты элементов** | `data-idx`, `data-type` | ❌ Нет |
-| **`localStorage`** (`stv_fav`) | `{idx, type}` без URL | ❌ Нет |
-| **`localStorage`** (`stv_meta`) | `{name, quality, category}` | ❌ Нет |
-| **`sessionStorage`** | — | ❌ Не используется |
-| **Cookies** | — | ❌ Не используются |
+| **localStorage** (`stv_fav`) | `{idx, type}` без URL | ❌ Нет |
+| **localStorage** (`stv_meta`) | `{name, quality, category}` | ❌ Нет |
 | **JS-память** | `channelsData[]`, `radioData[]` | ✅ Только в RAM |
 | **Кнопки "Копировать URL"** | Отсутствуют | ❌ Нет таких кнопок |
 
-**Извлечение URL** происходит только в момент клика по карточке:
+Извлечение URL происходит только в момент клика по карточке:
+
 ```js
 function openPlayer(idx) {
   const url = channelsData[idx].url;   // ← RAM only
@@ -31,24 +26,21 @@ function openPlayer(idx) {
 
 Ни DevTools, ни "Просмотр кода", ни `view-source:` не покажут URL потоков — всё зашито в JS-функции, а DOM содержит только индексы.
 
----
-
 ## ✨ Возможности
 
 ### 📺 ТВ-каналы
-- **850+ каналов** из публичного источника `iptv-org.github.io`
-- 8 категорий: Фильмы, Спорт, Новости, Детские, Музыка, HD, Региональные, Другое
-- Автоматический парсинг M3U плейлиста
+- 850+ каналов в 8 категориях: Фильмы, Спорт, Новости, Детские, Музыка, HD, Региональные, Другое
+- Параллельное сканирование 3 API-зеркал — берётся самый быстрый ответ
+- HTTP 200 валидация перед добавлением каналов
+- Пакетная загрузка по 30 каналов (Promise.allSettled)
 - HLS.js плеер с авто-fallback на нативное видео
 - Полноэкранный режим и Picture-in-Picture
 - Регулятор громкости с плавной анимацией
 
 ### 📻 Радио
-- **20+ радиостанций** с разными жанрами (Pop, Rock, Jazz, Talk, Dance)
-- Местные FM-станции Европы (NRJ, Virgin, Europe 1, RTL, Chérie FM и др.)
+- 5 категорий: Pop, Rock, Jazz, Talk, Dance
 - HTML5 Audio с визуализатором
 - Фоновое воспроизведение и блокировка экрана
-- Стриминг метаданных (исполнитель, трек)
 
 ### ⭐ Избранное
 - Быстрое сохранение: `localStorage` хранит только `{idx, type}`
@@ -64,10 +56,7 @@ function openPlayer(idx) {
 - Splash-экран с 200 звёздами на Canvas + parallax
 - Glass morphism (rgba card + 20px blur)
 - Плавные переходы между вкладками
-- Web Share API для "Поделиться"
 - Touch-жесты и длительное нажатие
-
----
 
 ## 🚀 Деплой на GitHub Pages
 
@@ -87,9 +76,7 @@ function openPlayer(idx) {
 
 > ⚠️ **ВАЖНО**: Если в истории чата был опубликован GitHub-токен — **немедленно отзовите его** на [github.com/settings/tokens](https://github.com/settings/tokens), затем переустановите через `git credential-manager` или SSH-ключ.
 
----
-
-## 🛠️ Стек
+## 🛠 Стек
 
 | Слой | Технология |
 |---|---|
@@ -101,53 +88,41 @@ function openPlayer(idx) {
 | Кэш | Service Worker |
 | PWA | Web App Manifest |
 | CI/CD | GitHub Actions |
-| Источники | IPTV-org (TV), публичный M3U (Radio) |
 
 **Никаких фреймворков, никаких сборщиков** — открывается сразу как `index.html`.
 
----
+## 📦 API-зеркала
 
-## 📦 Источники данных
+Приложение использует 3 зеркала для автоматической балансировки:
 
-### ТВ
-- **`https://iptv-org.github.io/iptv/index.m3u`** — публичный плейлист с 850+ каналами
-- Парсинг на клиенте с автоматическим определением категорий
+```
+api.v1.mediabay.tv (первичное, всегда первое)
+api.mediabay.tv (резервное)
+api.v1.mediabay.uz (резервное)
+```
 
-### Радио
-- **`public_radio.m3u`** — 20+ радиостанций с различными жанрами
-- Включает популярные FM-станции Европы: NRJ, Virgin, Europe 1, RTL, Chérie FM, Fun Radio, RFM и др.
-
----
+При запросе к каналу сначала пробуются все 3 зеркала. При успешном ответе HTTP 200 URL извлекается из JS-памяти, ни в коем случае не сохраняется в localStorage или DOM.
 
 ## 📁 Структура проекта
 
 ```
 S_TV/
-├── index.html              # Главное приложение (1111 строк)
-├── public_radio.m3u         # 20+ радиостанций (M3U плейлист)
+├── index.html              # Главное приложение (146 строк)
 ├── manifest.json           # PWA manifest
 ├── sw.js                   # Service Worker для оффлайн-кеша
 ├── icon.svg                # SVG-иконка
-├── icon-192.png            # PWA 192x192
-├── icon-512.png            # PWA 512x512
-├── apple-touch-icon.png    # iOS 180x180
-├── favicon.ico             # Multi-resolution favicon
-├── favicon-32.png          # Favicon 32x32
-├── og-image.png            # Open Graph 1200x630
+├── public_radio.m3u        # Плейлист радиостанций
 ├── README.md               # Этот файл
-├── LICENSE                 # MIT
-└── .github/
-    └── workflows/
-        └── deploy.yml      # GitHub Pages автодеплой
-```
+└── LICENSE                 # MIT License
 
----
+.github/
+└── workflows/
+    └── deploy.yml         # GitHub Pages автодеплой
+```
 
 ## 🔐 Лицензия
 
 MIT © Safarali Group — см. [LICENSE](LICENSE)
-
----
 
 ## 💬 Контакты
 

@@ -1,7 +1,3 @@
-#EXTINF:-1 tvg-name="Radio 1",Radio 1
-https://icestreamer.radiobossfm.com:8032/stream
-#EXTINF:-1 tvg-name="NRJ Hits",NRJ Hits
-https://nrj-hits.streamr.it/nrj-hits-128.mp3
 #EXTINF:-1 tvg-name="NRJ",NRJ
 https://nrj-streaming-nrj.ice.infomaniak.ch/nrj-high.mp3
 #EXTINF:-1 tvg-name="Virgin Radio",Virgin Radio
@@ -16,7 +12,7 @@ https://direct-fr-3.aacp.radionomy.com/franceinter.mp3
 https://direct-fr-5.aacp.radionomy.com/franceinfo.mp3
 #EXTINF:-1 tvg-name="RFM",RFM
 https://rfm-streaming.radiomobile.fr/rt1-128.mp3
-#EXTINF:-1 tvg-name="Cherie FM",Cherie FM
+#EXTINF:-1 tvg-name="Cherie FM",Chérie FM
 https://cheriefm-ice.ice.infomaniak.ch/cheriefm-high.mp3
 #EXTINF:-1 tvg-name="Fun Radio",Fun Radio
 https://funradio-ice.ice.infomaniak.ch/funradio-high.mp3
@@ -34,27 +30,15 @@ https://dfm-nfd.hostingradio.ru/dfm96.aacp
 https://ep128.hostingradio.ru:8032/europa128.mp3
 #EXTINF:-1 tvg-name="RAI Radio 1",RAI Radio 1
 https://icestreamer.radiobossfm.com:8032/stream
-#EXTINF:-1 tvg-name="Radio Monte Carlo",RMC
-https://rmc.media/8649550e/128/16/0/0
+#EXTINF:-1 tvg-name="RMC Info",RMC Info
+https://rmcinfo.ice.infomaniak.ch/rmcinfo-high.mp3
 #EXTINF:-1 tvg-name="BBC Radio 1",BBC Radio 1
 https://stream.live.vc.bbcmedia.co.uk/bbc_radio_one
-#EXTINF:-1 tvg-name="BBC Radio 2",BBC Radio 2
-https://stream.live.vc.bbcmedia.co.uk/bbc_radio_two
 #EXTINF:-1 tvg-name="Capital FM",Capital FM
 https://media-ice.musicradio.com/CapitalMP3
 #EXTINF:-1 tvg-name="Classic FM",Classic FM
 https://media-ice.musicradio.com/ClassicFMMP3
-#EXTINF:-1 tvg-name="LBC",LBC
-https://media-ice.musicradio.com/LBCUKMP3
-#EXTINF:-1 tvg-name="Radio Swiss Pop",Radio Swiss Pop
-https://stream.srg-ssr.ch/m/rsj/mp3_128
-#EXTINF:-1 tvg-name="SRF 1",SRF 1
-https://stream.srg-ssr.ch/m/drs1/mp3_128
-#EXTINF:-1 tvg-name="RadioFrance FIP",FIP
-https://direct.fip.fr/live/fip-midfi.mp3
-#EXTINF:-1 tvg-name="RTL2",RTL2
-https://rtl2.ice.infomaniak.ch/rtl2-high.mp3
-#EXTINF:-1 tvg-name="France Bleu",France Bleu
-https://direct.francebleu.fr/live/fb750midfi.mp3
-#EXTINF:-1 tvg-name="RMC Info",RMC Info
-https://rmcinfo.ice.infomaniak.ch/rmcinfo-high.mp3
+#EXTINF:-1 tvg-name="Retro FM",Retro FM
+https://retrofm.ice.infomaniak.ch/retro-high.mp3
+#EXTINF:-1 tvg-name="Nostalgie",Nostalgie
+https://nostalgie-ice.ice.infomaniak.ch/nostalgie-high.mp3
