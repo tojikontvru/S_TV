@@ -1,0 +1,40 @@
+#EXTINF:-1 tvg-name="Radio 1",Radio 1
+https://icestreamer.radiobossfm.com:8032/stream
+#EXTINF:-1 tvg-name="Radio 2",Radio 2
+https://playerservices.streamtheworld.com/api/livestream-redirect/DISCOVERY_HD_WOW.json
+#EXTINF:-1 tvg-name="Radio 3",Radio 3
+https://streams.ilovemusic.de/iloveradio37.mp3
+#EXTINF:-1 tvg-name="Radio 4",Radio 4
+https://streams.ilovemusic.de/iloveradio38.mp3
+#EXTINF:-1 tvg-name="Radio 5",Radio 5
+https://streams.ilovemusic.de/iloveradio39.mp3
+#EXTINF:-1 tvg-name="NRJ",NRJ
+https://nrj-streaming-nrj.ice.infomaniak.ch/nrj-high.mp3
+#EXTINF:-1 tvg-name="Virgin Radio",Virgin Radio
+https://virginradio-ice.ice.infomaniak.ch/virginradio-high.mp3
+#EXTINF:-1 tvg-name="Europe 1",Europe 1
+https://direct-fr-2.aacp.radionomy.com/europe1.mp3
+#EXTINF:-1 tvg-name="RTL",RTL
+https://rlt.streamr.it/rtl-128.mp3
+#EXTINF:-1 tvg-name="Skyrock",Skyrock
+https://skyrock-ice.skyrock.net/skyrockhigh.mp3
+#EXTINF:-1 tvg-name="RMC",RMC
+https://rmc.media/8649550e/128/16/0/0
+#EXTINF:-1 tvg-name="France Inter",France Inter
+https://direct-fr-3.aacp.radionomy.com/franceinter.mp3
+#EXTINF:-1 tvg-name="France Info",France Info
+https://direct-fr-5.aacp.radionomy.com/franceinfo.mp3
+#EXTINF:-1 tvg-name="Info 107.1",Info 107.1
+https://stream.infogrrr.com/stream
+#EXTINF:-1 tvg-name="RFM",RFM
+https://rfm-streaming.radiomobile.fr/rt1-128.mp3
+#EXTINF:-1 tvg-name="Cherie FM",Cherie FM
+https://cheriefm-ice.ice.infomaniak.ch/cheriefm-high.mp3
+#EXTINF:-1 tvg-name="Fun Radio",Fun Radio
+https://funradio-ice.ice.infomaniak.ch/funradio-high.mp3
+#EXTINF:-1 tvg-name="NRJ Hits",NRJ Hits
+https://nrj-hits.streamr.it/nrj-hits-128.mp3
+#EXTINF:-1 tvg-name="Kiss FM",Kiss FM
+https://kissfm-ice.ice.infomaniak.ch/kissfm-high.mp3
+#EXTINF:-1 tvg-name="Rire & Chansons",Rire & Chansons
+https://rireetchansons-ice.ice.infomaniak.ch/rrireetchansons-high.mp3
