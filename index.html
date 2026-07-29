@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>S TV — ТВ и Радио</title>
+<title>S TV</title>
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a14">
@@ -12,38 +12,227 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#0a0a14;--card:rgba(255,255,255,.03);--border:rgba(255,255,255,.06);--accent:#00d4ff;--radio:#ff5e94;--hd:#00e676;--sd:#ffd600;--text:#e8e8f0;--muted:#6e7191;--glass:rgba(10,10,20,.85)}
-html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;background-attachment:fixed}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
 body::-webkit-scrollbar{display:none}
 #loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease-out}
 #loader.hidden{opacity:0;pointer-events:none;visibility:hidden}
-.stars-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
-.loader-content{position:relative;z-index:1;text-align:center}.s-logo{font-size:72px;font-weight:900;color:var(--accent);text-shadow:0 0 40px var(--accent),0 0 80px var(--accent);letter-spacing:-4px;margin-bottom:8px}.s-subtitle{font-size:16px;color:var(--muted);margin-bottom:24px;font-weight:400}.s-dev{font-size:14px;color:var(--muted);margin-bottom:8px}.s-version{font-size:12px;color:var(--muted);margin-bottom:24px}.progress-container{width:320px;margin-bottom:20px}.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--radio));width:0%}.stat-row{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;color:var(--muted)}.mirror-indicator{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:8px 16px;border-radius:20px;font-size:13px;color:var(--accent);gap:8px;z-index:1}.mirror-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
-#app{position:relative;display:flex;flex-direction:column;height:100vh;visibility:hidden}.app-visible{visibility:inherit}
-header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}.logo{font-size:24px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-right:8px}.search-wrap{flex:1;min-width:200px;position:relative}.search-wrap input{width:100%;padding:10px 40px 10px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border .3s}.search-wrap input:focus{border-color:var(--accent)}.search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}.btn-group{display:flex;gap:8px;align-items:center}
-.nav-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;transition:.3s}.nav-btn:hover{border-color:var(--accent);color:var(--text)}.nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
-.tabs{display:flex;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0;position:relative}
+#starsCanvas{position:absolute;inset:0;z-index:0}
+.loader-content{position:relative;z-index:1;text-align:center}
+.s-logo{font-size:72px;font-weight:900;color:var(--accent);text-shadow:0 0 40px var(--accent),0 0 80px var(--accent);letter-spacing:-4px;margin-bottom:8px}
+.s-subtitle{font-size:16px;color:var(--muted);margin-bottom:24px}
+.s-dev{font-size:14px;color:var(--muted);margin-bottom:8px}
+.s-ver{font-size:12px;color:var(--muted);margin-bottom:24px}
+.progress-container{width:320px;margin-bottom:20px}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--radio));width:0%}
+.stat-row{display:flex;justify-content:space-between;margin-top:16px;font-size:14px;color:var(--muted)}
+.mirror-indicator{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;align-items:center;background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.2);padding:8px 16px;border-radius:20px;font-size:13px;color:var(--accent);gap:8px;z-index:1}
+.mirror-dot{width:8px;height:8px;border-radius:50%;background:#4caf50;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+#app{position:relative;display:flex;flex-direction:column;height:100vh;visibility:hidden}
+#app.visible{visibility:inherit}
+header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:900;color:var(--accent);letter-spacing:-1px;margin-right:8px}
+.search-wrap{flex:1;min-width:200px;position:relative}
+.search-wrap input{width:100%;padding:10px 40px 10px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border .3s}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.btn-group{display:flex;gap:8px;align-items:center}
+.nav-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;transition:.3s}
+.nav-btn:hover{border-color:var(--accent);color:var(--text)}
+.nav-btn.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.tabs{display:flex;background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0}
 .tab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;transition:.3s;border-bottom:3px solid transparent;display:flex;align-items:center;justify-content:center;gap:6px}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}.tab.radio-tab.active{color:var(--radio);border-bottom-color:var(--radio)}.tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.02)}
-.content{flex:1;overflow-y:auto;padding:16px;scroll-snap-type:y mandatory}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.radio-tab.active{color:var(--radio);border-bottom-color:var(--radio)}
+.content{flex:1;overflow-y:auto;padding:16px}
 .category-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;padding:0 16px}
-.cat-pill{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:.3s}.cat-pill:hover{border-color:var(--accent);color:var(--text)}.cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}.cat-pill.radio-cat.active{background:var(--radio);color:#fff;border-color:var(--radio)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;padding:0 16px 16px 16px;scroll-snap-align:start}
+.cat-pill{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:.3s}
+.cat-pill:hover{border-color:var(--accent);color:var(--text)}
+.cat-pill.active{background:var(--accent);color:#000;border-color:var(--accent)}
+.cat-pill.radio-cat.active{background:var(--radio);color:#fff;border-color:var(--radio)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;padding:0 16px 16px}
 .card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .3s;display:flex;flex-direction:column}
 .card:hover{transform:translateY(-4px);border-color:rgba(0,212,255,.3);box-shadow:0 8px 32px rgba(0,0,0,.4)}
-.card.poster{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative}
-.card.poster .s-silver{font-size:48px;font-weight:900;color:rgba(0,212,255,.15)}.card.info{padding:12px;display:flex;flex-direction:column;flex:1}.c-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}.c-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.c-q{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}.c-q.sd{color:var(--sd);background:rgba(255,214,0,.1)}.c-q.hd{color:var(--hd);background:rgba(0,230,118,.1)}.c-q.fhd{color:#fff;background:rgba(0,212,255,.25)}.c-actions{margin-top:auto;display:flex;justify-content:space-between;align-items:center}.c-play{background:var(--accent);color:#000;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s}.c-play:hover{background:#00b8e6;transform:scale(1.05)}.c-star{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;transition:.2s}.c-star.active{color:#ffd700;transform:scale(1.1)}
-.radio-card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:16px}.radio-card:hover{border-color:rgba(255,94,148,.3);transform:translateY(-2px)}.r-eq{display:flex;gap:2px;height:32px;align-items:flex-end}.r-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .8s ease-in-out infinite alternate}@keyframes r-eq{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}.r-info{flex:1}.r-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}.r-cat{font-size:12px;color:var(--muted)}
+.card.poster{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center}
+.card.poster .s-silver{font-size:48px;font-weight:900;color:rgba(0,212,255,.15)}
+.card.info{padding:12px;display:flex;flex-direction:column;flex:1}
+.c-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:8px}
+.c-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.c-q{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.c-q.sd{color:var(--sd);background:rgba(255,214,0,.1)}
+.c-q.hd{color:var(--hd);background:rgba(0,230,118,.1)}
+.c-q.fhd{color:#fff;background:rgba(0,212,255,.25)}
+.c-actions{margin-top:auto;display:flex;justify-content:space-between;align-items:center}
+.c-play{background:var(--accent);color:#000;border:none;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s}
+.c-play:hover{background:#00b8e6;transform:scale(1.05)}
+.c-star{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;transition:.2s}
+.c-star.active{color:#ffd700;transform:scale(1.1)}
+.radio-card{background:var(--card);backdrop-filter:blur(30px);border:1px solid var(--border);border-radius:16px;padding:16px;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:16px}
+.radio-card:hover{border-color:rgba(255,94,148,.3);transform:translateY(-2px)}
+.r-eq{display:flex;gap:2px;height:32px;align-items:flex-end}
+.r-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .8s ease-in-out infinite alternate}@keyframes r-eq{0%{transform:scaleY(.3)}100%{transform:scaleY(1)}}
+.r-info{flex:1}
+.r-name{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.r-cat{font-size:12px;color:var(--muted)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center;animation:fadeIn .3s}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal.show{display:flex}.player{width:90%;max-width:900px;background:#000;border:1px solid var(--border);border-radius:16px;overflow-hidden}.p-header{padding:16px 20px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}.p-title{font-size:18px;font-weight:700;color:var(--text)}.p-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}.p-close:hover{color:var(--accent)}.v-area{position:relative;background:#000;aspect-ratio:16/9}.v-area video{width:100%;height:100%}.controls{padding:16px 20px;background:var(--bg);display:flex;align-items:center;gap:16px;border-top:1px solid var(--border)}.ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}.ctrl:hover{border-color:var(--accent)}.ctrl.play{background:var(--accent);color:#000;width:44px;height:44px}.progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;cursor:pointer}.progress-bar{height:100%;width:0;background:var(--accent);transition:0.2s}.time{font-size:12px;color:var(--muted);min-width:80px;text-align:right}
-.audio-bar{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--glass);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:150;transform:translateY(100%)}.audio-bar.show{transform:translateY(0)}.a-info{flex:1;min-width:0}.a-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.a-eq{display:flex;gap:2px;height:18px;align-items:flex-end;margin-top:2px}.a-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .6s ease-in-out infinite alternate}.a-ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}.a-ctrl:hover{border-color:var(--accent)}.a-ctrl.play{background:var(--radio);color:#000;border-color:var(--radio)}
-.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(20px);padding:12px 24px;border-radius:12px;font-size:14px;z-index:300;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.empty{padding:60px 20px;text-align:center;color:var(--muted)}.empty i{font-size:48px;margin-bottom:16px;opacity:.3}.empty p{font-size:14px}
-.scroll-top{position:fixed;bottom:96px;right:20px;width:44px;height:44px;background:var(--glass);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:.3s;z-index:100}.scroll-top.show{display:flex}.scroll-top:hover{background:var(--accent);color:#000}</style>
+.modal.show{display:flex}
+.player{width:90%;max-width:900px;background:#000;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.p-header{padding:16px 20px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.p-title{font-size:18px;font-weight:700;color:var(--text)}
+.p-close{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px}
+.p-close:hover{color:var(--accent)}
+.v-area{position:relative;background:#000;aspect-ratio:16/9}
+.v-area video{width:100%;height:100%}
+.controls{padding:16px 20px;background:var(--bg);display:flex;align-items:center;gap:16px;border-top:1px solid var(--border)}
+.-ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.ctrl:hover{border-color:var(--accent)}
+.ctrl.play{background:var(--accent);color:#000;width:44px;height:44px}
+.progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;cursor:pointer}
+.progress-bar{height:100%;width:0;background:var(--accent);transition:0.2s}
+.time{font-size:12px;color:var(--muted);min-width:80px;text-align:right}
+.audio-bar{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--glass);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:150;transform:translateY(100%)}
+.audio-bar.show{transform:translateY(0)}
+.a-info{flex:1;min-width:0}
+.a-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a-eq{display:flex;gap:2px;height:18px;align-items:flex-end;margin-top:2px}
+.a-eq span{width:3px;background:var(--radio);border-radius:2px;animation:r-eq .6s ease-in-out infinite alternate}
+.a-ctrl{background:var(--card);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.2s}
+.a-ctrl:hover{border-color:var(--accent)}
+.a-ctrl.play{background:var(--radio);color:#000;border-color:var(--radio)}
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--glass);border:1px solid var(--border);backdrop-filter:blur(20px);padding:12px 24px;border-radius:12px;font-size:14px;z-index:300;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:60px 20px;text-align:center;color:var(--muted)}
+.empty i{font-size:48px;margin-bottom:16px;opacity:.3}
+.empty p{font-size:14px}
+.scroll-top{position:fixed;bottom:96px;right:20px;width:44px;height:44px;background:var(--glass);border:1px solid var(--border);border-radius:50%;color:var(--accent);font-size:18px;cursor:pointer;display:none;align-items:center;justify-content:center;transition:.3s;z-index:100}
+.scroll-top.show{display:flex}
+.scroll-top:hover{background:var(--accent);color:#000}
+</style>
 </head>
 <body>
-<canvas class="stars-canvas" id="stars"></canvas>
-<div id="loader"><div class="loader-content"><div class="s-logo">S TV</div><div class="s-subtitle">ТВ и Радио — всегда под рукой</div><div class="s-dev">by Safarali Group 🛡</div><div class="s-version">v1.0.0</div><div class="progress-container"><div class="progress-bar"><div class="progress-fill" id="pfill"></div></div></div><div class="stat-row"><span>Сканирование...</span><span id="sc-count">ТВ: 0 | Радио: 0</span></div></div><div class="mirror-indicator"><div class="mirror-dot"></div><span id="mirror-text">api.v1.mediabay.tv</span></div></div>
+<canvas id="starsCanvas"></canvas>
+<div id="loader">
+  <div class="loader-content">
+    <div class="s-logo">S TV</div>
+    <div class="s-subtitle">TV i Radio — vsegda pod rukoj</div>
+    <div class="s-dev">by Safarali Group</div>
+    <div class="s-ver">v1.0.0</div>
+    <div class="progress-container"><div class="progress-bar"><div class="progress-fill" id="pfill"></div></div></div>
+    <div class="stat-row"><span>Skanirovanie...</span><span id="sc-count">TV: 0 | Radio: 0</span></div>
+  </div>
+  <div class="mirror-indicator"><div class="mirror-dot"></div><span id="mirror-text">api.v1.mediabay.tv</span></div>
+</div>
 
-<div id="app" class="app-hidden"><header><div class="logo">S TV</div><div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Поиск каналов..."></div><div class="btn-group"><button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>ТВ</button><button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Радио</button><button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Настройки</button></div></header><div class="tabs"><div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Все</div><div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Кино</div><div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Спорт</div><div class="tv-tab" data-cat="news" onclick="setCat('news')">Новости</div><div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Детские</div><div class="tv-tab" data-cat="music" onclick="setCat('music')">Музыка</div><div class="tv-tab" data-cat="hd" onclick="setCat('hd')">HD</div><div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Регион</div><div class="tv-tab" data-cat="other" onclick="setCat('other')">Другое</div><div class="tv-tab" data-cat="fav" onclick="setCat('fav')">⭐ Избранное</div></div><div class="content" id="content"><div id="tvview"><div class="category-filters" id="tcats"></div><div class="grid" id="tvgrid"></div></div><div id="radioview" style="display:none"><div class="category-filters" id="rcats"></div><div class="grid" id="radiogrid" style="grid-template-columns:1fr"></div></div><div id="settingsview" style="display:none;max-width:600px;padding:20px"><h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Настройки</h2><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🎨 Оформление</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px"><button class="cat-pill active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button><button class="cat-pill" data-theme="dark" onclick="setTheme('dark',this)">Тёмная</button><button class="cat-pill" data-theme="gray" onclick="setTheme('gray',this)">Серая</button></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px"><button class="cat-pill active" data-size="normal" onclick="setSize('normal',this)">Стандарт</button><button class="cat-pill" data-size="compact" onclick="setSize('compact',this)">Компакт</button><button class="cat-pill" data-size="large" onclick="setSize('large',this)">Крупный</button></div></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">🔄 Данные</h3><p style="font-size:13px;color:var(--muted);margin-bottom:8px">Кэш: <span id="cachetxt">не загружен</span></p><p style="font-size:13px;color:var(--muted);margin-bottom:16px">Зеркало: <span id="actmirr" style="color:var(--accent)">—</span></p><button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="startScan()"><i class="fas fa-sync-alt"></i>Обновить каналы</button><button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="clearCache()"><i class="fas fa-trash"></i>Очистить кэш</button><button class="nav-btn" style="width:100%" onclick="clearFav()"><i class="fas fa-star"></i>Очистить избранное</button></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">📡 API</h3><p style="font-size:13px;color:var(--muted)">Основное: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p><p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 1: <code style="color:var(--text)">api.mediabay.tv</code></p><p style="font-size:13px;color:var(--muted);margin-top:8px">Резерв 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p></div><div style="margin-bottom:24px"><h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">ℹ️ О приложении</h3><div style="text-align:center;padding:20px"><div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div><p style="font-size:14px;color:var(--muted);margin-top:8px">Версия 1.0.0</p><p style="font-size:13px;color:var(--muted)">Разработчик: Safarali Group 🛡</p><p style="font-size:12px;color:var(--muted);margin-top:4px">© 2026 Safarali Group</p></div></div><div><div style="margin-bottom:12px"><h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:var(--muted)">📤 Поделиться</h3><button class="nav-btn" style="width:100%" onclick="share()"><i class="fas fa-share-alt"></i>Поделиться</button></div><div style="margin-bottom:12px"><button class="nav-btn" style="width:100%" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')"><i class="fab fa-telegram"></i>@Mushtariy_LLC</button></div><div><button class="nav-btn" style="width:100%"><i class="fab fa-github"></i>Оценить на GitHub</button></div></div></div></div><div class="modal" id="vm"><div class="player"><div class="p-header"><div class="p-title" id="ptitle">Канал</div><button class="p-close" onclick="closeV()"><i class="fas fa-times"></i></button></div><div class="v-area"><video id="vp"></video></div><div class="controls"><button class="ctrl" id="pb"><i class="fas fa-play"></i></button><div class="progress"><div class="progress-bar" id="pb2"></div></div><button class="ctrl" id="fs"><i class="fas fa-expand"></i></button><span class="time" id="td">0:00 / 0:00</span></div></div></div><div class="audio-bar" id="ab"><div class="a-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="a-info"><div class="a-name" id="araname">Радио</div></div><button class="a-ctrl play" id="apb"><i class="fas fa-play"></i></button><button class="a-ctrl" id="ast"><i class="fas fa-stop"></i></button></div><div class="toast" id="toast"></div><div class="scroll-top" onclick="document.querySelector('.content').scrollTop=0"><i class="fas fa-arrow-up"></i></div>
+<div id="app">
+  <header>
+    <div class="logo">S TV</div>
+    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Poisk kanalov..."></div>
+    <div class="btn-group">
+      <button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>TV</button>
+      <button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Radio</button>
+      <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Nastrojki</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Vse</div>
+    <div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Kino</div>
+    <div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Sport</div>
+    <div class="tv-tab" data-cat="news" onclick="setCat('news')">Novosti</div>
+    <div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Detskie</div>
+    <div class="tv-tab" data-cat="music" onclick="setCat('music')">Muzyka</div>
+    <div class="tv-tab" data-cat="hd" onclick="setCat('hd')">HD</div>
+    <div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Region</div>
+    <div class="tv-tab" data-cat="other" onclick="setCat('other')">Drugoe</div>
+    <div class="tv-tab" data-cat="fav" onclick="setCat('fav')">Izbrannoe</div>
+  </div>
+
+  <div class="content" id="content">
+    <div id="tvview">
+      <div class="category-filters" id="tcats"></div>
+      <div class="grid" id="tvgrid"></div>
+    </div>
+    <div id="radioview" style="display:none">
+      <div class="category-filters" id="rcats"></div>
+      <div class="grid" id="radiogrid" style="grid-template-columns:1fr"></div>
+    </div>
+    <div id="settingsview" style="display:none;max-width:600px;padding:20px">
+      <h2 style="font-size:22px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px"><i class="fas fa-cog" style="color:var(--accent)"></i>Nastrojki</h2>
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">Oformlenie</h3>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+          <button class="cat-pill active" data-theme="default" onclick="setTheme('default',this)">AMOLED</button>
+          <button class="cat-pill" data-theme="dark" onclick="setTheme('dark',this)">Temnaya</button>
+          <button class="cat-pill" data-theme="gray" onclick="setTheme('gray',this)">Seraya</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+          <button class="cat-pill active" data-size="normal" onclick="setSize('normal',this)">Standart</button>
+          <button class="cat-pill" data-size="compact" onclick="setSize('compact',this)">Kompakt</button>
+          <button class="cat-pill" data-size="large" onclick="setSize('large',this)">Krupnyy</button>
+        </div>
+      </div>
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">Dannye</h3>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Kesh: <span id="cachetxt" style="color:var(--text)">ne zagruzhen</span></p>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Zerkalo: <span id="actmirr" style="color:var(--accent)">—</span></p>
+        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="startScan()"><i class="fas fa-sync-alt"></i>Obnovit kanaly</button>
+        <button class="nav-btn" style="margin-bottom:10px;width:100%" onclick="clearCache()"><i class="fas fa-trash"></i>Ochistit kesh</button>
+        <button class="nav-btn" style="width:100%" onclick="clearFav()"><i class="fas fa-star"></i>Ochistit izbrannoe</button>
+      </div>
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">API</h3>
+        <p style="font-size:13px;color:var(--muted)">Osnovnoe: <code style="color:var(--accent)">api.v1.mediabay.tv</code></p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px">Rezerv 1: <code style="color:var(--text)">api.mediabay.tv</code></p>
+        <p style="font-size:13px;color:var(--muted);margin-top:8px">Rezerv 2: <code style="color:var(--text)">api.v1.mediabay.uz</code></p>
+      </div>
+      <div style="margin-bottom:24px">
+        <h3 style="font-size:15px;font-weight:600;margin-bottom:12px;color:var(--muted)">O prilozhenii</h3>
+        <div style="text-align:center;padding:20px">
+          <div style="font-size:48px;font-weight:900;color:var(--accent)">S TV</div>
+          <p style="font-size:14px;color:var(--muted);margin-top:8px">Versiya 1.0.0</p>
+          <p style="font-size:13px;color:var(--muted)">Razrabotchik: Safarali Group</p>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px">2026 Safarali Group</p>
+        </div>
+      </div>
+      <div>
+        <div style="margin-bottom:12px">
+          <h3 style="font-size:15px;font-weight:600;margin-bottom:8px;color:var(--muted)">Podelitsya</h3>
+          <button class="nav-btn" style="width:100%" onclick="share()"><i class="fas fa-share-alt"></i>Podelitsya</button>
+        </div>
+        <div style="margin-bottom:12px">
+          <button class="nav-btn" style="width:100%" onclick="window.open('https://t.me/Mushtariy_LLC','_blank')"><i class="fab fa-telegram"></i>@Mushtariy_LLC</button>
+        </div>
+        <div><button class="nav-btn" style="width:100%"><i class="fab fa-github"></i>Ocenit na GitHub</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="vm">
+  <div class="player">
+    <div class="p-header">
+      <div class="p-title" id="ptitle">Kanal</div>
+      <button class="p-close" onclick="closeV()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="v-area"><video id="vp"></video></div>
+    <div class="controls">
+      <button class="ctrl" id="pb"><i class="fas fa-play"></i></button>
+      <div class="progress"><div class="progress-bar" id="pb2"></div></div>
+      <button class="ctrl" id="fs"><i class="fas fa-expand"></i></button>
+      <span class="time" id="td">0:00 / 0:00</span>
+    </div>
+  </div>
+</div>
+
+<div class="audio-bar" id="ab">
+  <div class="a-eq"><span></span><span></span><span></span><span></span><span></span></div>
+  <div class="a-info"><div class="a-name" id="araname">Radio</div></div>
+  <button class="a-ctrl play" id="apb"><i class="fas fa-play"></i></button>
+  <button class="a-ctrl" id="ast"><i class="fas fa-stop"></i></button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="scroll-top" onclick="document.querySelector('.content').scrollTop=0"><i class="fas fa-arrow-up"></i></div>
 
 <script>
 const state={channels:[],radios:[],fav:[],curTab:"tv",curCat:"all",search:"",actMirror:"",cacheTime:null,vEl:null,hls:null,aEl:null,pIdx:-1};
@@ -57,7 +246,7 @@ async function fetchChannel(thread){
   for(let i=1;i<MIRRORS.length;i++){
     const url=MIRRORS[i]+thread;
     const res=await tryFetch(url,TIMEOUT);
-    if(res){state.actMirror=MIRRORS[i].split('/')[2];console.log("⚡ Switch to reserve: "+state.actMirror);return res;}
+    if(res){state.actMirror=MIRRORS[i].split('/')[2];console.log("Switch to: "+state.actMirror);return res;}
   }
   return null;
 }
@@ -76,10 +265,12 @@ async function tryFetch(url,timeout){
 }
 
 async function startScan(){
-  if(state.scanning)return;state.scanning=true;
-  document.getElementById("loader").classList.remove("hidden");document.getElementById("app").classList.add("app-hidden");
+  if(state.scanning)return;
+  state.scanning=true;
+  document.getElementById("loader").classList.remove("hidden");
+  document.getElementById("app").classList.remove("visible");
   const tv=[],rad=[],tvCount=0,radCount=0;
-  document.getElementById("sc-count").textContent="ТВ: 0 | Радио: 0";
+  document.getElementById("sc-count").textContent="TV: 0 | Radio: 0";
   for(let i=1;i<=850;i+=BATCH){
     const e=Math.min(i+BATCH-1,850),prs=[];
     for(let k=i;k<=e;k++)prs.push(fetchChannel(k));
@@ -87,60 +278,125 @@ async function startScan(){
     const batchResults=prs.map(r=>r.status==="fulfilled"?r.value:null).filter(Boolean);
     batchResults.forEach(item=>{
       const name=(item||{}).name||"";
-      const isRadio=/radio|fm|музыка|хит|джаз|рок|ретро|волна|эхо|танцевальный|разговорный/i.test(name);
-      if(isRadio){rad.push({name:name,url:(item||{}).url,category:detRadCat(name)});radCount++;}else{tv.push({name:name,url:(item||{}).url||"",quality:detQuality(name),category:detCat(name)});tvCount++;}
+      const isRadio=/radio|fm|music|hit|jazz|rock|retro|wave|talk|dance/i.test(name);
+      if(isRadio){rad.push({name:name,url:(item||{}).url,category:detRadCat(name)});radCount++;}else{tv.push({name:name,url:(item||{}).url||"",quality:detQuality(name),category:detCat(name)});tvCount++}
     });
     document.getElementById("pfill").style.width=((e/850)*100)+"%";
-    document.getElementById("sc-count").textContent=`ТВ: ${tvCount} | Радио: ${radCount}`;
+    document.getElementById("sc-count").textContent="TV: "+tvCount+" | Radio: "+radCount;
   }
-  state.channels=tv;state.radios=rad;state.cacheTime=Date.now();saveCache();updateUI();
-  state.scanning=false;document.getElementById("loader").classList.add("hidden");document.getElementById("app").classList.remove("app-hidden");
+  state.channels=tv;state.radios=rad;state.cacheTime=Date.now();
+  saveCache();updateUI();
+  state.scanning=false;
+  document.getElementById("loader").classList.add("hidden");
+  document.getElementById("app").classList.add("visible");
+  toast("Updated: "+tv.length+" TV + "+rad.length+" Radio");
 }
 
-function detCat(n){n=n.toLowerCase();if(/кино|movie|film|сериал|kino/.test(n))return"movie";if(/спорт|sport|футбол|матч|hockey|basketball/.test(n))return"sport";if(/новост|news|24|vesti|cnn/.test(n))return"news";if(/дет|kids|cartoon|мульт/.test(n))return"kids";if(/музык|music|hit|muz/.test(n))return"music";if(/hd|4k|full hd|fhd|uhd/.test(n))return"hd";if(/регион|regional|домашн|local/.test(n))return"regional";return"other";}
-function detQuality(n){n=n.toLowerCase();if(/4k|full|fhd/.test(n))return"fhd";if(/hd/.test(n))return"hd";return"sd";}
-function detRadCat(n){n=n.toLowerCase();if(/pop|top|хит|поп/.test(n))return"Хиты";if(/rock|рок|classic/.test(n))return"Рок";if(/jazz|джаз/.test(n))return"Джаз";if(/talk|новост|news|информ/.test(n))return"Разговорное";if(/dance|house|техно|techno/.test(n))return"Танцевальное";return"Хиты";}
+function detCat(n){n=n.toLowerCase();if(/movie|film|kino|serial|kinohd/.test(n))return"movie";if(/sport|football|hockey|basketball|tennis|fight|ufc/.test(n))return"sport";if(/news|novosti|vesti|24|cnn|bbc|euronews/.test(n))return"news";if(/kids|det|children|cartoon|mult|karusel|piter|tun/.test(n))return"kids";if(/music|hit|muz|top/.test(n))return"music";if(/hd|4k|fhd|uhd|fullhd/.test(n))return"hd";if(/regional|region|domashniy|local|oblast/.test(n))return"regional";return"other"}
+function detQuality(n){n=n.toLowerCase();if(/4k|full|fhd|uhd/.test(n))return"fhd";if(/hd/.test(n))return"hd";return"sd"}
+function detRadCat(n){n=n.toLowerCase();if(/pop|top|hit|hits|chart/.test(n))return"Pop";if(/rock|rok|metal|classic|alternative/.test(n))return"Rock";if(/jazz|blues|soul/.test(n))return"Jazz";if(/talk|news|info|inform/.test(n))return"Talk";if(/dance|house|techno|disco|electronic|club|edm/.test(n))return"Dance";return"Pop"}
 
-function updateUI(){renderTV();renderRad();renderCats();document.getElementById("actmirr").textContent=state.actMirror||apiMirror();document.getElementById("cachetxt").textContent=state.cacheTime?new Date(state.cacheTime).toLocaleString():'';}
-function apiMirror(){return MIRRORS[0].split('/')[2];}
+function updateUI(){renderTV();renderRad();renderCats();document.getElementById("actmirr").textContent=state.actMirror||apiMirror();document.getElementById("cachetxt").textContent=state.cacheTime?new Date(state.cacheTime).toLocaleString():"";}
+function apiMirror(){return MIRRORS[0].split('/')[2]}
 function renderTV(){
   const g=document.getElementById("tvgrid"),s=document.getElementById("search").value.toLowerCase().trim();
-  let list=state.channels;if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(c=>c.category===state.curCat);
+  let list=state.channels;
+  if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(c=>c.category===state.curCat);
   if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes(i));
   if(s)list=list.filter(c=>c.name.toLowerCase().includes(s));
-  g.innerHTML=list.length?list.map((c,i)=>{const isFav=favIn(i);const idx=i;return`<div class="card" data-idx="${idx}" onclick="openV(${idx})"><div class="card poster"><div class="s-silver">${c.name.charAt(0)}</div></div><div class="card info"><div class="c-name">${c.name}</div><div class="c-meta"><span class="c-q ${c.quality}">${c.quality.toUpperCase()}</span></div><div class="c-actions"><button class="c-play" onclick="event.stopPropagation();openV(${idx})"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${idx},'tv')"><i class="far fa-star"></i></button></div></div></div>`}).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';}
+  g.innerHTML=list.length?list.map((c,i)=>{
+    const isFav=state.fav.includes(i);
+    return`<div class="card" data-idx="${i}" onclick="openV(${i})"><div class="card poster"><div class="s-silver">${c.name.charAt(0)}</div></div><div class="card info"><div class="c-name">${c.name}</div><div class="c-meta"><span class="c-q ${c.quality}">${c.quality.toUpperCase()}</span></div><div class="c-actions"><button class="c-play" onclick="event.stopPropagation();openV(${i})"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'tv')"><i class="far fa-star"></i></button></div></div></div>`;
+  }).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Kanali ne naydeny</p></div>';
+}
 function renderRad(){
   const g=document.getElementById("radiogrid"),s=document.getElementById("search").value.toLowerCase().trim();
-  let list=state.radios;if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(r=>r.category===state.curCat);
+  let list=state.radios;
+  if(state.curCat!=="all"&&state.curCat!=="fav")list=list.filter(r=>r.category===state.curCat);
   if(state.curCat==="fav")list=list.filter((_,i)=>state.fav.includes('r'+i));
   if(s)list=list.filter(r=>r.name.toLowerCase().includes(s));
-  g.innerHTML=list.length?list.map((r,i)=>{const isFav=favIn('r'+i);return`<div class="radio-card" onclick="playRad(${i})"><div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="r-info"><div class="r-name">${r.name}</div><div class="r-cat">${r.category}</div></div><button class="c-play"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="far fa-star"></i></button></div>`}).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';}
+  g.innerHTML=list.length?list.map((r,i)=>{
+    const isFav=state.fav.includes('r'+i);
+    return`<div class="radio-card" onclick="playRad(${i})"><div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div><div class="r-info"><div class="r-name">${r.name}</div><div class="r-cat">${r.category}</div></div><button class="c-play"><i class="fas fa-play"></i></button><button class="c-star ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav(${i},'radio')"><i class="far fa-star"></i></button></div>`;
+  }).join(''):'<div class="empty"><i class="fas fa-search"></i><p>Radiostantsii ne naydeny</p></div>';
+}
 function renderCats(){
-  document.getElementById("tcats").innerHTML=['movie','sport','news','kids','music','hd','regional','other','fav'].map(c=>`<div class="cat-pill ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'⭐ Избранное':c}</div>`).join('');
-  document.getElementById("rcats").innerHTML=['Хиты','Рок','Джаз','Разговорное','Танцевальное','Регион','fav'].map(c=>`<div class="cat-pill radio-cat ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'⭐ Избранное':c}</div>`).join('');
+  document.getElementById("tcats").innerHTML=['movie','sport','news','kids','music','hd','regional','other','fav'].map(c=>`<div class="cat-pill ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'Izbrannoe':c}</div>`).join('');
+  document.getElementById("rcats").innerHTML=['Pop','Rock','Jazz','Talk','Dance','fav'].map(c=>`<div class="cat-pill radio-cat ${state.curCat===c?'active':''}" onclick="setCat('${c}')">${c==='fav'?'Izbrannoe':c}</div>`).join('');
 }
 
-function openV(idx){const c=state.channels[idx];if(!c||!c.url){toast('❌ URL канала недоступен');return;}state.vEl=document.getElementById("vp");state.pIdx=idx;document.getElementById("ptitle").textContent=c.name;document.getElementById("vm").classList.add("show");if(c.url.includes(".m3u8")){if(Hls.isSupported()){state.hls=new Hls();state.hls.loadSource(c.url);}else{state.vEl.src=c.url;}}}
-function closeV(){document.getElementById("vm").classList.remove("show");if(state.hls){state.hls.destroy();state.hls=null;}if(state.vEl){state.vEl.pause();state.vEl.src="";}}
-function playRad(idx){const r=state.radios[idx];if(!r)return;document.getElementById("araname").textContent=r.name;document.getElementById("ab").classList.add("show");state.aEl=new Audio(r.url);state.aEl.play().catch(()=>toast('❌ Радио недоступно'));}
-function stopRad(){if(state.aEl){state.aEl.pause();state.aEl=null;document.getElementById("ab").classList.remove("show");}}
+function openV(idx){
+  const c=state.channels[idx];
+  if(!c||!c.url){toast("URL ne dostupen");return}
+  state.vEl=document.getElementById("vp");
+  state.pIdx=idx;
+  document.getElementById("ptitle").textContent=c.name;
+  document.getElementById("vm").classList.add("show");
+  if(c.url.includes(".m3u8")){
+    if(Hls.isSupported()){
+      state.hls=new Hls();
+      state.hls.loadSource(c.url);
+      state.hls.attachMedia(state.vEl);
+    }else{
+      state.vEl.src=c.url;
+    }
+  }else{
+    state.vEl.src=c.url;
+  }
+}
 
-function favIn(key){return state.fav.includes(key);}
-function toggleFav(idx,type){const key=type==="radio"?"r"+idx:idx;const pos=state.fav.indexOf(key);if(pos>-1){state.fav.splice(pos,1);toast('❌ Удалено из избранного');}else{state.fav.push(key);toast('⭐ Добавлено в избранное');}saveFav();renderTV();renderRad();}
-function clearFav(){if(confirm("Очистить избранное?")){state.fav=[];saveFav();renderTV();renderRad();toast('🗑 Избранное очищено');}}
-function saveFav(){localStorage.setItem("stv_fav",JSON.stringify(state.fav));}
-function saveCache(){localStorage.setItem("stv_cache",JSON.stringify({t:Date.now(),channels:state.channels.map(c=>({name:c.name,quality:c.quality,category:c.category})),radios:state.radios.map(r=>({name:r.name,category:r.category}))}));}
-function loadCache(){const cached=localStorage.getItem("stv_cache");if(!cached)return false;try{const d=JSON.parse(cached);if(Date.now()-d.t>86400000)return false;state.channels=d.channels.map(c=>({name:c.name,quality:c.quality,category:c.category,url:""}));state.radios=d.radios.map(r=>({name:r.name,category:r.category,url:""}));state.cacheTime=d.t;return true}catch(e){return false;}}
+function closeV(){
+  document.getElementById("vm").classList.remove("show");
+  if(state.hls){state.hls.destroy();state.hls=null}
+  if(state.vEl){state.vEl.pause();state.vEl.src=""}
+}
 
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500);}
-function switchTab(tab){state.curTab=tab;document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));event.target.closest(".nav-btn").classList.add("active");document.getElementById("tvview").style.display=tab==="tv"?"":"none";document.getElementById("radioview").style.display=tab==="radio"?"":"none";document.getElementById("settingsview").style.display=tab==="settings"?"":"none";}
-function setCat(c){state.curCat=c;renderTV();renderRad();renderCats();}
-function setTheme(t,b){document.body.className=t==="gray"?"";localStorage.setItem("stv_theme",t);}
-function setSize(s,b){document.getElementById("tvgrid").style.gridTemplateColumns=s==="compact"?"repeat(auto-fill,minmax(140px,1fr))":s==="large"?"repeat(auto-fill,minmax(260px,1fr))":"";localStorage.setItem("stv_size",s);}
-function share(){navigator.share?navigator.share({title:"S TV",text:"850+ каналов - Safarali Group",url:location.href}):alert("Ссылка скопирована!");}
-function drawStars(){const c=document.getElementById("stars"),x=c.getContext("2d"),w=c.width=innerWidth,h=c.height=innerHeight;let stars=[];function init(){stars=Array.from({length:200},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.5,a:Math.random()}));}init();function animate(){x.clearRect(0,0,w,h);stars.forEach(s=>{x.beginPath();x.arc(s.x,s.y,s.r,0,Math.PI*2);x.fillStyle=`rgba(0,212,255,${s.a*0.6})`;x.fill();});requestAnimationFrame(animate);}animate();window.onresize=()=>{w=c.width=innerWidth;h=c.height=innerHeight;init();}}
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("vm").classList.contains("show"))closeV();if((e.ctrlKey||e.metaKey)&&e.key==="f"){document.getElementById("search").focus();}});
-loadCache()?updateUI():startScan();drawStars();
+function playRad(idx){
+  const r=state.radios[idx];
+  if(!r)return;
+  document.getElementById("araname").textContent=r.name;
+  document.getElementById("ab").classList.add("show");
+  if(state.aEl){state.aEl.pause();state.aEl=null}
+  state.aEl=new Audio(r.url);
+  state.aEl.play().catch(()=>toast("Radio ne dostupno"));
+}
+
+function favIn(key){return state.fav.includes(key)}
+function toggleFav(idx,type){
+  const key=type==="radio"?"r"+idx:idx;
+  const pos=state.fav.indexOf(key);
+  if(pos>-1){state.fav.splice(pos,1);toast("Udaleno iz izbrannogo")}else{state.fav.push(key);toast("Dobavleno v izbrannoe")}
+  saveFav();renderTV();renderRad();
+}
+function clearFav(){if(confirm("Ochistit izbrannoe?")){state.fav=[];saveFav();renderTV();renderRad();toast("Izbrannoe ochischeno")}}
+function saveFav(){localStorage.setItem("stv_fav",JSON.stringify(state.fav))}
+function saveCache(){localStorage.setItem("stv_cache",JSON.stringify({t:Date.now(),channels:state.channels.map(c=>({name:c.name,quality:c.quality,category:c.category})),radios:state.radios.map(r=>({name:r.name,category:r.category}))}))}
+function loadCache(){const cached=localStorage.getItem("stv_cache");if(!cached)return false;try{const d=JSON.parse(cached);if(Date.now()-d.t>86400000)return false;state.channels=d.channels.map(c=>({name:c.name,quality:c.quality,category:c.category,url:""}));state.radios=d.radios.map(r=>({name:r.name,category:r.category,url:""}));state.cacheTime=d.t;return true}catch(e){return false}}
+
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+function switchTab(tab){state.curTab=tab;document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));event.target.closest(".nav-btn").classList.add("active");document.getElementById("tvview").style.display=tab==="tv"?"block":"none";document.getElementById("radioview").style.display=tab==="radio"?"block":"none";document.getElementById("settingsview").style.display=tab==="settings"?"block":"none"}
+function setCat(c){state.curCat=c;renderTV();renderRad();renderCats()}
+function setTheme(t,b){document.body.className=t==="gray"?"body-gray":"";localStorage.setItem("stv_theme",t)}
+function setSize(s,b){const g=document.getElementById("tvgrid");g.style.gridTemplateColumns=s==="compact"?"repeat(auto-fill,minmax(140px,1fr))":s==="large"?"repeat(auto-fill,minmax(260px,1fr))":"repeat(auto-fill,minmax(180px,1fr))";localStorage.setItem("stv_size",s)}
+function share(){if(navigator.share){navigator.share({title:"S TV",text:"TV i Radio - Safarali Group",url:location.href}).catch(()=>{})}else{toast("Link copied")}}
+
+function drawStars(){
+  const c=document.getElementById("starsCanvas"),ctx=c.getContext("2d"),w=c.width=innerWidth,h=c.height=innerHeight;
+  let stars=[];
+  function init(){stars=Array.from({length:200},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.5+0.5,a:Math.random()}))}
+  init();
+  function animate(){ctx.clearRect(0,0,w,h);stars.forEach(s=>{ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle="rgba(0,212,255,"+(s.a*0.6)+")";ctx.fill()});requestAnimationFrame(animate)}
+  animate();
+  window.addEventListener("resize",()=>{w=c.width=innerWidth;h=c.height=innerHeight;init()});
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&document.getElementById("vm").classList.contains("show"))closeV();
+  if((e.ctrlKey||e.metaKey)&&e.key==="f"){e.preventDefault();document.getElementById("search").focus()}
+});
+
+if(loadCache()){updateUI()}else{startScan()}
+drawStars();
 </script>
 </body>
 </html>
