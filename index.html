@@ -36,6 +36,9 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 .search-wrap input{width:100%;padding:10px 40px 10px 16px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;outline:none;transition:border .3s}
 .search-wrap input:focus{border-color:var(--accent)}
 .search-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.search-info{font-size:12px;color:var(--muted);white-space:nowrap;line-height:1.4;text-align:right}
+.search-info b{color:var(--accent);font-weight:600}
+.search-info .r{color:var(--radio)}
 .btn-group{display:flex;gap:8px;align-items:center}
 .nav-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:8px;cursor:pointer;font-family:inherit;font-size:13px;transition:.3s}
 .nav-btn:hover{border-color:var(--accent);color:var(--text)}
@@ -126,26 +129,14 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div id="app">
   <header>
     <div class="logo">S TV</div>
-    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Поиск каналов..."></div>
+    <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="search" placeholder="Поиск каналов..." autocomplete="off"></div>
+    <span class="search-info" id="searchInfo"></span>
     <div class="btn-group">
-      <button class="nav-btn active" data-tab="tv" onclick="switchTab('tv')"><i class="fas fa-tv"></i>ТВ</button>
-      <button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio')"><i class="fas fa-broadcast-tower"></i>Радио</button>
-      <button class="nav-btn" data-tab="settings" onclick="switchTab('settings')"><i class="fas fa-cog"></i>Настройки</button>
+      <button class="nav-btn active" data-tab="tv" onclick="switchTab('tv',this)"><i class="fas fa-tv"></i>ТВ</button>
+      <button class="nav-btn radio-tab" data-tab="radio" onclick="switchTab('radio',this)"><i class="fas fa-broadcast-tower"></i>Радио</button>
+      <button class="nav-btn" data-tab="settings" onclick="switchTab('settings',this)"><i class="fas fa-cog"></i>Настройки</button>
     </div>
   </header>
-
-  <div class="tabs">
-    <div class="tab tv-tab active" data-cat="all" onclick="setCat('all')">Все</div>
-    <div class="tv-tab" data-cat="movie" onclick="setCat('movie')">Кино</div>
-    <div class="tv-tab" data-cat="sport" onclick="setCat('sport')">Спорт</div>
-    <div class="tv-tab" data-cat="news" onclick="setCat('news')">Новости</div>
-    <div class="tv-tab" data-cat="kids" onclick="setCat('kids')">Детские</div>
-    <div class="tv-tab" data-cat="music" onclick="setCat('music')">Музыка</div>
-    <div class="tv-tab" data-cat="hd" onclick="setCat('hd')">HD</div>
-    <div class="tv-tab" data-cat="regional" onclick="setCat('regional')">Регион</div>
-    <div class="tv-tab" data-cat="other" onclick="setCat('other')">Другое</div>
-    <div class="tv-tab" data-cat="fav" onclick="setCat('fav')">⭐ Избранное</div>
-  </div>
 
   <div class="content" id="content">
     <div id="tvview">
@@ -235,6 +226,8 @@ header{position:sticky;top:0;z-index:100;background:var(--glass);backdrop-filter
 <div class="scroll-top" onclick="document.querySelector('.content').scrollTop=0"><i class="fas fa-arrow-up"></i></div>
 
 <script>
+'use strict';
+
 // ========== STATE ==========
 const state = {
   channels: [],
@@ -248,7 +241,8 @@ const state = {
   vEl: null,
   hls: null,
   aEl: null,
-  pIdx: -1
+  pIdx: -1,
+  scanning: false
 };
 
 // ========== CONSTANTS ==========
@@ -257,67 +251,88 @@ const MIRRORS = [
   'https://api.mediabay.tv/v2/channels/thread/',
   'https://api.v1.mediabay.uz/v2/channels/thread/'
 ];
-const BATCH = 30;
-const TIMEOUT = 10000;
+const THREAD_START = 440;
+const THREAD_END = 570;
+const BATCH = 50;
+const TIMEOUT = 4000;
 
-// ========== FETCH WITH FALLBACK ==========
-async function tryFetch(url) {
-  try {
-    const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), TIMEOUT);
-    const res = await fetch(url, {
-      signal: ctrl.signal,
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    });
-    clearTimeout(tid);
-    if (res.status === 200) {
-      const d = await res.json();
-      if (d && d.url) return { name: d.name, url: d.url };
-    }
-  } catch (e) {}
-  return null;
+const RADIO_RE = /^radio|^радио|\bradio\b|\bрадио\b|радио|fm|фм|музык|музик|муsic|\bmusic\b|хит|хиты|hits|\bhit\b|джаз|jazz|рок|rock|ретро|retro|волна|wave|эхо|echo|танц|dance|разговор|talk|поп|top 40|love|relax|классик|classic|энерг|energy|чарт|chart/i;
+
+const CAT_NAMES = {
+  movie: 'Кино', sport: 'Спорт', news: 'Новости', kids: 'Детские',
+  music: 'Музыка', hd: 'HD', regional: 'Регион', other: 'Другое', fav: '⭐ Избранное'
+};
+
+// ========== API ==========
+function apiName() {
+  return state.actMirror || MIRRORS[0].split('/')[2];
 }
 
-async function fetchChannel(thread) {
-  // Try all mirrors in order
+function nameFromUrl(url) {
+  try {
+    const path = new URL(url).pathname;
+    const parts = path.split('/').filter(Boolean);
+    const slug = parts.length >= 2 ? parts[parts.length - 2] : (parts[0] || 'Канал');
+    const name = slug.split('?')[0].replace(/[_\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+    return name || 'Канал';
+  } catch (e) {
+    return 'Канал';
+  }
+}
+
+// Try all mirrors in order — PRIMARY always first
+async function fetchRaw(thread) {
   for (let i = 0; i < MIRRORS.length; i++) {
-    const url = MIRRORS[i] + thread;
-    const result = await tryFetch(url);
-    if (result) {
-      state.actMirror = MIRRORS[i].split('/')[2];
-      return result;
-    }
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(function() { ctrl.abort(); }, TIMEOUT);
+      const res = await fetch(MIRRORS[i] + thread, {
+        signal: ctrl.signal,
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+      });
+      clearTimeout(tid);
+      if (res.status === 200) {
+        const d = await res.json();
+        if (d && d.status === 'ok' && d.data && d.data.length) {
+          state.actMirror = MIRRORS[i].split('/')[2];
+          return d.data;
+        }
+      }
+    } catch (e) {}
   }
   return null;
 }
 
-// ========== CATEGORY DETECTORS ==========
+// ========== DETECTORS ==========
+function isRadio(name) {
+  return RADIO_RE.test(name || '');
+}
+
 function detCat(n) {
-  n = n.toLowerCase();
+  n = (n || '').toLowerCase();
   if (/movie|film|kino|serial|kinohd/.test(n)) return 'movie';
-  if (/sport|football|hockey|basketball|tennis|fight|ufc/.test(n)) return 'sport';
-  if (/news|novosti|vesti|24|cnn|bbc|euronews/.test(n)) return 'news';
-  if (/kids|det|children|cartoon|mult|karusel|piter|tun/.test(n)) return 'kids';
-  if (/music|hit|muz|top/.test(n)) return 'music';
+  if (/sport|football|hockey|basketball|tennis|fight|ufc|mma/.test(n)) return 'sport';
+  if (/news|novosti|vesti|\bcnn\b|\bbbc\b|euronews|\b24\b/.test(n)) return 'news';
+  if (/kids|deti|children|cartoon|mult|karusel|tun/.test(n)) return 'kids';
+  if (/music|muz|hit|top/.test(n)) return 'music';
   if (/hd|4k|fhd|uhd|fullhd/.test(n)) return 'hd';
   if (/regional|region|domashniy|local|oblast/.test(n)) return 'regional';
   return 'other';
 }
 
 function detQuality(n) {
-  n = n.toLowerCase();
+  n = (n || '').toLowerCase();
   if (/4k|full|fhd|uhd/.test(n)) return 'fhd';
   if (/hd/.test(n)) return 'hd';
   return 'sd';
 }
 
 function detRadCat(n) {
-  n = n.toLowerCase();
-  if (/pop|top|hit|hits|chart/.test(n)) return 'Pop';
-  if (/rock|rok|metal|classic|alternative/.test(n)) return 'Rock';
-  if (/jazz|blues|soul/.test(n)) return 'Jazz';
-  if (/talk|news|info|inform/.test(n)) return 'Talk';
-  if (/dance|house|techno|disco|electronic|club|edm/.test(n)) return 'Dance';
+  n = (n || '').toLowerCase();
+  if (/talk|news|info|inform|разговор/.test(n)) return 'Talk';
+  if (/rock|rok|metal|classic|классик|рок/.test(n)) return 'Rock';
+  if (/jazz|blues|soul|джаз/.test(n)) return 'Jazz';
+  if (/dance|house|techno|disco|electronic|club|edm|танц/.test(n)) return 'Dance';
   return 'Pop';
 }
 
@@ -332,38 +347,45 @@ async function startScan() {
   const rad = [];
   let tvCount = 0;
   let radCount = 0;
+  const seen = new Set();
+  const total = THREAD_END - THREAD_START + 1;
 
   document.getElementById('sc-count').textContent = 'ТВ: 0 | Радио: 0';
+  document.getElementById('mirror-text').textContent = apiName();
 
-  for (let i = 1; i <= 850; i += BATCH) {
-    const end = Math.min(i + BATCH - 1, 850);
+  for (let i = THREAD_START; i <= THREAD_END; i += BATCH) {
+    const end = Math.min(i + BATCH - 1, THREAD_END);
     const promises = [];
-
     for (let k = i; k <= end; k++) {
-      promises.push(fetchChannel(k));
+      promises.push(fetchRaw(k));
     }
-
     const results = await Promise.allSettled(promises);
 
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value) {
-        const name = r.value.name || '';
-        const url = r.value.url || '';
-        const isRadio = /radio|fm|music|hit|jazz|rock|retro|wave|talk|dance/i.test(name);
-
-        if (isRadio) {
-          rad.push({ name: name, url: url, category: detRadCat(name) });
+    results.forEach(function(r) {
+      if (r.status !== 'fulfilled' || !r.value) return;
+      r.value.forEach(function(ch) {
+        if (!ch.threadAddress || seen.has(ch.id)) return;
+        seen.add(ch.id);
+        const name = nameFromUrl(ch.threadAddress);
+        const isR = isRadio(name);
+        const item = { id: ch.id, thread: k, name: name, url: ch.threadAddress };
+        if (isR) {
+          item.category = detRadCat(name);
+          rad.push(item);
           radCount++;
         } else {
-          tv.push({ name: name, url: url, quality: detQuality(name), category: detCat(name) });
+          item.quality = detQuality(name);
+          item.category = detCat(name);
+          tv.push(item);
           tvCount++;
         }
-      }
+      });
     });
 
-    const pct = Math.round((end / 850) * 100);
-    document.getElementById('pfill').style.width = pct + '%';
+    const done = end - THREAD_START + 1;
+    document.getElementById('pfill').style.width = Math.round((done / total) * 100) + '%';
     document.getElementById('sc-count').textContent = 'ТВ: ' + tvCount + ' | Радио: ' + radCount;
+    document.getElementById('mirror-text').textContent = apiName();
   }
 
   state.channels = tv;
@@ -383,90 +405,103 @@ function updateUI() {
   renderTV();
   renderRad();
   renderCats();
-  document.getElementById('actmirr').textContent = state.actMirror || apiMirror();
-  document.getElementById('cachetxt').textContent = state.cacheTime ? new Date(state.cacheTime).toLocaleString() : '';
+  document.getElementById('actmirr').textContent = apiName();
+  document.getElementById('cachetxt').textContent = state.cacheTime ? new Date(state.cacheTime).toLocaleString() : 'не загружен';
+  updateSearchInfo();
 }
 
-function apiMirror() {
-  return MIRRORS[0].split('/')[2];
+function updateSearchInfo() {
+  const s = state.search;
+  const el = document.getElementById('searchInfo');
+  let tvc = state.channels.length;
+  let rc = state.radios.length;
+  if (s) {
+    tvc = state.channels.filter(function(c) { return c.name.toLowerCase().includes(s); }).length;
+    rc = state.radios.filter(function(r) { return r.name.toLowerCase().includes(s); }).length;
+  }
+  if (!s && state.curTab === 'tv' && state.curCat !== 'all' && state.curCat !== 'fav') {
+    tvc = state.channels.filter(function(c) { return c.category === state.curCat; }).length;
+  }
+  if (!s && state.curTab === 'radio' && state.curCat !== 'all' && state.curCat !== 'fav') {
+    rc = state.radios.filter(function(r) { return r.category === state.curCat; }).length;
+  }
+  el.innerHTML = '<span>ТВ: <b>' + tvc + '</b></span> · <span class="r">Радио: <b>' + rc + '</b></span>';
 }
 
 function renderTV() {
   const g = document.getElementById('tvgrid');
-  const s = document.getElementById('search').value.toLowerCase().trim();
+  const s = state.search;
   let list = state.channels;
 
-  if (state.curCat !== 'all' && state.curCat !== 'fav') {
-    list = list.filter(c => c.category === state.curCat);
-  }
   if (state.curCat === 'fav') {
-    list = list.filter((_, i) => state.fav.includes(i));
+    list = list.filter(function(c, i) { return state.fav.indexOf(i) > -1; });
+  } else if (state.curCat !== 'all') {
+    list = list.filter(function(c) { return c.category === state.curCat; });
   }
   if (s) {
-    list = list.filter(c => c.name.toLowerCase().includes(s));
+    list = list.filter(function(c) { return c.name.toLowerCase().includes(s); });
   }
 
-  if (list.length === 0) {
-    g.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Каналы не найдены</p></div>';
-    return;
-  }
-
-  g.innerHTML = list.map((c, i) => {
-    const idx = state.channels.indexOf(c);
-    const isFav = state.fav.includes(idx);
-    return '<div class="card" data-idx="' + idx + '" onclick="openV(' + idx + ')">' +
-      '<div class="card poster"><div class="s-silver">' + c.name.charAt(0) + '</div></div>' +
-      '<div class="card info">' +
-        '<div class="c-name">' + c.name + '</div>' +
-        '<div class="c-meta"><span class="c-q ' + c.quality + '">' + c.quality.toUpperCase() + '</span></div>' +
-        '<div class="c-actions">' +
-          '<button class="c-play" onclick="event.stopPropagation();openV(' + idx + ')"><i class="fas fa-play"></i></button>' +
-          '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + idx + ',\'tv\')"><i class="far fa-star"></i></button>' +
+  if (!list.length) {
+    g.innerHTML = '<div class="empty"><i class="fas fa-tv"></i><p>' + (s ? 'Ничего не найдено' : 'Каналы не найдены') + '</p></div>';
+  } else {
+    g.innerHTML = list.map(function(c) {
+      const idx = state.channels.indexOf(c);
+      const isFav = state.fav.indexOf(idx) > -1;
+      return '<div class="card" onclick="openV(' + idx + ')">' +
+        '<div class="card poster"><div class="s-silver">' + (c.name.charAt(0) || '?') + '</div></div>' +
+        '<div class="card info">' +
+          '<div class="c-name">' + c.name + '</div>' +
+          '<div class="c-meta"><span class="c-q ' + c.quality + '">' + c.quality.toUpperCase() + '</span></div>' +
+          '<div class="c-actions">' +
+            '<button class="c-play" onclick="event.stopPropagation();openV(' + idx + ')"><i class="fas fa-play"></i> Смотреть</button>' +
+            '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + idx + ',\'tv\')"><i class="' + (isFav ? 'fas' : 'far') + ' fa-star"></i></button>' +
+          '</div>' +
         '</div>' +
-      '</div>' +
-    '</div>';
-  }).join('');
+      '</div>';
+    }).join('');
+  }
+  updateSearchInfo();
 }
 
 function renderRad() {
   const g = document.getElementById('radiogrid');
-  const s = document.getElementById('search').value.toLowerCase().trim();
+  const s = state.search;
   let list = state.radios;
 
-  if (state.curCat !== 'all' && state.curCat !== 'fav') {
-    list = list.filter(r => r.category === state.curCat);
-  }
   if (state.curCat === 'fav') {
-    list = list.filter((_, i) => state.fav.includes('r' + i));
+    list = list.filter(function(r, i) { return state.fav.indexOf('r' + i) > -1; });
+  } else if (state.curCat !== 'all') {
+    list = list.filter(function(r) { return r.category === state.curCat; });
   }
   if (s) {
-    list = list.filter(r => r.name.toLowerCase().includes(s));
+    list = list.filter(function(r) { return r.name.toLowerCase().includes(s); });
   }
 
-  if (list.length === 0) {
-    g.innerHTML = '<div class="empty"><i class="fas fa-search"></i><p>Радиостанции не найдены</p></div>';
-    return;
+  if (!list.length) {
+    g.innerHTML = '<div class="empty"><i class="fas fa-broadcast-tower"></i><p>' + (s ? 'Ничего не найдено' : 'Радиостанции не найдены') + '</p></div>';
+  } else {
+    g.innerHTML = list.map(function(r, i) {
+      const isFav = state.fav.indexOf('r' + i) > -1;
+      return '<div class="radio-card" onclick="playRad(' + i + ')">' +
+        '<div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div>' +
+        '<div class="r-info">' +
+          '<div class="r-name">' + r.name + '</div>' +
+          '<div class="r-cat">' + r.category + '</div>' +
+        '</div>' +
+        '<button class="c-play" onclick="event.stopPropagation();playRad(' + i + ')"><i class="fas fa-play"></i></button>' +
+        '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + i + ',\'radio\')"><i class="' + (isFav ? 'fas' : 'far') + ' fa-star"></i></button>' +
+      '</div>';
+    }).join('');
   }
-
-  g.innerHTML = list.map((r, i) => {
-    const isFav = state.fav.includes('r' + i);
-    return '<div class="radio-card" onclick="playRad(' + i + ')">' +
-      '<div class="r-eq"><span></span><span></span><span></span><span></span><span></span></div>' +
-      '<div class="r-info">' +
-        '<div class="r-name">' + r.name + '</div>' +
-        '<div class="r-cat">' + r.category + '</div>' +
-      '</div>' +
-      '<button class="c-play"><i class="fas fa-play"></i></button>' +
-      '<button class="c-star ' + (isFav ? 'active' : '') + '" onclick="event.stopPropagation();toggleFav(' + i + ',\'radio\')"><i class="far fa-star"></i></button>' +
-    '</div>';
-  }).join('');
+  updateSearchInfo();
 }
 
 function renderCats() {
   const tvc = ['movie', 'sport', 'news', 'kids', 'music', 'hd', 'regional', 'other', 'fav'];
   document.getElementById('tcats').innerHTML = tvc.map(function(c) {
     return '<div class="cat-pill ' + (state.curCat === c ? 'active' : '') + '" onclick="setCat(\'' + c + '\')">' +
-      (c === 'fav' ? '⭐ Избранное' : c) + '</div>';
+      (CAT_NAMES[c] || c) + '</div>';
   }).join('');
 
   const rc = ['Pop', 'Rock', 'Jazz', 'Talk', 'Dance', 'fav'];
@@ -477,10 +512,15 @@ function renderCats() {
 }
 
 // ========== PLAYERS ==========
-function openV(idx) {
+async function openV(idx) {
   const c = state.channels[idx];
-  if (!c || !c.url) {
-    toast('URL канала недоступен');
+  if (!c) return;
+  if (!c.url) {
+    const data = await fetchRaw(c.thread);
+    if (data && data.length && data[0].threadAddress) c.url = data[0].threadAddress;
+  }
+  if (!c.url) {
+    toast('Поток канала недоступен');
     return;
   }
   state.vEl = document.getElementById('vp');
@@ -488,7 +528,7 @@ function openV(idx) {
   document.getElementById('ptitle').textContent = c.name;
   document.getElementById('vm').classList.add('show');
 
-  if (c.url.includes('.m3u8')) {
+  if (c.url.indexOf('.m3u8') > -1) {
     if (Hls.isSupported()) {
       state.hls = new Hls();
       state.hls.loadSource(c.url);
@@ -499,30 +539,30 @@ function openV(idx) {
   } else {
     state.vEl.src = c.url;
   }
+  state.vEl.play().catch(function() {});
 }
 
 function closeV() {
   document.getElementById('vm').classList.remove('show');
-  if (state.hls) {
-    state.hls.destroy();
-    state.hls = null;
-  }
-  if (state.vEl) {
-    state.vEl.pause();
-    state.vEl.src = '';
-  }
+  if (state.hls) { state.hls.destroy(); state.hls = null; }
+  if (state.vEl) { state.vEl.pause(); state.vEl.src = ''; }
 }
 
-function playRad(idx) {
+async function playRad(idx) {
   const r = state.radios[idx];
   if (!r) return;
+  if (!r.url) {
+    const data = await fetchRaw(r.thread);
+    if (data && data.length && data[0].threadAddress) r.url = data[0].threadAddress;
+  }
+  if (!r.url) {
+    toast('Радио недоступно');
+    return;
+  }
   document.getElementById('araname').textContent = r.name;
   document.getElementById('ab').classList.add('show');
 
-  if (state.aEl) {
-    state.aEl.pause();
-    state.aEl = null;
-  }
+  if (state.aEl) { state.aEl.pause(); state.aEl = null; }
   state.aEl = new Audio(r.url);
   state.aEl.play().catch(function() {
     toast('Радио недоступно');
@@ -530,18 +570,11 @@ function playRad(idx) {
 }
 
 function stopRad() {
-  if (state.aEl) {
-    state.aEl.pause();
-    state.aEl = null;
-  }
+  if (state.aEl) { state.aEl.pause(); state.aEl = null; }
   document.getElementById('ab').classList.remove('show');
 }
 
 // ========== FAVORITES ==========
-function favIn(key) {
-  return state.fav.includes(key);
-}
-
 function toggleFav(idx, type) {
   const key = type === 'radio' ? 'r' + idx : idx;
   const pos = state.fav.indexOf(key);
@@ -571,15 +604,15 @@ function saveFav() {
   localStorage.setItem('stv_fav', JSON.stringify(state.fav));
 }
 
-// ========== CACHE ==========
+// ========== CACHE (URLs NOT stored — only names/ids) ==========
 function saveCache() {
   const data = {
     t: Date.now(),
     channels: state.channels.map(function(c) {
-      return { name: c.name, quality: c.quality, category: c.category };
+      return { id: c.id, thread: c.thread, name: c.name, quality: c.quality, category: c.category };
     }),
     radios: state.radios.map(function(r) {
-      return { name: r.name, category: r.category };
+      return { id: r.id, thread: r.thread, name: r.name, category: r.category };
     })
   };
   localStorage.setItem('stv_cache', JSON.stringify(data));
@@ -590,14 +623,13 @@ function loadCache() {
   if (!cached) return false;
   try {
     const d = JSON.parse(cached);
-    // 24 hours
     if (Date.now() - d.t > 86400000) return false;
 
     state.channels = d.channels.map(function(c) {
-      return { name: c.name, quality: c.quality, category: c.category, url: '' };
+      return { id: c.id, thread: c.thread, name: c.name, quality: c.quality, category: c.category, url: '' };
     });
     state.radios = d.radios.map(function(r) {
-      return { name: r.name, category: r.category, url: '' };
+      return { id: r.id, thread: r.thread, name: r.name, category: r.category, url: '' };
     });
     state.cacheTime = d.t;
     return true;
@@ -619,21 +651,19 @@ function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(function() {
-    t.classList.remove('show');
-  }, 2500);
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function() { t.classList.remove('show'); }, 2500);
 }
 
-function switchTab(tab) {
+function switchTab(tab, el) {
   state.curTab = tab;
-  document.querySelectorAll('.nav-btn').forEach(function(x) {
-    x.classList.remove('active');
-  });
-  event.target.closest('.nav-btn').classList.add('active');
-
+  document.querySelectorAll('.nav-btn').forEach(function(x) { x.classList.remove('active'); });
+  if (el) el.classList.add('active');
   document.getElementById('tvview').style.display = tab === 'tv' ? 'block' : 'none';
   document.getElementById('radioview').style.display = tab === 'radio' ? 'block' : 'none';
   document.getElementById('settingsview').style.display = tab === 'settings' ? 'block' : 'none';
+  renderTV();
+  renderRad();
 }
 
 function setCat(c) {
@@ -644,39 +674,27 @@ function setCat(c) {
 }
 
 function setTheme(t, el) {
-  document.body.className = t === 'gray' ? 'body-gray' : '';
+  document.body.classList.toggle('body-gray', t === 'gray');
   localStorage.setItem('stv_theme', t);
-  document.querySelectorAll('[data-theme]').forEach(function(x) {
-    x.classList.remove('active');
-  });
+  document.querySelectorAll('[data-theme]').forEach(function(x) { x.classList.remove('active'); });
   el.classList.add('active');
 }
 
 function setSize(s, el) {
   const g = document.getElementById('tvgrid');
-  if (s === 'compact') {
-    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(140px,1fr))';
-  } else if (s === 'large') {
-    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(260px,1fr))';
-  } else {
-    g.style.gridTemplateColumns = 'repeat(auto-fill,minmax(180px,1fr))';
-  }
+  g.style.gridTemplateColumns = s === 'compact' ? 'repeat(auto-fill,minmax(140px,1fr))'
+    : s === 'large' ? 'repeat(auto-fill,minmax(260px,1fr))'
+    : 'repeat(auto-fill,minmax(180px,1fr))';
   localStorage.setItem('stv_size', s);
-  document.querySelectorAll('[data-size]').forEach(function(x) {
-    x.classList.remove('active');
-  });
+  document.querySelectorAll('[data-size]').forEach(function(x) { x.classList.remove('active'); });
   el.classList.add('active');
 }
 
 function share() {
   if (navigator.share) {
-    navigator.share({
-      title: 'S TV',
-      text: 'ТВ и Радио — Safarali Group',
-      url: location.href
-    }).catch(function() {});
+    navigator.share({ title: 'S TV', text: 'ТВ и Радио — Safarali Group', url: location.href }).catch(function() {});
   } else {
-    toast('Ссылка скопирована');
+    toast('Ссылка: ' + location.href);
   }
 }
 
@@ -691,31 +709,22 @@ function drawStars() {
     canvas.height = innerHeight;
     initStars();
   }
-
   function initStars() {
     stars = [];
     for (let i = 0; i < 200; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.5 + 0.5,
-        a: Math.random()
-      });
+      stars.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, r: Math.random() * 1.5 + 0.5, a: Math.random() });
     }
   }
-
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    for (let i = 0; i < stars.length; i++) {
-      const s = stars[i];
+    stars.forEach(function(s) {
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(0,212,255,' + (s.a * 0.6) + ')';
       ctx.fill();
-    }
+    });
     requestAnimationFrame(animate);
   }
-
   resize();
   animate();
   window.addEventListener('resize', resize);
@@ -723,27 +732,97 @@ function drawStars() {
 
 // ========== EVENTS ==========
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && document.getElementById('vm').classList.contains('show')) {
-    closeV();
-  }
+  if (e.key === 'Escape' && document.getElementById('vm').classList.contains('show')) closeV();
   if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
     e.preventDefault();
     document.getElementById('search').focus();
   }
 });
 
+document.querySelector('.content').addEventListener('scroll', function() {
+  document.querySelector('.scroll-top').classList.toggle('show', this.scrollTop > 300);
+});
+
 document.getElementById('search').oninput = function(e) {
-  state.search = e.target.value;
+  state.search = e.target.value.toLowerCase().trim();
   renderTV();
   renderRad();
 };
 
+document.getElementById('ab').addEventListener('click', function(e) {
+  if (e.target.closest('#apb')) {
+    if (state.aEl && !state.aEl.paused) { state.aEl.pause(); }
+    else if (state.aEl) { state.aEl.play().catch(function() {}); }
+  } else if (e.target.closest('#ast')) {
+    stopRad();
+  }
+});
+
+// ========== VIDEO PLAYER CONTROLS ==========
+document.getElementById('pb').addEventListener('click', function() {
+  const v = state.vEl;
+  if (!v) return;
+  if (v.paused) { v.play().catch(function() {}); } else { v.pause(); }
+});
+
+document.getElementById('vp').addEventListener('play', function() {
+  document.getElementById('pb').querySelector('i').className = 'fas fa-pause';
+});
+document.getElementById('vp').addEventListener('pause', function() {
+  document.getElementById('pb').querySelector('i').className = 'fas fa-play';
+});
+document.getElementById('vp').addEventListener('timeupdate', function() {
+  const v = this;
+  if (!v.duration) return;
+  const pct = (v.currentTime / v.duration) * 100;
+  document.getElementById('pb2').style.width = pct + '%';
+  const fmt = function(t) {
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  };
+  document.getElementById('td').textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+});
+document.querySelector('.progress').addEventListener('click', function(e) {
+  const v = state.vEl;
+  if (!v || !v.duration) return;
+  const rect = this.getBoundingClientRect();
+  v.currentTime = ((e.clientX - rect.left) / rect.width) * v.duration;
+});
+
+document.getElementById('fs').addEventListener('click', function() {
+  const v = state.vEl;
+  if (!v) return;
+  if (document.fullscreenElement) document.exitFullscreen();
+  else v.requestFullscreen().catch(function() {});
+});
+
+document.addEventListener('keydown', function(e) {
+  const v = state.vEl;
+  if (document.getElementById('vm').classList.contains('show') && v) {
+    if (e.code === 'Space') { e.preventDefault(); v.paused ? v.play().catch(function(){}) : v.pause(); }
+    if (e.key === 'ArrowUp') { v.volume = Math.min(1, v.volume + 0.1); }
+    if (e.key === 'ArrowDown') { v.volume = Math.max(0, v.volume - 0.1); }
+  }
+});
+
 // ========== INIT ==========
-if (loadCache()) {
-  updateUI();
-} else {
-  startScan();
-}
+(function() {
+  const savedTheme = localStorage.getItem('stv_theme');
+  if (savedTheme === 'gray') document.body.classList.add('body-gray');
+  document.querySelectorAll('[data-theme]').forEach(function(x) {
+    if (x.dataset.theme === savedTheme) x.classList.add('active');
+  });
+
+  if (loadCache()) {
+    updateUI();
+    document.getElementById('loader').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+  } else {
+    startScan();
+  }
+})();
+
 drawStars();
 </script>
 </body>
